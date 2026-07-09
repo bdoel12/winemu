@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html class="light" lang="id">
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Winemu - Pengaturan</title>
+<script src="/js/device-redirect.js"></script>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Philosopher:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Noto+Sans+Javanese&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<style>
+        body { background-color: #fcf9f4; font-family: 'Plus Jakarta Sans', sans-serif; color: #1c1c19; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e5e2dd; border-radius: 10px; }
+</style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: { extend: {
+                    "colors": {
+                        "primary": "#1a373b","primary-container": "#314e52","on-primary-container": "#a0bec3",
+                        "surface": "#fcf9f4","surface-container": "#f0ede9","surface-container-low": "#f6f3ee",
+                        "surface-container-lowest": "#ffffff","on-surface": "#1c1c19","on-surface-variant": "#414849",
+                        "outline": "#727879","secondary": "#7d562d","tertiary": "#5c1f09","error": "#ba1a1a"
+                    },
+                    "borderRadius": {"DEFAULT": "0.25rem","lg": "0.5rem","xl": "0.75rem","2xl": "1rem","full": "9999px"},
+                    "spacing": {"stack-md": "24px","stack-lg": "48px","container-margin": "24px"},
+                    "fontFamily": {"display-lg": ["Philosopher"],"body-md": ["Plus Jakarta Sans"],"headline-md": ["Philosopher"]}
+            }}
+        }
+    </script>
+<!-- batik-bg-applied -->
+<style>
+  body { background-color:#fcf9f4; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cg fill='none'%3E%3Ccircle cx='30' cy='30' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='30' cy='30' r='6' stroke='%231a373b' stroke-width='0.4' stroke-opacity='0.05'/%3E%3Ccircle cx='0' cy='0' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='60' cy='0' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='0' cy='60' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='60' cy='60' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Cpath d='M30 20 L40 30 L30 40 L20 30 Z' stroke='%237d562d' stroke-width='0.5' stroke-opacity='0.06' fill='none'/%3E%3Cpath d='M0 0 L10 0 L5 8 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3Cpath d='M60 0 L50 0 L55 8 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3Cpath d='M0 60 L10 60 L5 52 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3Cpath d='M60 60 L50 60 L55 52 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3C/g%3E%3C/svg%3E"); }
+</style>
+</head>
+<body class="bg-surface text-on-surface">
+<div class="max-w-[1440px] mx-auto min-h-screen flex">
+  <div id="desktop-sidebar"></div>
+
+  <main class="flex-grow ml-64 flex flex-col md:flex-row bg-surface">
+    <div class="flex-grow max-w-4xl border-r border-surface-container p-8 md:p-12 custom-scrollbar overflow-y-auto">
+      <header class="mb-10">
+        <h2 class="font-display-lg text-primary text-4xl mb-2">Pengaturan Akun</h2>
+        <p class="text-on-surface-variant">Kelola preferensi akun dan keamanan Anda di sini.</p>
+      </header>
+
+      <div class="space-y-stack-lg">
+        <!-- Account Section -->
+        <section>
+          <h3 class="flex items-center gap-2 font-bold text-lg mb-6 text-primary">
+            <span class="material-symbols-outlined text-xl">person_outline</span> Akun &amp; Keamanan
+          </h3>
+          <div class="grid gap-4">
+            <a href="/desktop/profile.html" class="flex items-center justify-between p-5 bg-white border border-surface-container rounded-lg hover:border-primary-container hover:shadow-sm transition-all text-left group">
+              <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-primary/5 flex items-center justify-center text-primary"><span class="material-symbols-outlined">edit_square</span></div>
+                <div><p class="font-semibold">Ubah Profil</p><p class="text-sm text-on-surface-variant">Foto profil, bio, dan informasi publik</p></div>
+              </div>
+              <span class="material-symbols-outlined text-on-surface-variant group-hover:translate-x-1 transition-transform">chevron_right</span>
+            </a>
+            <button onclick="openPasswordModal()" class="flex items-center justify-between p-5 bg-white border border-surface-container rounded-lg hover:border-primary-container hover:shadow-sm transition-all text-left group">
+              <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-primary/5 flex items-center justify-center text-primary"><span class="material-symbols-outlined">lock</span></div>
+                <div><p class="font-semibold">Keamanan &amp; Kata Sandi</p><p class="text-sm text-on-surface-variant">Update password akun Anda</p></div>
+              </div>
+              <span class="material-symbols-outlined text-on-surface-variant group-hover:translate-x-1 transition-transform">chevron_right</span>
+            </button>
+            <div class="flex items-center justify-between p-5 bg-white border border-surface-container rounded-lg">
+              <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-primary/5 flex items-center justify-center text-primary"><span class="material-symbols-outlined">verified_user</span></div>
+                <div><p class="font-semibold">Verifikasi Identitas</p><p class="text-sm text-on-surface-variant" id="verify-status">-</p></div>
+              </div>
+            </div>
+            <button onclick="updateMyLocation()" class="flex items-center justify-between p-5 bg-white border border-surface-container rounded-lg hover:border-primary-container hover:shadow-sm transition-all text-left group">
+              <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-primary/5 flex items-center justify-center text-primary"><span class="material-symbols-outlined">my_location</span></div>
+                <div><p class="font-semibold">Lokasi Saya</p><p class="text-sm text-on-surface-variant" id="my-location-text">Belum diatur</p></div>
+              </div>
+              <span id="location-update-icon" class="material-symbols-outlined text-on-surface-variant group-hover:translate-x-1 transition-transform">chevron_right</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- Preferences Section -->
+        <section>
+          <h3 class="flex items-center gap-2 font-bold text-lg mb-6 text-primary">
+            <span class="material-symbols-outlined text-xl">tune</span> Preferensi
+          </h3>
+          <div class="bg-white border border-surface-container rounded-lg divide-y divide-surface-container">
+            <div class="flex items-center justify-between p-5">
+              <div class="flex items-center gap-4">
+                <span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+                <div><p class="font-semibold">Notifikasi</p><p class="text-sm text-on-surface-variant">Atur push notification dan email</p></div>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input checked class="sr-only peer" type="checkbox">
+                <div class="w-11 h-6 bg-surface-container rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-container"></div>
+              </label>
+            </div>
+            <div class="flex items-center justify-between p-5">
+              <div class="flex items-center gap-4">
+                <span class="material-symbols-outlined text-on-surface-variant">language</span>
+                <div><p class="font-semibold">Bahasa</p><p class="text-sm text-on-surface-variant">Bahasa Indonesia (Default)</p></div>
+              </div>
+            </div>
+            <div class="flex items-center justify-between p-5">
+              <div class="flex items-center gap-4">
+                <span class="material-symbols-outlined text-on-surface-variant">dark_mode</span>
+                <div><p class="font-semibold">Mode Gelap</p><p class="text-sm text-on-surface-variant">Gunakan tema yang lebih redup</p></div>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input class="sr-only peer" id="dark-mode-toggle" type="checkbox">
+                <div class="w-11 h-6 bg-surface-container rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-container"></div>
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <!-- Support Section -->
+        <section>
+          <h3 class="flex items-center gap-2 font-bold text-lg mb-6 text-primary">
+            <span class="material-symbols-outlined text-xl">info</span> Dukungan &amp; Kebijakan
+          </h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <a class="p-5 bg-white border border-surface-container rounded-lg hover:border-primary-container hover:shadow-sm transition-all group" href="#">
+              <span class="material-symbols-outlined text-primary mb-2">help_center</span>
+              <p class="font-semibold">Pusat Bantuan</p><p class="text-sm text-on-surface-variant">Temukan jawaban untuk pertanyaan Anda</p>
+            </a>
+            <a class="p-5 bg-white border border-surface-container rounded-lg hover:border-primary-container hover:shadow-sm transition-all group" href="#">
+              <span class="material-symbols-outlined text-primary mb-2">report</span>
+              <p class="font-semibold">Laporkan Masalah</p><p class="text-sm text-on-surface-variant">Bantu kami meningkatkan Winemu</p>
+            </a>
+            <a class="p-5 bg-white border border-surface-container rounded-lg hover:border-primary-container hover:shadow-sm transition-all group" href="#">
+              <span class="material-symbols-outlined text-primary mb-2">gavel</span>
+              <p class="font-semibold">Ketentuan Layanan</p><p class="text-sm text-on-surface-variant">Aturan dasar penggunaan platform</p>
+            </a>
+            <a class="p-5 bg-white border border-surface-container rounded-lg hover:border-primary-container hover:shadow-sm transition-all group" href="#">
+              <span class="material-symbols-outlined text-primary mb-2">policy</span>
+              <p class="font-semibold">Kebijakan Privasi</p><p class="text-sm text-on-surface-variant">Bagaimana kami menjaga data Anda</p>
+            </a>
+          </div>
+        </section>
+      </div>
+
+      <footer class="mt-stack-lg pt-8 border-t border-surface-container">
+        <p class="text-sm text-on-surface-variant text-center">© 2026 Winemu Dari Nusantara.</p>
+      </footer>
+    </div>
+
+    <!-- Right Column -->
+    <aside class="w-full md:w-80 bg-surface-container-low p-8 hidden lg:block">
+      <div class="sticky top-8 space-y-6">
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-white">
+          <div class="flex flex-col items-center text-center">
+            <div id="settings-avatar" class="w-24 h-24 rounded-full border-4 border-surface-container mb-4 overflow-hidden shadow-inner bg-primary-container text-white flex items-center justify-center text-3xl font-bold">?</div>
+            <h4 class="font-bold text-xl text-primary" id="settings-name">Loading...</h4>
+            <p class="text-sm text-on-surface-variant mb-6" id="settings-email"></p>
+            <button onclick="handleLogout()" class="w-full py-3 bg-white border-2 border-error/20 text-error font-bold rounded-lg hover:bg-error/5 hover:border-error transition-all flex items-center justify-center gap-2 active:scale-95">
+              <span class="material-symbols-outlined text-xl">logout</span> Keluar Akun
+            </button>
+          </div>
+        </div>
+
+        <div class="bg-primary-container text-white/90 p-6 rounded-2xl shadow-[0_10px_30px_rgba(49,78,82,0.15)] relative overflow-hidden">
+          <div class="relative z-10">
+            <p class="text-xs font-semibold uppercase tracking-wider text-on-primary-container/60 mb-4">Statistik Akun</p>
+            <div class="space-y-4">
+              <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-on-primary-container">inventory_2</span>
+                <div><p class="text-xs text-on-primary-container/70">Total Laporan</p><p class="text-sm font-medium" id="stat-total-reports">-</p></div>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-on-primary-container">task_alt</span>
+                <div><p class="text-xs text-on-primary-container/70">Berhasil Dikembalikan</p><p class="text-sm font-medium" id="stat-total-found">-</p></div>
+              </div>
+            </div>
+          </div>
+          <div class="absolute -bottom-10 -right-10 opacity-10"><span class="material-symbols-outlined text-[120px]" style="font-variation-settings:'wght' 200;">shield</span></div>
+        </div>
+      </div>
+    </aside>
+  </main>
+</div>
+
+<!-- Password Modal -->
+<div id="password-modal" class="hidden fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
+  <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="font-headline-md text-lg text-primary">Ubah Password</h3>
+      <button onclick="closePasswordModal()" class="text-on-surface-variant hover:text-error"><span class="material-symbols-outlined">close</span></button>
+    </div>
+    <p class="text-sm text-on-surface-variant mb-4">Masukkan email Anda untuk menerima tautan reset password.</p>
+    <input id="reset-email" type="email" placeholder="Email Anda" class="w-full px-4 py-3 border border-outline-variant rounded-xl focus:outline-none focus:border-primary mb-4">
+    <button onclick="sendResetLink()" class="w-full py-3 bg-primary text-on-primary rounded-xl font-bold hover:bg-primary-container transition-colors">Kirim Tautan Reset</button>
+  </div>
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/desktop/js/desktop-nav.js"></script>
+<script>
+  window.addEventListener('DOMContentLoaded', () => {
+    injectDesktopNav('settings');
+    if (!isLoggedIn()) { window.location.href = '/desktop/login.html'; return; }
+    loadUser();
+
+    const dm = localStorage.getItem('winemu-dark-mode') === 'true';
+    document.getElementById('dark-mode-toggle').checked = dm;
+    document.getElementById('dark-mode-toggle').addEventListener('change', e => {
+      localStorage.setItem('winemu-dark-mode', e.target.checked);
+      document.documentElement.classList.toggle('dark', e.target.checked);
+    });
+  });
+
+  async function loadUser() {
+    const res = await api.get('/users/profile');
+    if (!res?.data?.user) return;
+    const u = res.data.user;
+    document.getElementById('settings-name').textContent = u.full_name || u.username;
+    document.getElementById('settings-email').textContent = u.email || '';
+    document.getElementById('reset-email').value = u.email || '';
+    document.getElementById('verify-status').textContent = u.is_verified ? 'Terverifikasi' : 'Belum Verifikasi';
+    document.getElementById('my-location-text').textContent = u.location ? u.location : (u.latitude && u.longitude ? 'Lokasi tersimpan' : 'Belum diatur, klik untuk mengatur');
+    document.getElementById('stat-total-reports').textContent = u.total_reports || 0;
+    document.getElementById('stat-total-found').textContent = u.total_found || 0;
+
+    const av = document.getElementById('settings-avatar');
+    if (u.avatar_url) av.innerHTML = `<img src="${u.avatar_url}" class="w-full h-full object-cover">`;
+    else av.textContent = (u.full_name || u.username || '?')[0].toUpperCase();
+  }
+
+  function openPasswordModal() { document.getElementById('password-modal').classList.remove('hidden'); }
+  function closePasswordModal() { document.getElementById('password-modal').classList.add('hidden'); }
+
+  async function sendResetLink() {
+    const email = document.getElementById('reset-email').value.trim();
+    if (!email) return;
+    const res = await api.post('/auth/forgot-password', { email });
+    if (res?.status === 'success') { showToast('Tautan reset password telah dikirim'); closePasswordModal(); }
+  }
+
+  function handleLogout() {
+    if (!confirm('Yakin ingin keluar?')) return;
+    api.post('/auth/logout').finally(() => {
+      api.clearTokens();
+      window.location.href = '/desktop/login.html';
+    });
+  }
+
+  function updateMyLocation() {
+    if (!navigator.geolocation) { showToast('Browser Anda tidak mendukung deteksi lokasi', true); return; }
+
+    const icon = document.getElementById('location-update-icon');
+    const textEl = document.getElementById('my-location-text');
+    icon.textContent = 'sync';
+    icon.classList.add('animate-spin');
+    textEl.textContent = 'Mendeteksi lokasi...';
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        let locationName = `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
+        try {
+          const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=14`);
+          const geoData = await geoRes.json();
+          if (geoData?.address) {
+            const a = geoData.address;
+            locationName = a.suburb || a.city_district || a.city || a.county || locationName;
+          }
+        } catch (e) {}
+
+        const res = await api.put('/users/profile', { latitude, longitude, location: locationName });
+        icon.classList.remove('animate-spin');
+        icon.textContent = 'chevron_right';
+
+        if (res?.status === 'success') { textEl.textContent = locationName; showToast('Lokasi berhasil diperbarui ✓'); }
+        else { textEl.textContent = 'Gagal menyimpan lokasi'; showToast(res?.message || 'Gagal menyimpan lokasi', true); }
+      },
+      () => {
+        icon.classList.remove('animate-spin');
+        icon.textContent = 'chevron_right';
+        textEl.textContent = 'Izin lokasi ditolak';
+        showToast('Izin akses lokasi diperlukan untuk fitur ini', true);
+      },
+      { timeout: 10000 }
+    );
+  }
+</script>
+</body>
+</html>

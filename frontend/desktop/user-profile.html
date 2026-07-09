@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Profil Pengguna - Winemu</title>
+<script src="/js/device-redirect.js"></script>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&family=Philosopher:wght@400;700&family=Noto+Sans+Javanese&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: { extend: {
+        "colors": {
+                "secondary-container": "#ffca98","on-secondary-fixed-variant": "#623f18","on-secondary-container": "#7a532a",
+                "on-primary-fixed": "#001f23","surface": "#fcf9f4","on-tertiary": "#ffffff","tertiary-container": "#79351d",
+                "surface-container-high": "#ebe8e3","error-container": "#ffdad6","tertiary-fixed": "#ffdbd0",
+                "surface-container-lowest": "#ffffff","surface-container": "#f0ede9","primary-fixed-dim": "#adccd1",
+                "surface-variant": "#e5e2dd","outline": "#727879","on-surface-variant": "#414849","on-error": "#ffffff",
+                "on-tertiary-fixed-variant": "#76321b","on-tertiary-fixed": "#390b00","primary-fixed": "#c9e8ed",
+                "on-secondary": "#ffffff","primary-container": "#314e52","on-background": "#1c1c19",
+                "secondary-fixed": "#ffdcbd","tertiary": "#5c1f09","surface-container-low": "#f6f3ee",
+                "background": "#fcf9f4","surface-bright": "#fcf9f4","on-primary-container": "#a0bec3",
+                "on-surface": "#1c1c19","inverse-on-surface": "#f3f0eb","surface-container-highest": "#e5e2dd",
+                "on-primary-fixed-variant": "#2e4b4f","inverse-primary": "#adccd1","on-error-container": "#93000a",
+                "surface-dim": "#dcdad5","secondary-fixed-dim": "#f0bd8b","error": "#ba1a1a","primary": "#1a373b",
+                "on-tertiary-container": "#ffa182","inverse-surface": "#31302d","surface-tint": "#466367",
+                "outline-variant": "#c1c8c9","on-secondary-fixed": "#2c1600","on-primary": "#ffffff",
+                "tertiary-fixed-dim": "#ffb59d","secondary": "#7d562d"
+        },
+        "borderRadius": {"DEFAULT": "0.25rem","lg": "0.5rem","xl": "0.75rem","full": "9999px"},
+        "spacing": {"gutter": "16px","stack-sm": "12px","base": "8px","container-margin": "24px","stack-md": "24px","stack-lg": "48px"},
+        "fontFamily": {"javanese-script": ["Noto Sans Javanese"],"headline-md": ["Philosopher"],"display-lg-mobile": ["Philosopher"],"body-md": ["Plus Jakarta Sans"],"display-lg": ["Philosopher"],"body-sm": ["Plus Jakarta Sans"],"body-lg": ["Plus Jakarta Sans"],"label-caps": ["Plus Jakarta Sans"]},
+        "fontSize": {
+                "javanese-script": ["1.2em", {"lineHeight": "1.8", "fontWeight": "400"}],
+                "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                "display-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                "display-lg": ["40px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                "label-caps": ["12px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600"}]
+        }
+}}}
+</script>
+<style>
+        body { background-color: #fcf9f4; color: #1c1c19; }
+        .ambient-shadow { box-shadow: 0 10px 40px -10px rgba(49, 78, 82, 0.08); }
+        .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;display:inline-block;line-height:1;}
+        .material-symbols-outlined.filled{font-variation-settings:'FILL' 1;}
+        .star-input span{cursor:pointer;transition:transform .1s;}
+        .star-input span:hover{transform:scale(1.15);}
+</style>
+<!-- batik-bg-applied -->
+<style>
+  body { background-color:#fcf9f4; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cg fill='none'%3E%3Ccircle cx='30' cy='30' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='30' cy='30' r='6' stroke='%231a373b' stroke-width='0.4' stroke-opacity='0.05'/%3E%3Ccircle cx='0' cy='0' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='60' cy='0' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='0' cy='60' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='60' cy='60' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Cpath d='M30 20 L40 30 L30 40 L20 30 Z' stroke='%237d562d' stroke-width='0.5' stroke-opacity='0.06' fill='none'/%3E%3Cpath d='M0 0 L10 0 L5 8 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3Cpath d='M60 0 L50 0 L55 8 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3Cpath d='M0 60 L10 60 L5 52 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3Cpath d='M60 60 L50 60 L55 52 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3C/g%3E%3C/svg%3E"); }
+</style>
+</head>
+<body class="font-body-md text-body-md bg-surface flex">
+<div id="desktop-sidebar"></div>
+
+<div class="flex-1 ml-64 flex min-h-screen">
+  <main class="flex-grow w-full max-w-[860px] px-8 py-8 mx-auto">
+    <div id="profile-container">
+      <div class="flex justify-center py-20"><div class="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div></div>
+    </div>
+  </main>
+
+  <aside class="w-80 hidden lg:block p-8 border-l border-surface-variant">
+    <div class="bg-surface-container-lowest rounded-md p-6 ambient-shadow mb-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-headline-md text-xl text-on-surface">Ulasan dari Pengguna Lain</h3>
+        <button id="flag-user-btn" onclick="toggleFlagUserMenu(event)" title="Laporkan pengguna" class="text-outline hover:text-error transition-colors p-1 rounded-full hover:bg-error/10">
+          <span class="material-symbols-outlined text-[20px]">flag</span>
+        </button>
+      </div>
+      <div id="sidebar-ratings" class="space-y-4">
+        <p class="text-sm text-on-surface-variant text-center py-4">Memuat...</p>
+      </div>
+    </div>
+    <footer class="text-on-surface-variant font-body-sm text-sm">
+      <div class="flex flex-wrap gap-x-4 gap-y-2 mb-4">
+        <a class="hover:text-primary transition-colors" href="#">Tentang</a>
+        <a class="hover:text-primary transition-colors" href="#">Privasi</a>
+        <a class="hover:text-primary transition-colors" href="#">Ketentuan</a>
+      </div>
+      <div>© 2026 Winemu Dari Nusantara.</div>
+    </footer>
+  </aside>
+</div>
+
+<!-- Rating Modal -->
+<div id="rating-modal" class="hidden fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
+  <div class="bg-surface-container-lowest rounded-2xl p-6 w-full max-w-sm shadow-2xl">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="font-headline-md text-lg text-primary">Beri Rating</h3>
+      <button onclick="closeRatingModal()" class="text-on-surface-variant hover:text-error"><span class="material-symbols-outlined">close</span></button>
+    </div>
+    <p class="text-sm text-on-surface-variant mb-4">Bagaimana pengalaman Anda berinteraksi dengan pengguna ini?</p>
+    <div class="star-input flex justify-center gap-2 mb-4 text-4xl" id="star-input">
+      <span data-score="1" class="material-symbols-outlined text-outline-variant">star</span>
+      <span data-score="2" class="material-symbols-outlined text-outline-variant">star</span>
+      <span data-score="3" class="material-symbols-outlined text-outline-variant">star</span>
+      <span data-score="4" class="material-symbols-outlined text-outline-variant">star</span>
+      <span data-score="5" class="material-symbols-outlined text-outline-variant">star</span>
+    </div>
+    <textarea id="rating-comment" rows="3" placeholder="Tulis ulasan singkat (opsional)..." class="w-full border border-outline-variant rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-primary resize-none mb-4"></textarea>
+    <p id="rating-error" class="text-red-600 text-sm hidden mb-2"></p>
+    <button onclick="submitRating()" id="rating-submit-btn" class="w-full py-3 bg-primary text-on-primary rounded-xl font-bold hover:bg-primary-container transition-colors">Kirim Rating</button>
+  </div>
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/desktop/js/desktop-nav.js"></script>
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const targetUserId = parseInt(params.get('id'));
+  let selectedScore = 0;
+  let targetUser = null;
+
+  if (!targetUserId) window.location.href = '/desktop/feed.html';
+
+  window.addEventListener('DOMContentLoaded', () => {
+    injectDesktopNav('profile');
+    const me = api.getUser();
+    if (me && me.id === targetUserId) { window.location.href = '/desktop/profile.html'; return; }
+    loadProfile();
+    setupStarInput();
+  });
+
+  function setupStarInput() {
+    document.querySelectorAll('#star-input span').forEach(star => {
+      star.addEventListener('click', () => { selectedScore = parseInt(star.dataset.score); renderStars(); });
+    });
+  }
+
+  function renderStars() {
+    document.querySelectorAll('#star-input span').forEach(star => {
+      const score = parseInt(star.dataset.score);
+      if (score <= selectedScore) { star.classList.add('filled', 'text-secondary'); star.classList.remove('text-outline-variant'); }
+      else { star.classList.remove('filled', 'text-secondary'); star.classList.add('text-outline-variant'); }
+    });
+  }
+
+  async function loadProfile() {
+    const [userRes, reportsRes, ratingsRes] = await Promise.all([
+      api.get(`/users/${targetUserId}`),
+      api.get(`/users/${targetUserId}/reports?per_page=9`),
+      api.get(`/users/${targetUserId}/ratings?per_page=5`),
+    ]);
+
+    if (!userRes?.data?.user) {
+      document.getElementById('profile-container').innerHTML = '<p class="text-center py-20 text-on-surface-variant">Pengguna tidak ditemukan</p>';
+      return;
+    }
+
+    targetUser = userRes.data.user;
+    const reports = reportsRes?.data?.items || [];
+    const ratings = ratingsRes?.data?.items || [];
+    const ratingTotal = ratingsRes?.data?.pagination?.total || 0;
+
+    renderProfile(targetUser, reports, ratingTotal);
+    renderSidebarRatings(ratings);
+  }
+
+  function renderProfile(u, reports, ratingTotal) {
+    const avatar = u.avatar_url
+      ? `<img alt="${u.full_name} Profile" class="w-40 h-40 rounded-full object-cover border-4 border-surface-bright shadow-sm" src="${u.avatar_url}">`
+      : `<div class="w-40 h-40 rounded-full bg-primary-container text-white flex items-center justify-center text-5xl font-bold border-4 border-surface-bright shadow-sm">${(u.full_name||u.username||'?')[0].toUpperCase()}</div>`;
+
+    const starsDisplay = renderStarDisplay(u.rating);
+
+    const reportsHtml = reports.length
+      ? reports.map(r => {
+          if (!r) return '';
+          const badgeColor = r.type === 'hilang' ? '#ba1a1a' : '#7d562d';
+          const badgeText  = r.type === 'hilang' ? 'HILANG' : 'DITEMUKAN';
+          const overlayClass = r.type === 'hilang' ? 'overlay-hilang' : 'overlay-ditemukan';
+          const img = r.primary_image
+            ? `<img src="${r.primary_image}" class="w-full h-full object-cover">`
+            : r.primary_video
+              ? `<video src="${r.primary_video}" class="w-full h-full object-cover" muted playsinline preload="metadata"></video><div class="absolute inset-0 flex items-center justify-center pointer-events-none"><span class="material-symbols-outlined text-white drop-shadow-lg" style="font-size:32px;">play_circle</span></div>`
+              : `<div class="w-full h-full bg-surface-container flex items-center justify-center"><span class="material-symbols-outlined text-3xl text-outline">image_not_supported</span></div>`;
+          return `<div onclick="window.location.href='/desktop/report-detail.html?id=${r.id}'" class="aspect-square relative group cursor-pointer overflow-hidden bg-surface-container rounded-md hover:-translate-y-1 transition-transform duration-300">
+            ${img}
+            <div class="absolute inset-0 ${overlayClass} pointer-events-none"></div>
+            <div class="absolute bottom-2 left-2 text-white px-1.5 py-0.5 text-[10px] font-bold rounded tracking-wider" style="background:${badgeColor};">${badgeText}</div>
+            ${r.status === 'selesai' ? '<div class="absolute inset-0 bg-black/50 flex items-center justify-center"><span class="text-white text-xs font-bold border border-white px-2 py-1 rounded-full tracking-wider">✓ SELESAI</span></div>' : ''}
+          </div>`;
+        }).join('')
+      : '<div class="col-span-3 text-center py-12 text-on-surface-variant"><span class="material-symbols-outlined text-5xl block mb-3">inventory_2</span><p>Belum ada laporan dari pengguna ini</p></div>';
+
+    document.getElementById('profile-container').innerHTML = `
+      <section class="flex flex-col md:flex-row items-center md:items-start gap-10 mb-12 bg-surface-container-lowest ambient-shadow rounded-md p-8">
+        <div class="flex-shrink-0 relative">
+          ${avatar}
+          ${u.is_verified ? `<div class="absolute bottom-2 right-2 bg-primary-container text-on-primary w-10 h-10 rounded-full flex items-center justify-center border-4 border-surface-container-lowest" title="Pengguna Terverifikasi"><span class="material-symbols-outlined text-[18px] filled">verified</span></div>` : ''}
+        </div>
+        <div class="flex-grow text-center md:text-left flex flex-col justify-center pt-2">
+          <div class="flex flex-wrap md:flex-nowrap md:flex-row md:items-start justify-between gap-3 mb-4">
+            <div class="min-w-0">
+              <h1 class="font-headline-md text-3xl text-on-surface">${u.full_name || u.username}</h1>
+              <p class="text-on-surface-variant text-sm">@${u.username}</p>
+            </div>
+            <div class="flex-shrink-0 flex gap-2 justify-center md:justify-end mt-1">
+              <button onclick="openRatingModal()" class="bg-primary-container text-on-primary px-4 py-2 rounded-full font-body-md text-sm hover:opacity-90 transition-opacity flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-[18px]">star</span>Rating
+              </button>
+              <button onclick="startChat(${u.id})" class="border border-outline-variant text-primary px-4 py-2 rounded-full font-body-md text-sm hover:bg-surface-container-low transition-colors flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-[18px]">mail</span>Pesan
+              </button>
+              <div class="relative">
+                <button onclick="toggleUserMenu(event,${u.id},'${(u.full_name||u.username).replace(/'/g,'')}')" class="border border-outline-variant text-primary w-10 h-10 rounded-full hover:bg-surface-container-low transition-colors flex items-center justify-center">
+                  <span class="material-symbols-outlined text-[18px]">more_horiz</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          ${u.bio ? `<p class="font-body-md text-body-md text-on-surface-variant mb-6 max-w-2xl leading-relaxed">${u.bio}</p>` : ''}
+          ${u.location ? `<p class="text-on-surface-variant text-sm mb-4 flex items-center gap-1 justify-center md:justify-start"><span class="material-symbols-outlined text-[16px]">location_on</span>${u.location}</p>` : ''}
+          <div class="flex justify-center md:justify-start gap-10 border-t border-surface-variant pt-6">
+            <div class="text-center md:text-left">
+              <div class="font-headline-md text-2xl text-primary mb-1">${u.total_found || 0}</div>
+              <div class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Ditemukan</div>
+            </div>
+            <div class="text-center md:text-left">
+              <div class="font-headline-md text-2xl text-primary mb-1">${u.total_reports || 0}</div>
+              <div class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Dilaporkan</div>
+            </div>
+            <div class="text-center md:text-left">
+              <div class="font-headline-md text-2xl text-secondary flex items-center justify-center md:justify-start gap-1 mb-1">
+                ${(u.rating||0).toFixed(1)} <span class="material-symbols-outlined text-lg filled">star</span>
+              </div>
+              <div class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">${ratingTotal} Rating</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="flex gap-8 border-b border-surface-variant mb-8">
+        <button onclick="setTab('posts')" id="tab-posts" class="text-primary font-bold border-b-2 border-primary pb-3 px-2 font-body-lg text-body-lg tracking-wide">LAPORAN</button>
+        <button onclick="setTab('map')" id="tab-map" class="text-on-surface-variant font-normal hover:text-primary pb-3 px-2 font-body-lg text-body-lg tracking-wide transition-colors">PETA</button>
+      </div>
+
+      <div id="tab-posts-content" class="grid grid-cols-3 gap-4">${reportsHtml}</div>
+      <div id="tab-map-content" class="hidden">
+        <div id="profile-map" class="w-full h-[500px] rounded-md ambient-shadow"></div>
+      </div>
+    `;
+
+    window._profileReports = reports;
+  }
+
+  function setTab(tab) {
+    const postsBtn = document.getElementById('tab-posts');
+    const mapBtn = document.getElementById('tab-map');
+    const postsContent = document.getElementById('tab-posts-content');
+    const mapContent = document.getElementById('tab-map-content');
+
+    if (tab === 'posts') {
+      postsBtn.className = 'text-primary font-bold border-b-2 border-primary pb-3 px-2 font-body-lg text-body-lg tracking-wide';
+      mapBtn.className = 'text-on-surface-variant font-normal hover:text-primary pb-3 px-2 font-body-lg text-body-lg tracking-wide transition-colors';
+      postsContent.classList.remove('hidden');
+      mapContent.classList.add('hidden');
+    } else {
+      mapBtn.className = 'text-primary font-bold border-b-2 border-primary pb-3 px-2 font-body-lg text-body-lg tracking-wide';
+      postsBtn.className = 'text-on-surface-variant font-normal hover:text-primary pb-3 px-2 font-body-lg text-body-lg tracking-wide transition-colors';
+      mapContent.classList.remove('hidden');
+      postsContent.classList.add('hidden');
+      initProfileMap();
+    }
+  }
+
+  let profileMapInstance = null;
+  function initProfileMap() {
+    if (profileMapInstance) { setTimeout(() => profileMapInstance.invalidateSize(), 100); return; }
+    setTimeout(() => {
+      profileMapInstance = L.map('profile-map').setView([-7.797068, 110.370529], 12);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution:'© OpenStreetMap'}).addTo(profileMapInstance);
+      (window._profileReports || []).forEach(r => {
+        if (r.latitude && r.longitude) {
+          const color = r.type === 'hilang' ? '#ba1a1a' : '#7d562d';
+          const icon = L.divIcon({ html: `<div style="width:28px;height:28px;background:${color};border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,.3);"></div>`, className: '', iconSize: [28,28], iconAnchor: [14,28] });
+          L.marker([r.latitude, r.longitude], {icon}).addTo(profileMapInstance).bindPopup(`<b>${r.title}</b>`);
+        }
+      });
+    }, 100);
+  }
+
+  function renderSidebarRatings(ratings) {
+    const el = document.getElementById('sidebar-ratings');
+    if (!ratings.length) { el.innerHTML = '<p class="text-sm text-on-surface-variant text-center py-4">Belum ada ulasan</p>'; return; }
+    el.innerHTML = ratings.map(r => {
+      const av = r.rater?.avatar_url
+        ? `<img src="${r.rater.avatar_url}" class="w-10 h-10 rounded-full object-cover flex-shrink-0">`
+        : `<div class="w-10 h-10 rounded-full bg-surface-variant flex-shrink-0 flex items-center justify-center text-xs font-bold">${(r.rater?.full_name||'?')[0]}</div>`;
+      return `<div class="flex items-start gap-3">
+        ${av}
+        <div class="flex-grow">
+          <div class="font-body-md font-semibold text-on-surface text-sm">${r.rater?.full_name || r.rater?.username || 'Pengguna'}</div>
+          <div class="text-secondary text-xs">${'★'.repeat(r.score)}${'☆'.repeat(5-r.score)}</div>
+          ${r.comment ? `<p class="font-body-sm text-on-surface-variant text-sm mt-1">${r.comment}</p>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  function renderStarDisplay(rating) {
+    const r = rating || 0;
+    let html = '';
+    for (let i = 1; i <= 5; i++) {
+      if (r >= i) html += '<span class="material-symbols-outlined filled text-secondary text-[18px]">star</span>';
+      else if (r >= i - 0.5) html += '<span class="material-symbols-outlined filled text-secondary text-[18px]">star_half</span>';
+      else html += '<span class="material-symbols-outlined text-outline-variant text-[18px]">star</span>';
+    }
+    return html;
+  }
+
+
+  let _currentProfileUserId = null;
+
+  function toggleUserMenu(e, userId, userName) {
+    e.stopPropagation();
+    document.querySelectorAll('._float-menu').forEach(m => m.remove());
+    _currentProfileUserId = userId;
+    const menu = document.createElement('div');
+    menu.className = '_float-menu';
+    menu.style.cssText = 'position:absolute;top:44px;right:0;background:#fff;border:1px solid #c1c8c9;border-radius:1rem;box-shadow:0 8px 32px rgba(0,0,0,0.12);padding:8px;z-index:200;min-width:180px;';
+
+    // Share profile
+    const shareBtn = document.createElement('button');
+    shareBtn.style.cssText = 'display:flex;align-items:center;gap:10px;width:100%;padding:8px 12px;border:none;background:none;cursor:pointer;border-radius:8px;font-size:14px;';
+    shareBtn.onmouseover = function() { this.style.background='#f0ede9'; };
+    shareBtn.onmouseout  = function() { this.style.background='none'; };
+    shareBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px;">share</span>Bagikan Profil';
+    shareBtn.onclick = function() {
+      menu.remove();
+      const url = window.location.origin + '/desktop/user-profile.html?id=' + userId;
+      if (navigator.share) { navigator.share({ title: userName + ' - Winemu', url }); }
+      else { navigator.clipboard.writeText(url); showToast('Link profil disalin!'); }
+    };
+    menu.appendChild(shareBtn);
+
+    // Flag user
+    const flagBtn = document.createElement('button');
+    flagBtn.style.cssText = 'display:flex;align-items:center;gap:10px;width:100%;padding:8px 12px;border:none;background:none;cursor:pointer;border-radius:8px;font-size:14px;color:#ba1a1a;';
+    flagBtn.onmouseover = function() { this.style.background='#ffdad6'; };
+    flagBtn.onmouseout  = function() { this.style.background='none'; };
+    flagBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px;">flag</span>Laporkan Pengguna';
+    flagBtn.onclick = function() { menu.remove(); showFlagUserModal(userId, userName); };
+    menu.appendChild(flagBtn);
+
+    e.currentTarget.closest('.relative').appendChild(menu);
+  }
+
+  function toggleFlagUserMenu(e) {
+    e.stopPropagation();
+    const uid = _currentProfileUserId || new URLSearchParams(window.location.search).get('id');
+    const uname = document.querySelector('h1')?.textContent || 'Pengguna ini';
+    showFlagUserModal(uid, uname);
+  }
+
+  function showFlagUserModal(userId, userName) {
+    document.querySelectorAll('._float-menu,#flag-user-modal').forEach(m => m.remove());
+    const REASONS = [
+      'Perilaku pengguna tidak pantas',
+      'Menyebarkan berita bohong / hoaks',
+      'Penipuan / scam',
+      'Konten pornografi atau tidak senonoh',
+      'Ujaran kebencian atau diskriminasi',
+      'Spam atau akun palsu',
+    ];
+    const overlay = document.createElement('div');
+    overlay.id = 'flag-user-modal';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:1000;display:flex;align-items:center;justify-content:center;padding:1rem;';
+    overlay.onclick = function(e) { if (e.target === overlay) overlay.remove(); };
+    const box = document.createElement('div');
+    box.style.cssText = 'background:#fff;border-radius:1.5rem;padding:1.5rem;width:100%;max-width:420px;box-shadow:0 20px 60px rgba(0,0,0,0.2);';
+    const _hdr = document.createElement('div');
+    _hdr.style.cssText = 'display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;';
+    _hdr.innerHTML = '<h3 style="font-weight:700;font-size:1.1rem;color:#1c1c19;">Laporkan Pengguna</h3>';
+    const _cls = document.createElement('button');
+    _cls.style.cssText = 'background:none;border:none;cursor:pointer;color:#727879;font-size:1.2rem;line-height:1;';
+    _cls.textContent = '✕';
+    _cls.onclick = function() { overlay.remove(); };
+    _hdr.appendChild(_cls);
+    box.appendChild(_hdr);
+    const _desc = document.createElement('p');
+    _desc.style.cssText = 'font-size:13px;color:#414849;margin-bottom:1rem;';
+    _desc.innerHTML = 'Pilih alasan pelaporan untuk <strong>' + userName + '</strong>:';
+    box.appendChild(_desc);
+    REASONS.forEach(function(reason) {
+      const btn = document.createElement('button');
+      btn.style.cssText = 'display:flex;align-items:center;gap:10px;width:100%;padding:10px 14px;border:1px solid #e5e2dd;background:none;cursor:pointer;border-radius:10px;font-size:13px;text-align:left;margin-bottom:6px;transition:background 0.15s;';
+      btn.onmouseover = function() { this.style.background='#f0ede9'; this.style.borderColor='#1a373b'; };
+      btn.onmouseout  = function() { this.style.background='none'; this.style.borderColor='#e5e2dd'; };
+      btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px;color:#ba1a1a;flex-shrink:0;">flag</span>' + reason;
+      btn.onclick = function() {
+        overlay.remove();
+        api.post('/users/' + userId + '/flag', { reason })
+          .catch(() => {});
+        showToast('Laporan terkirim. Terima kasih!');
+      };
+      box.appendChild(btn);
+    });
+    overlay.appendChild(box);
+    document.body.appendChild(overlay);
+  }
+
+  document.addEventListener('click', function() {
+    document.querySelectorAll('._float-menu').forEach(m => m.remove());
+  });
+
+  function openRatingModal() {
+    if (!isLoggedIn()) { window.location.href = '/desktop/login.html'; return; }
+    selectedScore = 0;
+    renderStars();
+    document.getElementById('rating-comment').value = '';
+    document.getElementById('rating-error').classList.add('hidden');
+    document.getElementById('rating-modal').classList.remove('hidden');
+  }
+  function closeRatingModal() { document.getElementById('rating-modal').classList.add('hidden'); }
+
+  async function submitRating() {
+    const errEl = document.getElementById('rating-error');
+    if (selectedScore < 1) { errEl.textContent = 'Pilih jumlah bintang dahulu'; errEl.classList.remove('hidden'); return; }
+
+    const btn = document.getElementById('rating-submit-btn');
+    btn.textContent = 'Mengirim...'; btn.disabled = true;
+
+    const res = await api.post(`/users/${targetUserId}/ratings`, {
+      score: selectedScore,
+      comment: document.getElementById('rating-comment').value.trim(),
+    });
+
+    if (res?.status === 'success') {
+      closeRatingModal();
+      showToast('Rating terkirim, terima kasih!');
+      loadProfile();
+    } else {
+      errEl.textContent = res?.message || 'Gagal mengirim rating';
+      errEl.classList.remove('hidden');
+    }
+    btn.textContent = 'Kirim Rating'; btn.disabled = false;
+  }
+
+  async function startChat(userId) {
+    if (!isLoggedIn()) { window.location.href = '/desktop/login.html'; return; }
+    window.location.href = `/desktop/chat.html?user=${userId}`;
+  }
+</script>
+</body>
+</html>

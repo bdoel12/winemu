@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html class="light" lang="id">
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Winemu - Cari</title>
+<script src="/js/device-redirect.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Javanese&family=Philosopher:ital,wght@0,400;0,700;1,400;1,700&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: { extend: {
+            "colors": {
+                    "secondary-fixed-dim": "#f0bd8b","primary-container": "#314e52","tertiary-fixed": "#ffdbd0",
+                    "surface": "#fcf9f4","secondary": "#7d562d","primary": "#1a373b","on-primary": "#ffffff",
+                    "surface-container": "#f0ede9","on-error": "#ffffff","surface-dim": "#dcdad5",
+                    "on-secondary-fixed": "#2c1600","surface-tint": "#466367","surface-bright": "#fcf9f4",
+                    "on-background": "#1c1c19","primary-fixed-dim": "#adccd1","inverse-primary": "#adccd1",
+                    "primary-fixed": "#c9e8ed","outline-variant": "#c1c8c9","on-surface": "#1c1c19",
+                    "on-tertiary-fixed": "#390b00","on-tertiary-container": "#ffa182","on-primary-fixed-variant": "#2e4b4f",
+                    "on-error-container": "#93000a","on-surface-variant": "#414849","on-primary-fixed": "#001f23",
+                    "secondary-fixed": "#ffdcbd","surface-container-high": "#ebe8e3","surface-container-lowest": "#ffffff",
+                    "on-tertiary": "#ffffff","surface-variant": "#e5e2dd","tertiary-fixed-dim": "#ffb59d",
+                    "on-secondary-fixed-variant": "#623f18","inverse-on-surface": "#f3f0eb","tertiary-container": "#79351d",
+                    "error-container": "#ffdad6","surface-container-low": "#f6f3ee","background": "#fcf9f4",
+                    "error": "#ba1a1a","secondary-container": "#ffca98","surface-container-highest": "#e5e2dd",
+                    "on-primary-container": "#a0bec3","on-tertiary-fixed-variant": "#76321b","tertiary": "#5c1f09",
+                    "on-secondary-container": "#7a532a","on-secondary": "#ffffff","inverse-surface": "#31302d","outline": "#727879"
+            },
+            "borderRadius": {"DEFAULT": "0.25rem","lg": "0.5rem","xl": "0.75rem","2xl": "1.5rem","full": "9999px"},
+            "spacing": {"stack-md": "24px","stack-lg": "48px","gutter": "16px","container-margin": "24px","stack-sm": "12px","base": "8px"},
+            "fontFamily": {"display-lg-mobile": ["Philosopher"],"label-caps": ["Plus Jakarta Sans"],"display-lg": ["Philosopher"],"headline-md": ["Philosopher"],"javanese-script": ["Noto Sans Javanese"],"body-md": ["Plus Jakarta Sans"],"body-lg": ["Plus Jakarta Sans"],"body-sm": ["Plus Jakarta Sans"]},
+            "fontSize": {
+                    "display-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "label-caps": ["12px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "display-lg": ["40px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                    "javanese-script": ["1.2em", {"lineHeight": "1.8", "fontWeight": "400"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}]
+            }
+    }}}
+    </script>
+<style>
+        .custom-shadow { box-shadow: 0 8px 32px rgba(49, 78, 82, 0.06); }
+        .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;display:inline-block;line-height:1;}
+        #map-view { height: 100%; width: 100%; position:relative; z-index:0; }
+        #map-view .leaflet-pane, #map-view .leaflet-top, #map-view .leaflet-bottom { z-index: 1 !important; }
+</style>
+<!-- batik-bg-applied -->
+<style>
+  body { background-color:#fcf9f4; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cg fill='none'%3E%3Ccircle cx='30' cy='30' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='30' cy='30' r='6' stroke='%231a373b' stroke-width='0.4' stroke-opacity='0.05'/%3E%3Ccircle cx='0' cy='0' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='60' cy='0' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='0' cy='60' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='60' cy='60' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Cpath d='M30 20 L40 30 L30 40 L20 30 Z' stroke='%237d562d' stroke-width='0.5' stroke-opacity='0.06' fill='none'/%3E%3Cpath d='M0 0 L10 0 L5 8 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3Cpath d='M60 0 L50 0 L55 8 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3Cpath d='M0 60 L10 60 L5 52 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3Cpath d='M60 60 L50 60 L55 52 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3C/g%3E%3C/svg%3E"); }
+</style>
+</head>
+<body class="bg-surface text-on-surface font-body-md h-screen flex overflow-hidden">
+<div id="desktop-sidebar"></div>
+
+<main class="flex-grow flex w-full ml-64 overflow-hidden">
+  <aside class="w-full md:w-2/5 lg:w-[420px] flex flex-col h-full bg-surface z-10 border-r border-surface-variant/50">
+    <div class="px-stack-md py-stack-md flex-grow overflow-y-auto space-y-stack-md">
+      <div class="space-y-stack-sm">
+        <h2 class="font-headline-md text-headline-md text-primary tracking-tight">Temukan Sesuatu</h2>
+        <div class="relative group">
+          <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors">search</span>
+          <input id="search-input" oninput="debounceSearch()" class="w-full pl-12 pr-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-full text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary-container/30 focus:border-primary-container transition-all custom-shadow" placeholder="Cari barang hilang, lokasi..." type="text">
+        </div>
+      </div>
+
+      <div class="space-y-stack-sm">
+        <h3 class="font-body-md font-semibold text-primary">Kategori Populer</h3>
+        <div id="categories-list" class="flex flex-wrap gap-2"></div>
+      </div>
+
+      <div id="recent-section" class="hidden space-y-stack-sm pt-4 border-t border-surface-variant/50">
+        <div class="flex justify-between items-center">
+          <h3 class="font-body-md font-semibold text-primary">Pencarian Terkini</h3>
+          <button onclick="clearRecent()" class="text-xs text-outline hover:text-error">Hapus</button>
+        </div>
+        <ul id="recent-list" class="space-y-1"></ul>
+      </div>
+
+      <div id="results-section" class="hidden space-y-stack-sm pt-4 border-t border-surface-variant/50">
+        <div class="flex justify-between items-center">
+          <h3 class="font-body-md font-semibold text-primary">Hasil Pencarian</h3>
+          <span id="result-count" class="text-xs text-on-surface-variant"></span>
+        </div>
+        <div id="result-loading" class="hidden flex justify-center py-6"><div class="w-6 h-6 border-3 border-primary border-t-transparent rounded-full animate-spin"></div></div>
+        <div id="results-list" class="grid grid-cols-2 gap-3"></div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="hidden md:block flex-grow relative h-full bg-surface-container-low p-stack-sm">
+    <div class="w-full h-full rounded-2xl overflow-hidden relative custom-shadow bg-surface-container-lowest">
+      <div id="map-view"></div>
+    </div>
+  </div>
+</main>
+
+<script src="/js/api.js"></script>
+<script src="/desktop/js/desktop-nav.js"></script>
+<script>
+  if (!isLoggedIn()) window.location.href = '/desktop/login.html';
+
+  const RECENT_KEY = 'winemu_recent_searches';
+  let searchTimeout = null;
+  let mapInstance = null;
+
+  window.addEventListener('DOMContentLoaded', () => {
+    injectDesktopNav('search');
+    loadCategories();
+    loadRecent();
+    initMap();
+  });
+
+  function initMap() {
+    mapInstance = L.map('map-view').setView([-7.797068, 110.370529], 12);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution:'© OpenStreetMap'}).addTo(mapInstance);
+    loadMapMarkers();
+  }
+
+  async function loadMapMarkers() {
+    if (!mapInstance) return;
+    const res = await api.get('/reports?per_page=50');
+    if (!res?.data?.items) return;
+    res.data.items.forEach(r => {
+      if (r.latitude && r.longitude) {
+        const color = r.type === 'hilang' ? '#C06C50' : '#D4A373';
+        const icon = L.divIcon({ html: `<div style="width:32px;height:32px;background:${color};border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,.3);"></div>`, className: '', iconSize: [32, 32], iconAnchor: [16, 32] });
+        L.marker([r.latitude, r.longitude], {icon}).addTo(mapInstance)
+          .bindPopup(`<b>${r.title}</b><br><small>${r.type==='hilang'?'HILANG':'DITEMUKAN'}</small><br><a href="/desktop/report-detail.html?id=${r.id}" style="color:#314e52;font-weight:bold;">Lihat Detail →</a>`);
+      }
+    });
+  }
+
+  async function loadCategories() {
+    const res = await api.get('/categories');
+    if (!res?.data?.categories) return;
+    document.getElementById('categories-list').innerHTML = res.data.categories.map(c =>
+      `<button onclick="searchByCategory('${c.id}','${c.name}')" class="flex items-center gap-2 px-4 py-2 bg-primary-fixed/20 text-primary-container rounded-full hover:bg-primary-fixed/40 transition-colors custom-shadow">
+        <span class="material-symbols-outlined text-[18px]">${c.icon||'category'}</span>
+        <span class="font-body-sm text-sm font-semibold">${c.name}</span>
+      </button>`
+    ).join('');
+  }
+
+  function loadRecent() {
+    const recent = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]');
+    const list = document.getElementById('recent-list');
+    if (recent.length === 0) { document.getElementById('recent-section').classList.add('hidden'); return; }
+    document.getElementById('recent-section').classList.remove('hidden');
+    list.innerHTML = recent.map(q =>
+      `<li class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-xl custom-shadow hover:bg-surface-container-low transition-colors group cursor-pointer" onclick="doSearch('${q}')">
+        <div class="flex items-center gap-3 text-on-surface">
+          <span class="material-symbols-outlined text-outline">history</span>
+          <span class="font-body-md">${q}</span>
+        </div>
+        <button onclick="event.stopPropagation();removeRecent('${q}')" class="text-outline-variant hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 p-1">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </li>`
+    ).join('');
+  }
+
+  function addRecent(q) {
+    let recent = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]');
+    recent = [q, ...recent.filter(r => r !== q)].slice(0, 5);
+    localStorage.setItem(RECENT_KEY, JSON.stringify(recent));
+  }
+  function removeRecent(q) {
+    let recent = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]').filter(r => r !== q);
+    localStorage.setItem(RECENT_KEY, JSON.stringify(recent));
+    loadRecent();
+  }
+  function clearRecent() { localStorage.removeItem(RECENT_KEY); loadRecent(); }
+
+  function debounceSearch() {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+      const q = document.getElementById('search-input').value.trim();
+      if (q.length > 1) doSearch(q);
+      else showEmptyState();
+    }, 400);
+  }
+
+  function showEmptyState() {
+    document.getElementById('results-section').classList.add('hidden');
+    loadRecent();
+  }
+
+  async function doSearch(q) {
+    document.getElementById('search-input').value = q;
+    addRecent(q);
+    document.getElementById('results-section').classList.remove('hidden');
+    document.getElementById('result-loading').classList.remove('hidden');
+
+    const res = await api.get(`/reports?q=${encodeURIComponent(q)}&per_page=20`);
+    document.getElementById('result-loading').classList.add('hidden');
+
+    if (!res?.data) return;
+    const { items, pagination } = res.data;
+    document.getElementById('result-count').textContent = `${pagination.total} hasil`;
+    renderResults(items);
+  }
+
+  async function searchByCategory(catId, catName) {
+    document.getElementById('search-input').value = catName;
+    document.getElementById('results-section').classList.remove('hidden');
+    document.getElementById('result-loading').classList.remove('hidden');
+
+    const res = await api.get(`/reports?category_id=${catId}&per_page=20`);
+    document.getElementById('result-loading').classList.add('hidden');
+
+    if (!res?.data) return;
+    const { items, pagination } = res.data;
+    document.getElementById('result-count').textContent = `${pagination.total} hasil`;
+    renderResults(items);
+  }
+
+  function renderResults(items) {
+    const list = document.getElementById('results-list');
+    if (items.length === 0) {
+      list.innerHTML = '<div class="col-span-2 text-center py-12 text-on-surface-variant"><span class="material-symbols-outlined text-5xl block mb-3">search_off</span><p>Tidak ada hasil ditemukan</p></div>';
+      return;
+    }
+    list.innerHTML = items.map(r => {
+      const img = r.primary_image
+        ? `<img src="${r.primary_image}" class="w-full h-full object-cover">`
+        : r.primary_video
+          ? `<video src="${r.primary_video}" class="w-full h-full object-cover" muted playsinline preload="metadata"></video>
+             <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+               <span class="material-symbols-outlined text-white drop-shadow-lg" style="font-size:36px;">play_circle</span>
+             </div>`
+          : `<div class="w-full h-full bg-surface-container flex items-center justify-center"><span class="material-symbols-outlined text-4xl text-outline">image_not_supported</span></div>`;
+      const badgeColor = r.type === 'hilang' ? '#C06C50' : '#D4A373';
+      const badgeText = r.type === 'hilang' ? 'HILANG' : 'DITEMUKAN';
+      return `<div onclick="window.location.href='/desktop/report-detail.html?id=${r.id}'" class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden cursor-pointer hover:shadow-md transition-shadow">
+        <div class="relative aspect-square">${img}
+          <div class="absolute top-2 left-2 text-white px-2 py-0.5 rounded-full text-[10px] font-bold" style="background:${badgeColor};">${badgeText}</div>
+        </div>
+        <div class="p-2">
+          <p class="text-sm font-semibold text-on-surface truncate">${r.title}</p>
+          <p class="text-xs text-on-surface-variant truncate">${r.location_name || '-'}</p>
+        </div>
+      </div>`;
+    }).join('');
+  }
+</script>
+</body>
+</html>

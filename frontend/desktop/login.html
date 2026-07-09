@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html class="light" lang="id">
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Winemu - Masuk</title>
+<script src="/js/device-redirect.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&family=Philosopher:wght@400;700&family=Noto+Sans+Javanese&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: { extend: {
+                    "colors": {
+                        "background": "#fcf9f4","on-tertiary": "#ffffff","surface-container": "#f0ede9",
+                        "tertiary-fixed-dim": "#ffb59d","on-surface": "#1c1c19","on-secondary-fixed": "#2c1600",
+                        "on-primary": "#ffffff","error-container": "#ffdad6","outline-variant": "#c1c8c9",
+                        "on-secondary-fixed-variant": "#623f18","primary-container": "#314e52",
+                        "on-tertiary-fixed": "#390b00","surface-container-low": "#f6f3ee",
+                        "on-primary-fixed-variant": "#2e4b4f","tertiary-container": "#79351d",
+                        "secondary-fixed": "#ffdcbd","inverse-primary": "#adccd1","tertiary": "#5c1f09",
+                        "on-secondary": "#ffffff","on-primary-fixed": "#001f23","primary-fixed": "#c9e8ed",
+                        "on-surface-variant": "#414849","on-error": "#ffffff","on-background": "#1c1c19",
+                        "secondary-container": "#ffca98","surface-container-high": "#ebe8e3",
+                        "on-secondary-container": "#7a532a","inverse-on-surface": "#f3f0eb",
+                        "tertiary-fixed": "#ffdbd0","surface": "#fcf9f4","surface-variant": "#e5e2dd",
+                        "outline": "#727879","secondary-fixed-dim": "#f0bd8b","secondary": "#7d562d",
+                        "on-tertiary-container": "#ffa182","surface-container-highest": "#e5e2dd",
+                        "primary-fixed-dim": "#adccd1","error": "#ba1a1a","on-tertiary-fixed-variant": "#76321b",
+                        "on-primary-container": "#a0bec3","surface-tint": "#466367","surface-dim": "#dcdad5",
+                        "primary": "#1a373b","surface-container-lowest": "#ffffff","surface-bright": "#fcf9f4",
+                        "inverse-surface": "#31302d","on-error-container": "#93000a"
+                    },
+                    "borderRadius": {"DEFAULT": "0.25rem","lg": "0.5rem","xl": "0.75rem","full": "9999px"},
+                    "spacing": {"stack-sm": "12px","stack-lg": "48px","gutter": "16px","base": "8px","container-margin": "24px","stack-md": "24px"},
+                    "fontFamily": {"body-sm": ["Plus Jakarta Sans"],"body-lg": ["Plus Jakarta Sans"],"display-lg": ["Philosopher"],"body-md": ["Plus Jakarta Sans"],"label-caps": ["Plus Jakarta Sans"],"javanese-script": ["Noto Sans Javanese"],"headline-md": ["Philosopher"],"display-lg-mobile": ["Philosopher"]},
+                    "fontSize": {
+                        "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "display-lg": ["40px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "label-caps": ["12px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "javanese-script": ["1.2em", {"lineHeight": "1.8", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                        "display-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}]
+                    }
+            }},
+        }
+    </script>
+<style>
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; display: inline-block; vertical-align: middle; }
+        .tonal-elevation { box-shadow: 0 20px 40px rgba(49, 78, 82, 0.05); }
+        .active-scale:active { transform: scale(0.96); }
+        .input-focus-ring:focus { outline: none; box-shadow: 0 0 0 4px rgba(26, 55, 59, 0.1); }
+</style>
+</head>
+<body class="bg-background text-on-background min-h-screen font-body-md selection:bg-primary-fixed selection:text-on-primary-fixed">
+<main class="pt-12 pb-12 px-container-margin flex flex-col items-center justify-center min-h-screen max-w-[1200px] mx-auto">
+  <div class="grid grid-cols-1 md:grid-cols-12 gap-stack-lg items-center w-full">
+    <div class="hidden md:flex md:col-span-6 flex-col items-center justify-center">
+      <div class="relative w-full max-w-lg aspect-square flex items-center justify-center rounded-full overflow-hidden">
+        <img alt="Trusted Search Illustration" class="w-full h-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpNzXG5dxbEJD0DULckhGMLOHsQNFjeA63EYRIcHJ9u0BDjCQpW-6zyz72Bfj5aI1AtXquHPjjT81hbtjIYchwrKlreJObcVYGS8UK5MTZI4YuD34tJ8Ts65G9InMXNdBZWLYJM6tOx9ULSwa8hljvbxP1MHcNgeJeOH6FdnONU_CZ1Mfj7UCGc-bI3SEXunWUu8Uhwlmwm_4A2DWcxpskFefle8mG9VbZzTEPT5upCv9rEVTtPgHFN2YnOvMpNJKlVV9tC2Antw">
+      </div>
+      <div class="mt-8 text-center">
+        <h2 class="font-display-lg text-display-lg text-primary mb-2">Temukan Kembali</h2>
+        <p class="font-body-lg text-body-lg text-on-surface-variant max-w-md mx-auto">Masuki ekosistem pencarian komunitas yang dipercaya ribuan pengguna di seluruh Indonesia.</p>
+      </div>
+    </div>
+
+    <div class="md:col-span-6 flex justify-center w-full">
+      <div class="bg-surface-container-lowest p-8 md:p-12 rounded-[2rem] tonal-elevation w-full max-w-[480px] border border-surface-variant/30">
+        <div class="mb-stack-md text-center md:text-left">
+          <a href="/desktop/index.html" class="font-headline-md text-headline-md text-primary">Winemu</a>
+          <h1 class="font-headline-md text-headline-md text-on-surface mb-2 mt-4">Selamat Datang Kembali</h1>
+          <p class="font-body-sm text-body-sm text-on-surface-variant">
+            Belum punya akun? <a class="text-primary font-bold hover:underline" href="/desktop/register.html">Daftar sekarang</a>
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <label class="block font-label-caps text-label-caps text-on-surface-variant ml-4" for="email">Alamat Email</label>
+            <div class="relative">
+              <span class="material-symbols-outlined absolute left-5 top-1/2 -translate-y-1/2 text-outline">mail</span>
+              <input id="email" name="email" placeholder="nama@email.com" type="email" class="w-full h-14 pl-14 pr-6 bg-surface rounded-full border border-outline-variant focus:border-primary input-focus-ring transition-all duration-200 font-body-md text-on-surface placeholder:text-outline/50">
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <div class="flex justify-between items-center px-4">
+              <label class="font-label-caps text-label-caps text-on-surface-variant" for="password">Kata Sandi</label>
+              <a class="font-label-caps text-label-caps text-primary hover:underline" href="/desktop/forgot-password.html">Lupa sandi?</a>
+            </div>
+            <div class="relative">
+              <span class="material-symbols-outlined absolute left-5 top-1/2 -translate-y-1/2 text-outline">lock</span>
+              <input id="password" name="password" placeholder="Masukkan kata sandi" type="password" class="w-full h-14 pl-14 pr-14 bg-surface rounded-full border border-outline-variant focus:border-primary input-focus-ring transition-all duration-200 font-body-md text-on-surface placeholder:text-outline/50">
+              <button onclick="togglePass()" type="button" class="absolute right-5 top-1/2 -translate-y-1/2 text-outline hover:text-primary active-scale">
+                <span class="material-symbols-outlined" id="pass-icon">visibility_off</span>
+              </button>
+            </div>
+          </div>
+
+          <p id="error-msg" class="text-red-600 text-sm hidden px-4"></p>
+
+          <button id="submit-btn" onclick="handleLogin()" type="button" class="w-full h-14 bg-primary text-on-primary font-bold rounded-full shadow-lg active-scale transition-all duration-200 flex items-center justify-center gap-2 mt-2">
+            <span>Masuk</span>
+            <span class="material-symbols-outlined">arrow_forward</span>
+          </button>
+        </div>
+
+        <div class="flex items-center gap-4 my-8">
+          <div class="h-[1px] flex-1 bg-outline-variant/30"></div>
+          <span class="font-label-caps text-label-caps text-outline uppercase tracking-widest">atau masuk dengan</span>
+          <div class="h-[1px] flex-1 bg-outline-variant/30"></div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <button onclick="showToast('Login dengan Google segera hadir')" type="button" class="flex items-center justify-center gap-3 h-14 border border-outline-variant rounded-full font-body-md text-on-surface hover:bg-surface-container-high transition-colors active-scale">
+            <svg class="w-5 h-5" viewBox="0 0 24 24">
+              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
+              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
+              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"></path>
+              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path>
+            </svg>
+            <span>Google</span>
+          </button>
+          <button onclick="showToast('Login dengan Facebook segera hadir')" type="button" class="flex items-center justify-center gap-3 h-14 border border-outline-variant rounded-full font-body-md text-on-surface hover:bg-surface-container-high transition-colors active-scale">
+            <svg class="w-5 h-5" fill="#1877F2" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"></path></svg>
+            <span>Facebook</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="/js/api.js"></script>
+<script>
+  if (api.getToken()) {
+    const existingUser = api.getUser();
+    window.location.href = (existingUser && existingUser.role === 'admin') ? '/admin/dashboard.html' : '/desktop/feed.html';
+  }
+
+  function togglePass() {
+    const inp = document.getElementById('password');
+    const icon = document.getElementById('pass-icon');
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+    icon.textContent = inp.type === 'password' ? 'visibility_off' : 'visibility';
+  }
+
+  async function handleLogin() {
+    const btn = document.getElementById('submit-btn');
+    const errEl = document.getElementById('error-msg');
+    errEl.classList.add('hidden');
+
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+
+    if (!email || !password) { errEl.textContent = 'Email dan password wajib diisi'; errEl.classList.remove('hidden'); return; }
+
+    btn.innerHTML = '<span class="animate-spin material-symbols-outlined">refresh</span>';
+    btn.disabled = true;
+
+    const result = await api.post('/auth/login', { email, password });
+
+    if (result && result.status === 'success') {
+      api.setTokens(result.data.access_token, result.data.refresh_token);
+      api.setUser(result.data.user);
+      showToast('Berhasil masuk! Selamat datang kembali 👋');
+      const destination = result.data.user && result.data.user.role === 'admin' ? '/admin/dashboard.html' : '/desktop/feed.html';
+      setTimeout(() => window.location.href = destination, 800);
+    } else {
+      errEl.textContent = result?.message || 'Email atau password salah';
+      errEl.classList.remove('hidden');
+      btn.innerHTML = '<span>Masuk</span><span class="material-symbols-outlined">arrow_forward</span>';
+      btn.disabled = false;
+    }
+  }
+
+  document.addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
+</script>
+</body>
+</html>

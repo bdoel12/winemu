@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Winemu - Buat Laporan Baru</title>
+<script src="/js/device-redirect.js"></script>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Javanese&family=Philosopher:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: { extend: {
+            "colors": {
+                    "secondary-fixed-dim": "#f0bd8b","error": "#ba1a1a","surface-dim": "#dcdad5",
+                    "surface-tint": "#466367","primary": "#1a373b","on-tertiary-container": "#ffa182",
+                    "inverse-surface": "#31302d","tertiary-fixed-dim": "#ffb59d","outline-variant": "#c1c8c9",
+                    "on-secondary-fixed": "#2c1600","on-primary": "#ffffff","secondary": "#7d562d",
+                    "surface-bright": "#fcf9f4","on-primary-container": "#a0bec3","background": "#fcf9f4",
+                    "surface-container-highest": "#e5e2dd","on-surface": "#1c1c19","inverse-on-surface": "#f3f0eb",
+                    "on-error-container": "#93000a","on-primary-fixed-variant": "#2e4b4f","inverse-primary": "#adccd1",
+                    "on-tertiary-fixed": "#390b00","surface-variant": "#e5e2dd","outline": "#727879",
+                    "on-surface-variant": "#414849","on-error": "#ffffff","on-tertiary-fixed-variant": "#76321b",
+                    "on-secondary": "#ffffff","primary-fixed": "#c9e8ed","primary-container": "#314e52",
+                    "on-background": "#1c1c19","surface-container-low": "#f6f3ee","secondary-fixed": "#ffdcbd",
+                    "tertiary": "#5c1f09","surface": "#fcf9f4","on-tertiary": "#ffffff","secondary-container": "#ffca98",
+                    "on-secondary-fixed-variant": "#623f18","on-secondary-container": "#7a532a","on-primary-fixed": "#001f23",
+                    "tertiary-container": "#79351d","surface-container": "#f0ede9","surface-container-high": "#ebe8e3",
+                    "error-container": "#ffdad6","tertiary-fixed": "#ffdbd0","surface-container-lowest": "#ffffff",
+                    "primary-fixed-dim": "#adccd1"
+            },
+            "borderRadius": {"DEFAULT": "0.25rem","lg": "0.5rem","xl": "0.75rem","full": "9999px","2xl": "1rem"},
+            "spacing": {"container-margin": "24px","stack-md": "24px","stack-lg": "48px","gutter": "16px","stack-sm": "12px","base": "8px"},
+            "fontFamily": {"javanese-script": ["Noto Sans Javanese"],"headline-md": ["Philosopher"],"display-lg": ["Philosopher"],"body-sm": ["Plus Jakarta Sans"],"body-lg": ["Plus Jakarta Sans"],"display-lg-mobile": ["Philosopher"],"body-md": ["Plus Jakarta Sans"],"label-caps": ["Plus Jakarta Sans"]},
+            "fontSize": {
+                    "javanese-script": ["1.2em", {"lineHeight": "1.8", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                    "display-lg": ["40px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "display-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "label-caps": ["12px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600"}]
+            }
+        }}
+      }
+    </script>
+<style>
+        body { background-color: #fcf9f4; }
+        .ambient-shadow { box-shadow: 0 10px 40px -10px rgba(49,78,82,0.08); }
+        .input-glow:focus { box-shadow: 0 0 0 4px rgba(49,78,82,0.1); border-color: #314e52; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #e5e2dd; border-radius: 10px; }
+        .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;display:inline-block;line-height:1;}
+        #report-map { height: 100%; width: 100%; position:relative; z-index:0; }
+        #report-map .leaflet-pane, #report-map .leaflet-top, #report-map .leaflet-bottom { z-index: 1 !important; }
+</style>
+<!-- batik-bg-applied -->
+<style>
+  body { background-color:#fcf9f4; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cg fill='none'%3E%3Ccircle cx='30' cy='30' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='30' cy='30' r='6' stroke='%231a373b' stroke-width='0.4' stroke-opacity='0.05'/%3E%3Ccircle cx='0' cy='0' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='60' cy='0' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='0' cy='60' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='60' cy='60' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Cpath d='M30 20 L40 30 L30 40 L20 30 Z' stroke='%237d562d' stroke-width='0.5' stroke-opacity='0.06' fill='none'/%3E%3Cpath d='M0 0 L10 0 L5 8 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3Cpath d='M60 0 L50 0 L55 8 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3Cpath d='M0 60 L10 60 L5 52 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3Cpath d='M60 60 L50 60 L55 52 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3C/g%3E%3C/svg%3E"); }
+</style>
+</head>
+<body class="text-on-background font-body-md antialiased flex min-h-screen">
+<div id="desktop-sidebar"></div>
+
+<main class="flex-1 w-full md:ml-64 px-container-margin md:px-12 pb-stack-lg max-w-[1200px] mx-auto min-h-screen flex flex-col">
+  <header class="py-stack-md md:py-stack-lg">
+    <h1 class="font-display-lg text-display-lg text-primary mb-2">Buat Laporan Baru</h1>
+    <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">Lengkapi detail di bawah ini agar komunitas Winemu dapat membantu Anda dengan lebih efektif. Setiap informasi sangat berharga.</p>
+  </header>
+
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-stack-md items-start">
+    <!-- Left Column -->
+    <div class="lg:col-span-7 space-y-stack-md flex flex-col">
+      <!-- Type Selection -->
+      <section class="grid grid-cols-2 gap-gutter">
+        <label class="cursor-pointer group">
+          <input checked type="radio" name="report_type" value="hilang" class="hidden peer">
+          <div class="bg-surface-container-lowest text-primary rounded-2xl p-6 ambient-shadow transition-all duration-300 border-2 border-transparent peer-checked:bg-tertiary-container peer-checked:text-white peer-checked:scale-[1.02] peer-checked:border-transparent hover:scale-[1.01]" id="type-card-hilang">
+            <div class="flex items-center space-x-3 mb-2">
+              <span class="material-symbols-outlined text-2xl" style="font-variation-settings:'FILL' 1;">search</span>
+              <h3 class="font-headline-md text-headline-md text-xl">Saya Kehilangan</h3>
+            </div>
+            <p class="font-body-sm text-body-sm opacity-90">Bantu saya mencari barang yang hilang.</p>
+          </div>
+        </label>
+        <label class="cursor-pointer group">
+          <input type="radio" name="report_type" value="ditemukan" class="hidden peer">
+          <div class="bg-surface-container-lowest text-secondary rounded-2xl p-6 ambient-shadow transition-all duration-300 border-2 border-transparent peer-checked:bg-secondary peer-checked:text-white peer-checked:scale-[1.02] hover:scale-[1.01] group-hover:border-secondary/30" id="type-card-ditemukan">
+            <div class="flex items-center space-x-3 mb-2">
+              <span class="material-symbols-outlined text-2xl">pan_tool</span>
+              <h3 class="font-headline-md text-headline-md text-xl">Saya Menemukan</h3>
+            </div>
+            <p class="font-body-sm text-body-sm text-on-surface-variant" style="color:inherit;opacity:0.85;">Saya ingin mengembalikan barang temuan.</p>
+          </div>
+        </label>
+      </section>
+
+      <!-- Media Upload -->
+      <section class="bg-surface-container-lowest rounded-2xl p-6 ambient-shadow">
+        <h3 class="font-body-lg text-body-lg font-semibold text-primary mb-4 flex items-center">
+          <span class="material-symbols-outlined mr-2">photo_camera</span> Foto / Video Barang
+        </h3>
+        <div id="upload-area" onclick="document.getElementById('media-input').click()" class="border-2 border-dashed border-outline-variant hover:border-primary-container bg-surface-container-low rounded-xl p-8 flex flex-col items-center justify-center text-center cursor-pointer transition-colors group">
+          <span class="material-symbols-outlined text-4xl text-outline mb-3 group-hover:text-primary-container transition-colors">cloud_upload</span>
+          <p class="font-body-md text-body-md text-on-surface font-medium mb-1">Tarik &amp; lepas file di sini</p>
+          <p class="font-body-sm text-body-sm text-on-surface-variant">atau klik untuk menelusuri (Maks 5MB per file)</p>
+          <p class="font-body-sm text-outline text-[11px] mt-1" id="media-counter">Maks. 10 foto + 3 video</p>
+        </div>
+        <input type="file" id="media-input" accept="image/*,video/*" multiple class="hidden" onchange="previewMedia(event)">
+        <div id="media-preview" class="flex gap-3 mt-4 flex-wrap"></div>
+      </section>
+
+      <!-- Item Details -->
+      <section class="bg-surface-container-lowest rounded-2xl p-6 ambient-shadow space-y-5">
+        <h3 class="font-body-lg text-body-lg font-semibold text-primary mb-2 flex items-center">
+          <span class="material-symbols-outlined mr-2">description</span> Detail Barang
+        </h3>
+        <div>
+          <label class="block font-label-caps text-label-caps text-on-surface-variant mb-2 uppercase" for="item-title">Nama Barang</label>
+          <input id="item-title" type="text" placeholder="Mis: Dompet Kulit Coklat, Kucing Persia..." class="w-full bg-surface-container-lowest border border-outline-variant/50 rounded-lg px-4 py-3 font-body-md text-on-surface placeholder:text-outline focus:outline-none input-glow transition-all">
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+          <div>
+            <label class="block font-label-caps text-label-caps text-on-surface-variant mb-2 uppercase" for="category">Kategori</label>
+            <div class="relative">
+              <select id="category" class="w-full bg-surface-container-lowest border border-outline-variant/50 rounded-lg pl-4 pr-10 py-3 font-body-md text-on-surface appearance-none focus:outline-none input-glow transition-all">
+                <option value="">Pilih Kategori</option>
+              </select>
+              <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none">expand_more</span>
+            </div>
+          </div>
+          <div>
+            <label class="block font-label-caps text-label-caps text-on-surface-variant mb-2 uppercase" for="reward">Hadiah (Opsional)</label>
+            <input id="reward" type="text" placeholder="Mis: Rp 100.000" class="w-full bg-surface-container-lowest border border-outline-variant/50 rounded-lg px-4 py-3 font-body-md text-on-surface placeholder:text-outline focus:outline-none input-glow transition-all">
+          </div>
+        </div>
+        <div>
+          <label class="block font-label-caps text-label-caps text-on-surface-variant mb-2 uppercase" for="location-name">Nama Lokasi</label>
+          <input id="location-name" type="text" placeholder="Mis: Stasiun Tugu, Malioboro..." class="w-full bg-surface-container-lowest border border-outline-variant/50 rounded-lg px-4 py-3 font-body-md text-on-surface placeholder:text-outline focus:outline-none input-glow transition-all">
+        </div>
+        <div>
+          <label class="block font-label-caps text-label-caps text-on-surface-variant mb-2 uppercase" for="item-desc">Deskripsi &amp; Ciri-ciri Umum</label>
+          <textarea id="item-desc" rows="4" placeholder="Jelaskan warna, merk, kondisi, atau kronologi singkat..." class="w-full bg-surface-container-lowest border border-outline-variant/50 rounded-lg px-4 py-3 font-body-md text-on-surface placeholder:text-outline focus:outline-none input-glow transition-all resize-y"></textarea>
+        </div>
+      </section>
+    </div>
+
+    <!-- Right Column -->
+    <div class="lg:col-span-5 space-y-stack-md flex flex-col">
+      <!-- Map -->
+      <section class="bg-surface-container-lowest rounded-2xl p-6 ambient-shadow flex flex-col">
+        <h3 class="font-body-lg text-body-lg font-semibold text-primary mb-4 flex items-center justify-between">
+          <span class="flex items-center"><span class="material-symbols-outlined mr-2">location_on</span> Lokasi Terakhir</span>
+          <button type="button" onclick="useMyLocation()" class="text-xs font-bold text-primary hover:text-primary-container flex items-center gap-1">
+            <span class="material-symbols-outlined text-[16px]">my_location</span>Gunakan lokasi saya
+          </button>
+        </h3>
+        <div class="relative w-full h-64 md:h-80 bg-surface-container rounded-xl overflow-hidden mb-2 border border-outline-variant/30">
+          <div id="report-map"></div>
+        </div>
+        <p class="font-body-sm text-body-sm text-on-surface-variant flex items-start mt-2">
+          <span class="material-symbols-outlined text-sm mr-1 mt-0.5 opacity-70">info</span>
+          Klik pada peta untuk menempatkan pin di lokasi kejadian setepat mungkin.
+        </p>
+      </section>
+
+      <!-- Verification Question (only for ditemukan) -->
+      <section id="verification-section" class="bg-[#F8F5F0] border border-secondary-fixed-dim/50 rounded-2xl p-6 ambient-shadow hidden">
+        <div class="flex items-center space-x-3 mb-4">
+          <div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center">
+            <span class="material-symbols-outlined text-on-secondary-container" style="font-variation-settings:'FILL' 1;">vpn_key</span>
+          </div>
+          <div>
+            <h3 class="font-body-lg text-body-lg font-semibold text-on-surface">Verifikasi Kepemilikan (Opsional)</h3>
+            <p class="font-body-sm text-body-sm text-on-surface-variant">Hanya Anda yang tahu jawabannya</p>
+          </div>
+        </div>
+        <p class="font-body-sm text-body-sm text-on-surface-variant mb-4">
+          Tulis pertanyaan yang hanya bisa dijawab pemilik asli barang ini. Pertanyaan akan ditampilkan ke calon pengklaim, tapi jawabannya tetap rahasia untuk Anda gunakan saat memverifikasi klaim mereka.
+        </p>
+        <div class="space-y-3">
+          <input id="verification-question" type="text" placeholder="Pertanyaan: Mis. Ada tulisan apa di bagian dalam dompet?" class="w-full bg-surface-container-lowest border border-outline-variant/50 rounded-lg px-4 py-3 font-body-md text-on-surface focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-all">
+          <input id="verification-answer" type="text" placeholder="Jawaban rahasia: Mis. Inisial AB" class="w-full bg-surface-container-lowest border border-outline-variant/50 rounded-lg px-4 py-3 font-body-md text-on-surface focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-all">
+        </div>
+      </section>
+
+      <p id="form-error" class="text-red-600 text-sm hidden px-2"></p>
+
+      <!-- Submit -->
+      <div class="pt-stack-md mt-auto">
+        <button id="submit-btn" onclick="submitReport()" type="button" class="w-full bg-primary-container text-on-primary font-headline-md text-headline-md text-lg py-4 px-8 rounded-xl shadow-[0_8px_20px_rgba(49,78,82,0.15)] hover:scale-[1.02] transition-all duration-300 flex items-center justify-center space-x-2 group">
+          <span>Publikasikan Laporan</span>
+          <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">send</span>
+        </button>
+        <p class="text-center font-body-sm text-body-sm text-on-surface-variant mt-4">
+          Dengan mempublikasikan, Anda menyetujui <a class="text-primary underline hover:text-secondary transition-colors" href="#">Syarat &amp; Ketentuan</a> Winemu.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="w-full mt-stack-lg border-t border-outline-variant/20 pt-stack-md flex flex-col md:flex-row justify-between items-center py-stack-md">
+    <div class="font-headline-md text-headline-md text-primary mb-4 md:mb-0">Winemu</div>
+    <div class="font-body-sm text-body-sm text-on-surface-variant mt-4 md:mt-0 text-center md:text-right">© 2026 Winemu. Temukan kembali bersama komunitas.</div>
+  </footer>
+</main>
+
+<script src="/js/api.js"></script>
+<script src="/desktop/js/desktop-nav.js"></script>
+<script>
+  if (!requireAuth()) {}
+
+  let map, marker, selectedLat = null, selectedLng = null;
+  let selectedFiles = [];
+
+  function updateVerificationVisibility() {
+    const type = document.querySelector('input[name="report_type"]:checked')?.value;
+    const section = document.getElementById('verification-section');
+    if (section) section.classList.toggle('hidden', type !== 'ditemukan');
+  }
+
+  window.addEventListener('DOMContentLoaded', async () => {
+    document.querySelectorAll('input[name="report_type"]').forEach(r => r.addEventListener('change', updateVerificationVisibility));
+    updateVerificationVisibility();
+    injectDesktopNav('report');
+
+    const res = await api.get('/categories');
+    if (res?.data?.categories) {
+      const sel = document.getElementById('category');
+      res.data.categories.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.id;
+        opt.textContent = c.name;
+        sel.appendChild(opt);
+      });
+    }
+
+    map = L.map('report-map').setView([-7.797068, 110.370529], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution:'© OpenStreetMap'}).addTo(map);
+    map.on('click', e => setMapPin(e.latlng.lat, e.latlng.lng));
+  });
+
+  function setMapPin(lat, lng) {
+    selectedLat = lat;
+    selectedLng = lng;
+    if (marker) map.removeLayer(marker);
+    marker = L.marker([lat, lng]).addTo(map);
+  }
+
+  function useMyLocation() {
+    navigator.geolocation.getCurrentPosition(pos => {
+      const { latitude: lat, longitude: lng } = pos.coords;
+      map.setView([lat, lng], 16);
+      setMapPin(lat, lng);
+      showToast('Lokasi ditemukan');
+    }, () => showToast('Tidak bisa mendapatkan lokasi', 'error'));
+  }
+
+  function previewMedia(e) {
+    const newFiles = Array.from(e.target.files);
+    newFiles.forEach(f => {
+      const isImg = f.type.startsWith('image/');
+      const imgCount = selectedFiles.filter(x => x.type.startsWith('image/')).length;
+      const vidCount = selectedFiles.filter(x => x.type.startsWith('video/')).length;
+      if (isImg && imgCount >= 10) { showToast('Maksimal 10 foto'); return; }
+      if (!isImg && vidCount >= 3) { showToast('Maksimal 3 video'); return; }
+      selectedFiles.push(f);
+    });
+    e.target.value = '';
+    renderPreviews();
+  }
+
+  function renderPreviews() {
+    const preview = document.getElementById('media-preview');
+    preview.innerHTML = '';
+    const imgCount = selectedFiles.filter(x => x.type.startsWith('image/')).length;
+    const vidCount = selectedFiles.filter(x => x.type.startsWith('video/')).length;
+    document.getElementById('media-counter').textContent = `${imgCount}/10 foto · ${vidCount}/3 video`;
+
+    selectedFiles.forEach((f, idx) => {
+      const url = URL.createObjectURL(f);
+      const div = document.createElement('div');
+      div.className = 'relative w-20 h-20 rounded-lg overflow-hidden border border-outline-variant flex-shrink-0';
+      if (f.type.startsWith('image/')) {
+        div.innerHTML = `<img src="${url}" class="w-full h-full object-cover">`;
+      } else {
+        div.innerHTML = `<video src="${url}" class="w-full h-full object-cover"></video><div class="absolute inset-0 flex items-center justify-center bg-black/20"><span class="material-symbols-outlined text-white text-xl">play_arrow</span></div>`;
+      }
+      const del = document.createElement('button');
+      del.type = 'button';
+      del.className = 'absolute top-0.5 right-0.5 bg-black/60 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs leading-none';
+      del.innerHTML = '✕';
+      del.onclick = () => { selectedFiles.splice(idx, 1); renderPreviews(); };
+      div.appendChild(del);
+      preview.appendChild(div);
+    });
+
+    const imgCount2 = selectedFiles.filter(x => x.type.startsWith('image/')).length;
+    const vidCount2 = selectedFiles.filter(x => x.type.startsWith('video/')).length;
+    const canAddMore = imgCount2 < 10 || vidCount2 < 3;
+    if (selectedFiles.length === 0) {
+      document.getElementById('upload-area').classList.remove('hidden');
+    } else {
+      document.getElementById('upload-area').classList.add('hidden');
+      if (canAddMore) {
+        const addBtn = document.createElement('button');
+        addBtn.type = 'button';
+        addBtn.className = 'w-20 h-20 rounded-lg border-2 border-dashed border-outline-variant bg-surface-container-lowest flex flex-col items-center justify-center text-primary cursor-pointer flex-shrink-0 hover:border-primary-container transition-colors';
+        addBtn.innerHTML = '<span class="material-symbols-outlined text-2xl">add</span><span class="text-[10px] mt-0.5">Tambah</span>';
+        addBtn.onclick = () => document.getElementById('media-input').click();
+        preview.appendChild(addBtn);
+      }
+    }
+  }
+
+  async function submitReport() {
+    const title = document.getElementById('item-title').value.trim();
+    const errEl = document.getElementById('form-error');
+    errEl.classList.add('hidden');
+
+    if (!title) { errEl.textContent = 'Nama barang wajib diisi'; errEl.classList.remove('hidden'); return; }
+
+    const typeInput = document.querySelector('input[name="report_type"]:checked');
+    if (!typeInput) { errEl.textContent = 'Pilih jenis laporan'; errEl.classList.remove('hidden'); return; }
+
+    const formData = new FormData();
+    formData.append('type', typeInput.value);
+    formData.append('title', title);
+    formData.append('description', document.getElementById('item-desc').value);
+    formData.append('category_id', document.getElementById('category').value);
+    formData.append('location_name', document.getElementById('location-name').value);
+    formData.append('verification_question', document.getElementById('verification-question').value);
+    formData.append('verification_answer', document.getElementById('verification-answer').value);
+    formData.append('reward', document.getElementById('reward').value);
+    if (selectedLat) formData.append('latitude', selectedLat);
+    if (selectedLng) formData.append('longitude', selectedLng);
+    selectedFiles.forEach(f => formData.append('media', f));
+
+    const btn = document.getElementById('submit-btn');
+    btn.innerHTML = '<span>Mempublikasikan...</span>';
+    btn.disabled = true;
+
+    const res = await api.postForm('/reports', formData);
+    if (res?.status === 'success') {
+      showToast('Laporan berhasil dipublikasikan! 🎉');
+      setTimeout(() => window.location.href = `/desktop/report-detail.html?id=${res.data.report.id}`, 1000);
+    } else {
+      errEl.textContent = res?.message || 'Gagal membuat laporan';
+      errEl.classList.remove('hidden');
+      btn.innerHTML = '<span>Publikasikan Laporan</span><span class="material-symbols-outlined">send</span>';
+      btn.disabled = false;
+    }
+  }
+</script>
+</body>
+</html>

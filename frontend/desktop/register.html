@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html class="light" lang="id">
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Daftar Akun Baru | Winemu</title>
+<script src="/js/device-redirect.js"></script>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Philosopher:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Noto+Sans+Javanese&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: { extend: {
+            "colors": {
+                    "surface-container": "#f0ede9","surface-container-highest": "#e5e2dd",
+                    "on-error-container": "#93000a","tertiary": "#5c1f09","surface-dim": "#dcdad5",
+                    "secondary-fixed": "#ffdcbd","primary-fixed": "#c9e8ed","error-container": "#ffdad6",
+                    "on-secondary-fixed-variant": "#623f18","on-primary-container": "#a0bec3",
+                    "on-error": "#ffffff","on-secondary-fixed": "#2c1600","surface-container-high": "#ebe8e3",
+                    "outline": "#727879","inverse-surface": "#31302d","on-tertiary-fixed-variant": "#76321b",
+                    "on-tertiary-fixed": "#390b00","primary-fixed-dim": "#adccd1","secondary-fixed-dim": "#f0bd8b",
+                    "on-tertiary": "#ffffff","tertiary-fixed": "#ffdbd0","surface-container-lowest": "#ffffff",
+                    "tertiary-container": "#79351d","secondary-container": "#ffca98","error": "#ba1a1a",
+                    "on-secondary-container": "#7a532a","surface-bright": "#fcf9f4","surface-variant": "#e5e2dd",
+                    "primary": "#1a373b","inverse-primary": "#adccd1","on-primary-fixed-variant": "#2e4b4f",
+                    "on-primary": "#ffffff","on-secondary": "#ffffff","primary-container": "#314e52",
+                    "outline-variant": "#c1c8c9","on-background": "#1c1c19","surface": "#fcf9f4",
+                    "tertiary-fixed-dim": "#ffb59d","on-primary-fixed": "#001f23","inverse-on-surface": "#f3f0eb",
+                    "surface-container-low": "#f6f3ee","on-tertiary-container": "#ffa182","background": "#fcf9f4",
+                    "on-surface-variant": "#414849","secondary": "#7d562d","on-surface": "#1c1c19","surface-tint": "#466367"
+            },
+            "borderRadius": {"DEFAULT": "0.25rem","lg": "0.5rem","xl": "0.75rem","2xl": "1rem","full": "9999px"},
+            "spacing": {"stack-md": "24px","stack-sm": "12px","gutter": "16px","base": "8px","container-margin": "24px","stack-lg": "48px"},
+            "fontFamily": {"headline-md": ["Philosopher"],"body-sm": ["Plus Jakarta Sans"],"display-lg": ["Philosopher"],"body-lg": ["Plus Jakarta Sans"],"javanese-script": ["Noto Sans Javanese"],"body-md": ["Plus Jakarta Sans"],"label-caps": ["Plus Jakarta Sans"]},
+            "fontSize": {
+                    "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                    "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "display-lg": ["40px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "javanese-script": ["1.2em", {"lineHeight": "1.8", "fontWeight": "400"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "label-caps": ["12px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600"}]
+            }
+        }}
+      }
+    </script>
+<style>
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        body { background-color: #F8F5F0; color: #1c1c19; overflow-x: hidden; }
+        .soft-elevation { box-shadow: 0 20px 40px -10px rgba(49, 78, 82, 0.08); }
+        .keris-gradient { background: linear-gradient(135deg, #fcf9f4 0%, #f0ede9 100%); }
+        .transition-all-200 { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+</style>
+</head>
+<body class="font-body-md text-body-md min-h-screen flex items-center justify-center p-4 md:p-stack-lg">
+<main class="w-full max-w-[1200px] grid md:grid-cols-2 bg-surface-container-lowest rounded-[2.5rem] overflow-hidden soft-elevation relative">
+  <section class="hidden md:flex flex-col items-center justify-center p-stack-lg keris-gradient relative overflow-hidden">
+    <div class="absolute top-[-10%] right-[-10%] w-[400px] h-[400px] rounded-full bg-primary/5 blur-[80px]"></div>
+    <div class="absolute bottom-[-5%] left-[-5%] w-[300px] h-[300px] rounded-full bg-secondary/5 blur-[60px]"></div>
+    <div class="relative z-10 w-full max-w-md rounded-[3rem]" style="transform: translateY(-1.25px);">
+      <img alt="Minimalist 3D Illustration" class="w-full h-auto drop-shadow-2xl rounded-[4rem]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLya0b4z7mopeAKLnixTpxLU0wjbmQhMTL5RhsQiwqnss3Yw5vo1-J2_oo_rTc9dulajBkYz13aByaF6-dle6fTCgQEvi572ahDHhOfO76hFD89LsXVBimj4SbVHTJsiqoWFB9HDL-Y9ueQE4_UOBb0xrprxSeqKbTQqPIUlVYli3ccP7r7aoTzHuHPT8bUZj6iWgZT3dMAXUJEsL19xtPF-jDKEMEEuGk13pUn8dOArpq32SreQJBd-TGXAc3A0sMjOvb-4R1ng">
+    </div>
+    <div class="mt-stack-md text-center z-10">
+      <h2 class="font-headline-md text-headline-md text-primary mb-base">Selamat Datang di Aplikasi Winemu</h2>
+      <p class="text-on-surface-variant max-w-xs mx-auto">Cari dan temukan barang anda yang hilang melalui platform aplikasi temu barang berbasis feed sosial</p>
+    </div>
+  </section>
+
+  <section class="flex flex-col p-container-margin md:p-stack-lg bg-surface-container-lowest">
+    <div class="mb-stack-lg">
+      <a href="/desktop/index.html" class="font-headline-md text-headline-md text-primary">Winemu</a>
+      <h1 class="font-headline-md text-headline-md text-primary mt-4">Daftar Akun Baru</h1>
+      <p class="text-on-surface-variant font-body-sm text-body-sm mt-2">Mulai perjalanan Anda bersama Winemu.</p>
+    </div>
+
+    <div class="space-y-stack-sm">
+      <div class="flex flex-col gap-2">
+        <label class="font-label-caps text-label-caps text-on-surface-variant px-2" for="name">Nama Lengkap</label>
+        <input id="name" placeholder="Contoh: Raden Mas" type="text" class="w-full px-6 py-4 rounded-full border border-outline-variant bg-surface focus:border-primary-container focus:ring-2 focus:ring-primary-container/10 transition-all-200 outline-none placeholder:text-outline/50">
+      </div>
+      <div class="flex flex-col gap-2">
+        <label class="font-label-caps text-label-caps text-on-surface-variant px-2" for="email">Alamat Email</label>
+        <input id="email" placeholder="nama@email.com" type="email" class="w-full px-6 py-4 rounded-full border border-outline-variant bg-surface focus:border-primary-container focus:ring-2 focus:ring-primary-container/10 transition-all-200 outline-none placeholder:text-outline/50">
+      </div>
+      <div class="grid md:grid-cols-2 gap-stack-sm">
+        <div class="flex flex-col gap-2">
+          <label class="font-label-caps text-label-caps text-on-surface-variant px-2" for="password">Kata Sandi</label>
+          <div class="relative">
+            <input id="password" placeholder="••••••••" type="password" class="w-full px-6 py-4 pr-14 rounded-full border border-outline-variant bg-surface focus:border-primary-container focus:ring-2 focus:ring-primary-container/10 transition-all-200 outline-none">
+            <button type="button" onclick="togglePass('password','icon-pass')" class="absolute right-4 top-1/2 -translate-y-1/2 text-outline hover:text-primary transition-colors">
+              <span class="material-symbols-outlined text-[20px]" id="icon-pass">visibility_off</span>
+            </button>
+          </div>
+        </div>
+        <div class="flex flex-col gap-2">
+          <label class="font-label-caps text-label-caps text-on-surface-variant px-2" for="confirm-password">Konfirmasi Kata Sandi</label>
+          <div class="relative">
+            <input id="confirm-password" placeholder="••••••••" type="password" class="w-full px-6 py-4 pr-14 rounded-full border border-outline-variant bg-surface focus:border-primary-container focus:ring-2 focus:ring-primary-container/10 transition-all-200 outline-none">
+            <button type="button" onclick="togglePass('confirm-password','icon-confirm')" class="absolute right-4 top-1/2 -translate-y-1/2 text-outline hover:text-primary transition-colors">
+              <span class="material-symbols-outlined text-[20px]" id="icon-confirm">visibility_off</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="flex items-center gap-3 px-2 py-2">
+        <input id="terms" type="checkbox" class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary">
+        <label class="text-body-sm font-body-sm text-on-surface-variant" for="terms">
+          Saya setuju dengan <a class="text-primary font-semibold hover:underline" href="#">Ketentuan &amp; Kebijakan</a>
+        </label>
+      </div>
+
+      <p id="error-msg" class="text-red-600 text-sm hidden px-2"></p>
+
+      <button id="submit-btn" onclick="handleRegister()" type="button" class="w-full mt-4 py-4 bg-primary-container text-on-primary font-semibold rounded-full shadow-lg shadow-primary-container/20 hover:scale-[1.02] active:scale-[0.98] transition-all-200">
+        Daftar
+      </button>
+    </div>
+
+    <div class="relative flex items-center gap-4 my-stack-md">
+      <div class="flex-grow h-[1px] bg-outline-variant/30"></div>
+      <span class="text-label-caps font-label-caps text-outline shrink-0">Atau daftar dengan</span>
+      <div class="flex-grow h-[1px] bg-outline-variant/30"></div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-gutter">
+      <button onclick="showToast('Daftar dengan Google segera hadir')" type="button" class="flex items-center justify-center gap-2 py-3 px-4 border border-outline-variant rounded-full hover:bg-surface-container-low transition-all-200 font-body-sm text-body-sm">
+        <svg class="w-5 h-5" viewBox="0 0 24 24">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
+          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"></path>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path>
+        </svg>
+        Google
+      </button>
+      <button onclick="showToast('Daftar dengan Facebook segera hadir')" type="button" class="flex items-center justify-center gap-2 py-3 px-4 border border-outline-variant rounded-full hover:bg-surface-container-low transition-all-200 font-body-sm text-body-sm">
+        <svg class="w-5 h-5" fill="#1877F2" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"></path></svg>
+        Facebook
+      </button>
+    </div>
+
+    <p class="mt-auto pt-stack-lg text-center font-body-sm text-body-sm text-on-surface-variant">
+      Sudah punya akun?
+      <a class="text-primary font-bold hover:underline" href="/desktop/login.html">Masuk</a>
+    </p>
+  </section>
+</main>
+
+<script src="/js/api.js"></script>
+<script>
+  if (api.getToken()) window.location.href = '/desktop/feed.html';
+
+  function togglePass(inputId, iconId) {
+    const inp = document.getElementById(inputId);
+    const icon = document.getElementById(iconId);
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+    icon.textContent = inp.type === 'password' ? 'visibility_off' : 'visibility';
+  }
+
+  function slugifyUsername(fullName) {
+    const base = fullName.toLowerCase().trim().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '_').slice(0, 20);
+    const suffix = Math.floor(1000 + Math.random() * 9000);
+    return (base || 'pengguna') + suffix;
+  }
+
+  async function handleRegister() {
+    const btn = document.getElementById('submit-btn');
+    const errEl = document.getElementById('error-msg');
+    errEl.classList.add('hidden');
+
+    const full_name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const confirm = document.getElementById('confirm-password').value;
+    const termsAccepted = document.getElementById('terms').checked;
+
+    if (!full_name || !email || !password) { errEl.textContent = 'Semua field wajib diisi'; errEl.classList.remove('hidden'); return; }
+    if (password !== confirm) { errEl.textContent = 'Password tidak cocok'; errEl.classList.remove('hidden'); return; }
+    if (password.length < 6) { errEl.textContent = 'Password minimal 6 karakter'; errEl.classList.remove('hidden'); return; }
+    if (!termsAccepted) { errEl.textContent = 'Anda harus menyetujui Ketentuan & Kebijakan'; errEl.classList.remove('hidden'); return; }
+
+    btn.textContent = 'Memproses...';
+    btn.disabled = true;
+
+    const username = slugifyUsername(full_name);
+    let result = await api.post('/auth/register', { full_name, username, email, password });
+
+    // Username auto-generated berpotensi bentrok (jarang, tapi mungkin) - coba sekali lagi dengan suffix baru.
+    if (result?.message?.toLowerCase().includes('username')) {
+      result = await api.post('/auth/register', { full_name, username: slugifyUsername(full_name), email, password });
+    }
+
+    if (result && result.status === 'success') {
+      api.setTokens(result.data.access_token, result.data.refresh_token);
+      api.setUser(result.data.user);
+      showToast('Registrasi berhasil! Selamat datang di Winemu 🎉');
+      setTimeout(() => window.location.href = '/desktop/feed.html', 1000);
+    } else {
+      errEl.textContent = result?.message || 'Registrasi gagal';
+      errEl.classList.remove('hidden');
+      btn.textContent = 'Daftar';
+      btn.disabled = false;
+    }
+  }
+
+  document.addEventListener('keydown', e => { if (e.key === 'Enter') handleRegister(); });
+</script>
+</body>
+</html>

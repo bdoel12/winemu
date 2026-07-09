@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Winemu - Community Feed</title>
+<script src="/js/device-redirect.js"></script>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Javanese&family=Philosopher:ital,wght@0,400;0,700;1,400;1,700&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: { extend: {
+              "colors": {
+                      "tertiary-fixed": "#ffdbd0","primary-fixed": "#c9e8ed","surface-container": "#f0ede9",
+                      "surface-container-low": "#f6f3ee","on-primary-container": "#a0bec3","on-tertiary-container": "#ffa182",
+                      "secondary-fixed": "#ffdcbd","tertiary": "#5c1f09","outline-variant": "#c1c8c9",
+                      "on-surface": "#1c1c19","on-primary-fixed": "#001f23","surface-container-high": "#ebe8e3",
+                      "background": "#fcf9f4","on-secondary-container": "#7a532a","primary-fixed-dim": "#adccd1",
+                      "on-background": "#1c1c19","surface-bright": "#fcf9f4","secondary-fixed-dim": "#f0bd8b",
+                      "error-container": "#ffdad6","surface-variant": "#e5e2dd","surface-dim": "#dcdad5",
+                      "secondary": "#7d562d","on-tertiary": "#ffffff","surface-container-highest": "#e5e2dd",
+                      "on-primary-fixed-variant": "#2e4b4f","surface": "#fcf9f4","outline": "#727879",
+                      "inverse-surface": "#31302d","error": "#ba1a1a","surface-container-lowest": "#ffffff",
+                      "on-tertiary-fixed-variant": "#76321b","on-secondary-fixed": "#2c1600",
+                      "on-secondary-fixed-variant": "#623f18","on-primary": "#ffffff","on-surface-variant": "#414849",
+                      "primary-container": "#314e52","on-error-container": "#93000a","secondary-container": "#ffca98",
+                      "surface-tint": "#466367","on-tertiary-fixed": "#390b00","on-error": "#ffffff",
+                      "on-secondary": "#ffffff","inverse-on-surface": "#f3f0eb","tertiary-fixed-dim": "#ffb59d",
+                      "primary": "#1a373b","inverse-primary": "#adccd1","tertiary-container": "#79351d"
+              },
+              "borderRadius": {"DEFAULT": "0.25rem","lg": "0.5rem","xl": "0.75rem","full": "9999px","2xl": "1rem","3xl": "1.5rem"},
+              "spacing": {"stack-sm": "12px","gutter": "16px","stack-md": "24px","base": "8px","stack-lg": "48px","container-margin": "24px"},
+              "fontFamily": {"javanese-script": ["Noto Sans Javanese"],"headline-md": ["Philosopher"],"display-lg-mobile": ["Philosopher"],"body-sm": ["Plus Jakarta Sans"],"label-caps": ["Plus Jakarta Sans"],"body-md": ["Plus Jakarta Sans"],"body-lg": ["Plus Jakarta Sans"],"display-lg": ["Philosopher"]},
+              "fontSize": {
+                      "javanese-script": ["1.2em", {"lineHeight": "1.8", "fontWeight": "400"}],
+                      "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                      "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "label-caps": ["12px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                      "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                      "display-lg": ["40px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+              },
+              "boxShadow": { "soft": "0 10px 40px -10px rgba(49, 78, 82, 0.08)" }
+          }}
+        }
+    </script>
+<style>
+        body { background-color: #fcf9f4; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .icon-hover:hover { transform: scale(1.1); transition: transform 0.2s ease-in-out; }
+        .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;display:inline-block;line-height:1;}
+
+  .carousel-arrow {
+    position:absolute; top:50%; transform:translateY(-50%);
+    width:36px; height:36px; border-radius:50%;
+    background:rgba(255,255,255,0.85); border:none; cursor:pointer;
+    display:none; align-items:center; justify-content:center;
+    box-shadow:0 2px 8px rgba(0,0,0,0.18);
+    transition:opacity 0.2s, background 0.2s;
+    z-index:10; font-size:18px; color:#1a373b; font-weight:bold;
+  }
+  .carousel-arrow:hover { background:rgba(255,255,255,1); }
+  .carousel-wrap:hover .carousel-arrow { display:flex; }
+  .carousel-wrap:hover .carousel-arrow.arrow-disabled { display:none !important; }
+  .carousel-arrow.arrow-disabled { display:none !important; }
+  .carousel-arrow.prev { left:10px; }
+  .carousel-arrow.next { right:10px; }
+
+  </style>
+<!-- batik-bg-applied -->
+<style>
+  body { background-color:#fcf9f4; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cg fill='none'%3E%3Ccircle cx='30' cy='30' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='30' cy='30' r='6' stroke='%231a373b' stroke-width='0.4' stroke-opacity='0.05'/%3E%3Ccircle cx='0' cy='0' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='60' cy='0' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='0' cy='60' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='60' cy='60' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Cpath d='M30 20 L40 30 L30 40 L20 30 Z' stroke='%237d562d' stroke-width='0.5' stroke-opacity='0.06' fill='none'/%3E%3Cpath d='M0 0 L10 0 L5 8 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3Cpath d='M60 0 L50 0 L55 8 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3Cpath d='M0 60 L10 60 L5 52 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3Cpath d='M60 60 L50 60 L55 52 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3C/g%3E%3C/svg%3E"); }
+</style>
+</head>
+<body class="font-body-md text-on-surface antialiased flex">
+<div id="desktop-sidebar"></div>
+
+<main class="flex-1 ml-64 max-w-[1000px] mx-auto px-container-margin py-stack-md grid grid-cols-1 md:grid-cols-12 gap-8">
+  <div class="md:col-span-8 lg:col-span-7 xl:col-span-8 flex flex-col gap-stack-md">
+
+    <!-- Users Nearby -->
+    <section id="nearby-users-section" class="hidden bg-surface-container-lowest rounded-3xl p-6 shadow-soft">
+      <h2 class="font-headline-md text-headline-md text-primary mb-4">User di Sekitar Anda</h2>
+      <div id="nearby-users-list" class="flex gap-4 overflow-x-auto hide-scrollbar pb-2"></div>
+    </section>
+
+    <!-- Filter pills -->
+    <div class="flex gap-2 bg-surface-container-lowest rounded-full p-1.5 shadow-soft w-fit">
+      <button onclick="setFilter('all')" id="filter-all" class="px-5 py-2 rounded-full font-label-caps text-label-caps bg-primary-container text-white transition-all">Semua</button>
+      <button onclick="setFilter('hilang')" id="filter-hilang" class="px-5 py-2 rounded-full font-label-caps text-label-caps text-on-surface-variant hover:bg-surface-container transition-all">Hilang</button>
+      <button onclick="setFilter('ditemukan')" id="filter-ditemukan" class="px-5 py-2 rounded-full font-label-caps text-label-caps text-on-surface-variant hover:bg-surface-container transition-all">Ditemukan</button>
+    </div>
+
+    <!-- Feed posts -->
+    <div id="feed-container" class="flex flex-col gap-stack-md"></div>
+    <div id="loading-dots" class="flex justify-center py-6" style="display:none;">
+      <div class="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+    </div>
+    <div id="load-more-trigger" class="h-4"></div>
+  </div>
+
+  <!-- Sidebar Right -->
+  <aside class="hidden lg:block lg:col-span-5 xl:col-span-4 space-y-6">
+    <div class="flex items-center gap-4 bg-surface-container-lowest p-4 rounded-2xl shadow-soft">
+      <div id="mini-profile-avatar" class="w-14 h-14 rounded-full object-cover bg-primary-container text-white flex items-center justify-center font-bold text-xl">?</div>
+      <div class="flex-1 min-w-0">
+        <p class="font-body-md text-body-md font-bold text-primary truncate" id="mini-profile-name">-</p>
+        <p class="text-body-sm text-on-surface-variant truncate" id="mini-profile-username">-</p>
+      </div>
+      <a href="/desktop/profile.html" class="text-primary font-bold text-body-sm hover:text-primary-container flex-shrink-0">Ubah</a>
+    </div>
+
+    <div class="bg-surface-container-lowest p-6 rounded-3xl shadow-soft">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="font-body-md text-body-md font-bold text-on-surface-variant">Aktivitas Komunitas</h3>
+      </div>
+      <div class="flex flex-col gap-4" id="community-stats">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-primary-fixed/30 flex items-center justify-center text-primary"><span class="material-symbols-outlined text-[20px]">inventory_2</span></div>
+          <div class="flex-1">
+            <p class="font-body-sm text-body-sm font-semibold text-primary" id="stat-total-reports">-</p>
+            <p class="text-label-caps text-on-surface-variant">Total Laporan Aktif</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-secondary"><span class="material-symbols-outlined text-[20px]">task_alt</span></div>
+          <div class="flex-1">
+            <p class="font-body-sm text-body-sm font-semibold text-primary" id="stat-resolved">-</p>
+            <p class="text-label-caps text-on-surface-variant">Berhasil Dikembalikan</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pt-4 text-label-caps font-label-caps text-outline px-2">
+      <div class="flex flex-wrap gap-x-2 gap-y-1 mb-2">
+        <a class="hover:text-primary" href="#">Tentang</a><span>•</span>
+        <a class="hover:text-primary" href="#">Bantuan</a><span>•</span>
+        <a class="hover:text-primary" href="#">Persyaratan</a><span>•</span>
+        <a href="#" onclick="switchToMobileView();return false;" class="hover:text-primary">Versi Mobile</a>
+      </div>
+      <p>© 2026 WINEMU DARI NUSANTARA</p>
+    </div>
+  </aside>
+</main>
+
+<script src="/js/api.js"></script>
+<script src="/js/permissions.js"></script>
+<script src="/desktop/js/desktop-nav.js"></script>
+<script>
+  if (!isLoggedIn()) window.location.href = '/desktop/login.html';
+
+  let page = 1, loading = false, hasMore = true, currentFilter = 'all';
+
+  window.addEventListener('DOMContentLoaded', () => {
+    injectDesktopNav('home');
+    loadFeed();
+    setupInfiniteScroll();
+    loadNearbyUsers();
+    loadMiniProfile();
+    loadCommunityStats();
+  });
+
+  function setFilter(filter) {
+    currentFilter = filter;
+    page = 1; hasMore = true;
+    document.getElementById('feed-container').innerHTML = '';
+    ['all', 'hilang', 'ditemukan'].forEach(f => {
+      const btn = document.getElementById('filter-' + f);
+      if (f === filter) btn.className = 'px-5 py-2 rounded-full font-label-caps text-label-caps bg-primary-container text-white transition-all';
+      else btn.className = 'px-5 py-2 rounded-full font-label-caps text-label-caps text-on-surface-variant hover:bg-surface-container transition-all';
+    });
+    loadFeed();
+  }
+
+  async function loadFeed() {
+    if (loading || !hasMore) return;
+    loading = true;
+    document.getElementById('loading-dots').style.display = 'flex';
+
+    let url = `/reports?page=${page}&per_page=6`;
+    if (currentFilter !== 'all') url += `&type=${currentFilter}`;
+
+    const res = await api.get(url);
+    loading = false;
+
+    if (res && res.status === 'success') {
+      const { items, pagination } = res.data;
+      hasMore = pagination.has_next;
+      if (!hasMore) document.getElementById('loading-dots').style.display = 'none';
+      renderCards(items);
+      page++;
+    } else {
+      document.getElementById('loading-dots').style.display = 'none';
+    }
+  }
+
+  function renderCards(items) {
+    const container = document.getElementById('feed-container');
+    items.forEach(r => {
+      const card = document.createElement('article');
+      card.className = 'bg-surface-container-lowest rounded-3xl shadow-soft overflow-hidden';
+      const badgeColor = r.type === 'hilang' ? '#ba1a1a' : '#7d562d';
+      const badgeText = r.type === 'hilang' ? 'HILANG' : 'DITEMUKAN';
+      const timeStr = timeAgo(r.created_at);
+      const avatar = r.author?.avatar_url
+        ? `<img src="${r.author.avatar_url}" alt="${r.author.full_name}" class="w-10 h-10 rounded-full object-cover">`
+        : `<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-white font-bold">${(r.author?.full_name || r.author?.username || '?')[0].toUpperCase()}</div>`;
+
+      // Build full carousel from media array, fall back to primary_image/video
+      const mediaItems = (r.media && r.media.length > 0) ? r.media : (
+        r.primary_image ? [{ type: 'image', url: r.primary_image }] :
+        r.primary_video ? [{ type: 'video', url: r.primary_video }] : []
+      );
+      const carouselId = `carousel-${r.id}`;
+      const hasDots = mediaItems.length > 1;
+      const slides = mediaItems.map((m, i) =>
+        m.type === 'image'
+          ? `<img src="${m.url}" alt="${r.title}" class="feed-slide w-full h-[400px] object-cover flex-shrink-0" style="min-width:100%;pointer-events:none;" draggable="false">`
+          : `<video src="${m.url}" class="feed-slide w-full h-[400px] object-cover flex-shrink-0" style="min-width:100%;pointer-events:none;" draggable="false" muted playsinline autoplay loop preload="auto" id="vid-${r.id}-${m.url.slice(-8)}" onclick="toggleVideoSound(this)"></video>`
+      ).join('');
+      const dots = hasDots
+        ? `<div class="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5 pointer-events-none">
+            ${mediaItems.map((_, i) => `<span class="carousel-dot w-1.5 h-1.5 rounded-full transition-all duration-300 ${i===0?'bg-white w-3':'bg-white/50'}"></span>`).join('')}
+           </div>` : '';
+      const arrowBtns = mediaItems.length > 1 ? `
+        <button class="carousel-arrow prev arrow-disabled" onclick="carouselPrev('${carouselId}',${mediaItems.length},event)">&#8249;</button>
+        <button class="carousel-arrow next" onclick="carouselNext('${carouselId}',${mediaItems.length},event)">&#8250;</button>` : '';
+      const mediaHtml = mediaItems.length > 0
+        ? `<div class="relative overflow-hidden carousel-wrap" style="height:400px;">
+            <div id="${carouselId}" class="flex h-full transition-transform duration-300 ease-in-out" data-idx="0" style="will-change:transform;">${slides}</div>
+            ${hasDots ? dots : ''}
+            ${arrowBtns}
+           </div>`
+        : `<div class="w-full h-[400px] flex items-center justify-center bg-surface-container"><span class="material-symbols-outlined text-6xl text-outline">image_not_supported</span></div>`;
+
+      card.innerHTML = `
+        <div class="p-4 flex items-center justify-between">
+          <div class="flex items-center gap-3 cursor-pointer" onclick="window.location.href='/desktop/user-profile.html?id=${r.user_id}'">
+            ${avatar}
+            <div>
+              <p class="font-body-md text-body-md font-semibold text-primary">${r.author?.full_name || r.author?.username || 'Pengguna'}</p>
+              <p class="text-label-caps font-label-caps text-on-surface-variant">${r.location_name || 'Lokasi tidak diketahui'} • ${timeStr}</p>
+            </div>
+          </div>
+          <div class="relative">
+            <button onclick="toggleReportMenu(event, ${r.id})" class="text-on-surface-variant hover:text-primary p-1 rounded-full hover:bg-surface-container-low transition-colors"><span class="material-symbols-outlined">more_horiz</span></button>
+          </div>
+        </div>
+        <div class="relative cursor-pointer" onclick="openReport(${r.id})">
+          ${mediaHtml}
+          <div class="absolute top-4 left-4 text-white px-3 py-1 rounded-full text-label-caps font-label-caps shadow-sm" style="background:${badgeColor};">${badgeText}</div>
+        </div>
+        <div class="p-4">
+          <div class="flex justify-between items-center mb-3">
+            <div class="flex gap-4">
+              <button class="like-btn text-on-surface hover:text-error icon-hover" onclick="toggleLike(${r.id}, this)" data-liked="${r.is_liked}">
+                <span class="material-symbols-outlined" style="font-variation-settings:'FILL' ${r.is_liked ? '1' : '0'};${r.is_liked ? 'color:#ba1a1a;' : ''}">favorite</span>
+              </button>
+              <button class="text-on-surface hover:text-primary icon-hover" onclick="animBtn(this); openReport(${r.id})"><span class="material-symbols-outlined">chat_bubble</span></button>
+              <div class="relative">
+                <button class="text-on-surface hover:text-primary icon-hover" data-rid="${r.id}" data-title="${(r.title||'').replace(/"/g,'&quot;')}" data-loc="${r.location_name||''}" onclick="animBtn(this); toggleShareMenu(event, ${r.id}, '${(r.title||'').replace(/'/g,'')}', '${r.location_name||''}')">
+                  <span class="material-symbols-outlined">send</span>
+                </button>
+              </div>
+            </div>
+            <button class="bookmark-btn icon-hover transition-colors" style="color:${r.is_bookmarked?'#7d562d':'inherit'}" onclick="toggleBookmark(${r.id}, this)">
+              <span class="material-symbols-outlined">${r.is_bookmarked?'bookmark':'bookmark_border'}</span>
+            </button>
+          </div>
+          <p class="text-body-sm font-body-sm font-semibold mb-1">${r.like_count || 0} suka</p>
+          <p class="font-body-md text-body-md text-on-surface mb-2">
+            <a href="/desktop/user-profile.html?id=${r.user_id}" class="font-semibold hover:underline mr-2" style="color:#7d562d;">${r.author?.full_name || r.author?.username || 'Pengguna'}</a>
+            <span class="font-bold">${r.title}</span> ${r.description ? r.description.substring(0,140) + (r.description.length>140?'...':'') : ''}
+          </p>
+          <button onclick="openReport(${r.id})" class="text-body-sm font-body-sm text-on-surface-variant hover:text-primary mb-2">Lihat semua ${r.comment_count || 0} komentar</button>
+        </div>`;
+      container.appendChild(card);
+    });
+  }
+
+  // ── Carousel swipe logic ─────────────────────────────────────────────────
+
+  // ── Carousel (rewrite) ────────────────────────────────────────────────────
+  // Menggantikan initCarousels() sebelumnya dengan versi yang lebih robust
+  function initCarousels() {
+    document.querySelectorAll('[id^="carousel-"]').forEach(track => {
+      if (track.dataset.init) return;
+      track.dataset.init = '1';
+      const wrap = track.parentElement; // .relative.overflow-hidden
+      const total = track.children.length;
+      if (total <= 1) return;
+
+      let startX = 0, curX = 0, dragging = false;
+
+      function getIdx() { return parseInt(track.getAttribute('data-idx')) || 0; }
+
+      function goTo(idx) {
+        idx = Math.max(0, Math.min(total - 1, idx));
+        track.setAttribute('data-idx', idx);
+        track.style.transition = 'transform 0.3s ease';
+        track.style.transform = 'translateX(-' + (idx * 100) + '%)';
+        wrap.querySelectorAll('.carousel-dot').forEach(function(d, i) {
+          d.style.width = i === idx ? '14px' : '6px';
+          d.style.opacity = i === idx ? '1' : '0.55';
+        });
+        // Update arrow visibility saat swipe
+        var prevBtn = wrap.querySelector('.carousel-arrow.prev');
+        var nextBtn = wrap.querySelector('.carousel-arrow.next');
+        if (prevBtn) { idx === 0 ? prevBtn.classList.add('arrow-disabled') : prevBtn.classList.remove('arrow-disabled'); }
+        if (nextBtn) { idx === total - 1 ? nextBtn.classList.add('arrow-disabled') : nextBtn.classList.remove('arrow-disabled'); }
+      }
+
+      function onStart(x) { startX = x; curX = x; dragging = true; track.style.transition = 'none'; }
+      function onMove(x) {
+        if (!dragging) return;
+        curX = x;
+        var diff = x - startX;
+        track.style.transform = 'translateX(calc(-' + (getIdx() * 100) + '% + ' + diff + 'px))';
+      }
+      function onEnd(x) {
+        if (!dragging) return;
+        dragging = false;
+        var diff = x - startX;
+        if (Math.abs(diff) > 35) goTo(getIdx() + (diff < 0 ? 1 : -1));
+        else goTo(getIdx());
+      }
+
+      // Mouse
+      wrap.addEventListener('mousedown', function(e) { onStart(e.clientX); e.preventDefault(); });
+      window.addEventListener('mousemove', function(e) { if (dragging) onMove(e.clientX); });
+      window.addEventListener('mouseup', function(e) { if (dragging) onEnd(e.clientX); });
+
+      // Touch
+      wrap.addEventListener('touchstart', function(e) { onStart(e.touches[0].clientX); }, { passive: true });
+      wrap.addEventListener('touchmove', function(e) { onMove(e.touches[0].clientX); }, { passive: true });
+      wrap.addEventListener('touchend', function(e) { onEnd(e.changedTouches[0].clientX); }, { passive: true });
+
+      // Disable img/video native drag
+      track.querySelectorAll('img,video').forEach(function(el) {
+        el.setAttribute('draggable', 'false');
+        el.style.pointerEvents = 'none';
+        el.style.userSelect = 'none';
+      });
+      // Tombol prev sudah punya arrow-disabled dari HTML (mulai index 0), tidak perlu setTimeout
+    });
+  }
+
+
+
+  function setupInfiniteScroll() {
+    const observer = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting) loadFeed();
+    }, { threshold: 0.5 });
+    observer.observe(document.getElementById('load-more-trigger'));
+  }
+
+  async function toggleLike(reportId, btn) {
+    const wasLiked = btn.dataset.liked === 'true';
+    const res = await api.post(`/reports/${reportId}/like`);
+    if (res?.status === 'success') {
+      const nowLiked = !wasLiked;
+      btn.dataset.liked = nowLiked;
+      const icon = btn.querySelector('.material-symbols-outlined');
+      icon.style.fontVariationSettings = `'FILL' ${nowLiked ? 1 : 0}`;
+      icon.style.color = nowLiked ? '#ba1a1a' : '';
+    }
+  }
+
+
+
+
+  function toggleVideoSound(video) {
+    if (!video || video.tagName !== 'VIDEO') return;
+    video.muted = !video.muted;
+    // update button icon
+    const btn = video.closest('.relative')?.querySelector('.sound-btn');
+    if (btn) {
+      btn.querySelector('span').textContent = video.muted ? 'volume_off' : 'volume_up';
+    }
+  }
+
+  // Show sound button when carousel has a video
+  function checkVideoSlides() {
+    document.querySelectorAll('[id^="carousel-"]').forEach(track => {
+      const hasVideo = track.querySelector('video');
+      if (hasVideo) {
+        const btn = track.closest('.relative')?.querySelector('.sound-btn');
+        if (btn) btn.style.display = 'flex';
+      }
+    });
+  }
+
+
+  // ── Carousel prev/next arrows ─────────────────────────────────────────────
+  function carouselGoTo(trackId, idx, total) {
+    const track = document.getElementById(trackId);
+    if (!track) return;
+    idx = Math.max(0, Math.min(total - 1, idx));
+    track.setAttribute('data-idx', idx);
+    track.style.transition = 'transform 0.3s ease';
+    track.style.transform = 'translateX(-' + (idx * 100) + '%)';
+    track.closest('.carousel-wrap')?.querySelectorAll('.carousel-dot').forEach(function(d, i) {
+      d.style.width  = i === idx ? '14px' : '6px';
+      d.style.opacity = i === idx ? '1' : '0.55';
+    });
+    // Update arrow visibility: sembunyikan prev di slide pertama, next di slide terakhir
+    const wrap = track.closest('.carousel-wrap');
+    if (wrap) {
+      const prevBtn = wrap.querySelector('.carousel-arrow.prev');
+      const nextBtn = wrap.querySelector('.carousel-arrow.next');
+      if (prevBtn) { idx === 0 ? prevBtn.classList.add('arrow-disabled') : prevBtn.classList.remove('arrow-disabled'); }
+      if (nextBtn) { idx === total - 1 ? nextBtn.classList.add('arrow-disabled') : nextBtn.classList.remove('arrow-disabled'); }
+    }
+  }
+  function carouselPrev(id, total, e) { e.stopPropagation(); const t=document.getElementById(id); carouselGoTo(id, (parseInt(t?.getAttribute('data-idx'))||0)-1, total); }
+  function carouselNext(id, total, e) { e.stopPropagation(); const t=document.getElementById(id); carouselGoTo(id, (parseInt(t?.getAttribute('data-idx'))||0)+1, total); }
+
+
+
+  // ── Report/Flag menu (three-dot) ─────────────────────────────────────────
+  function toggleShareMenu(e, reportId, title, loc) {
+    e.stopPropagation(); closeAllMenus();
+    const url = window.location.origin + '/desktop/report-detail.html?id=' + reportId;
+    const text = encodeURIComponent((loc ? loc + ' - ' : '') + title + ' | Winemu');
+    const encUrl = encodeURIComponent(url);
+    const items = [
+      { label: 'WhatsApp',    svg: '<svg width="18" height="18" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.117 1.528 5.845L0 24l6.335-1.652A11.955 11.955 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.006-1.371l-.36-.213-3.728.972.998-3.636-.234-.373A9.818 9.818 0 112 12c0-5.421 4.397-9.818 9.818-9.818 5.421 0 9.818 4.397 9.818 9.818 0 5.421-4.397 9.818-9.818 9.818z"/></svg>', href: 'https://wa.me/?text=' + text + '%20' + encUrl },
+      { label: 'Facebook',    svg: '<svg width="18" height="18" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>', href: 'https://www.facebook.com/sharer/sharer.php?u=' + encUrl },
+      { label: 'Instagram',   svg: '<svg width="18" height="18" viewBox="0 0 24 24"><defs><linearGradient id="ig2" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" stop-color="#f09433"/><stop offset="50%" stop-color="#dc2743"/><stop offset="100%" stop-color="#bc1888"/></linearGradient></defs><path fill="url(#ig2)" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>', href: null },
+      { label: 'X (Twitter)', svg: '<svg width="18" height="18" viewBox="0 0 24 24" fill="#000"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.259 5.629L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>', href: 'https://twitter.com/intent/tweet?text=' + text + '&url=' + encUrl },
+      { label: 'Salin Link',  svg: '<svg width="18" height="18" viewBox="0 0 24 24" fill="#1a373b"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>', href: null },
+    ];
+    const menu = document.createElement('div');
+    menu.className = '_float-menu';
+    menu.style.cssText = 'position:absolute;bottom:36px;left:0;background:#fff;border:1px solid #c1c8c9;border-radius:1rem;box-shadow:0 8px 32px rgba(0,0,0,0.12);padding:8px;z-index:200;min-width:180px;';
+    items.forEach(function(item) {
+      const btn = document.createElement('button');
+      btn.style.cssText = 'display:flex;align-items:center;gap:10px;width:100%;padding:8px 12px;border:none;background:none;cursor:pointer;border-radius:8px;font-size:14px;';
+      btn.onmouseover = function() { this.style.background = '#f0ede9'; };
+      btn.onmouseout  = function() { this.style.background = 'none'; };
+      btn.innerHTML = item.svg + item.label;
+      btn.onclick = function() {
+        menu.remove();
+        if (item.label === 'Salin Link') { navigator.clipboard.writeText(url); showToast('Link disalin!'); }
+        else if (item.label === 'Instagram') { navigator.clipboard.writeText(url); showToast('Link disalin! Paste di Instagram.'); }
+        else { window.open(item.href, '_blank'); }
+      };
+      menu.appendChild(btn);
+    });
+    e.currentTarget.closest('.relative').appendChild(menu);
+  }
+
+
+  function toggleReportMenu(e, reportId) {
+    e.stopPropagation(); closeAllMenus();
+    const VIOLATIONS = [
+      'Konten pornografi',
+      'Perilaku pengguna tidak pantas',
+      'Informasi palsu / hoaks',
+      'Spam berlebihan',
+      'Konten berbahaya / kekerasan',
+      'Penipuan / scam',
+    ];
+    const menu = document.createElement('div');
+    menu.className = '_float-menu';
+    menu.style.cssText = 'position:absolute;top:36px;right:0;background:#fff;border:1px solid #c1c8c9;border-radius:1rem;box-shadow:0 8px 32px rgba(0,0,0,0.12);padding:8px;z-index:200;min-width:215px;';
+    const title = document.createElement('p');
+    title.style.cssText = 'font-size:11px;color:#727879;padding:4px 12px 6px;font-weight:600;letter-spacing:0.05em;';
+    title.textContent = 'LAPORKAN';
+    menu.appendChild(title);
+    VIOLATIONS.forEach(function(v, i) {
+      const btn = document.createElement('button');
+      btn.style.cssText = 'display:flex;align-items:center;gap:8px;width:100%;padding:8px 12px;border:none;background:none;cursor:pointer;border-radius:8px;font-size:13px;text-align:left;';
+      btn.onmouseover = function() { this.style.background = '#f0ede9'; };
+      btn.onmouseout  = function() { this.style.background = 'none'; };
+      btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:15px;color:#ba1a1a;">flag</span>' + v;
+      btn.onclick = function() { submitFlagReport(reportId, i, v, this); };
+      menu.appendChild(btn);
+    });
+    e.currentTarget.closest('.relative').appendChild(menu);
+  }
+
+  function submitFlagReport(reportId, categoryId, categoryName, btn) {
+    btn.closest('._float-menu').remove();
+    api.post('/reports/' + reportId + '/flag', { category: categoryName })
+      .then(() => showToast('Laporan terkirim. Terima kasih!'))
+      .catch(() => showToast('Gagal mengirim laporan'));
+  }
+
+  function closeAllMenus() {
+    document.querySelectorAll('._float-menu').forEach(m => m.remove());
+  }
+  document.addEventListener('click', closeAllMenus);
+
+  function animBtn(el) {
+    const span = el.querySelector('span') || el;
+    span.style.transition = 'all 0.15s cubic-bezier(0.34,1.56,0.64,1)';
+    span.style.color = '#1a373b';
+    span.style.transform = 'scale(1.4)';
+    setTimeout(() => {
+      span.style.transform = 'scale(1)';
+      setTimeout(() => { span.style.color = ''; }, 400);
+    }, 150);
+  }
+
+  function animateBtn(el, color) {
+    const span = el.querySelector('span') || el;
+    const orig = span.style.color || '';
+    span.style.color = color;
+    span.style.transform = 'scale(1.35)';
+    span.style.transition = 'all 0.15s cubic-bezier(0.34,1.56,0.64,1)';
+    setTimeout(() => { span.style.transform = 'scale(1)'; setTimeout(() => { span.style.color = orig; }, 350); }, 150);
+  }
+
+  async function shareReport(reportId, title, location) {
+    const url = window.location.origin + '/report-detail.html?id=' + reportId;
+    if (navigator.share) {
+      try { await navigator.share({ title, text: (location ? location + ' - ' : '') + 'Laporan di Winemu', url }); }
+      catch(e) { if (e.name !== 'AbortError') showToast('Gagal berbagi'); }
+    } else {
+      await navigator.clipboard.writeText(url);
+      showToast('Link disalin ke clipboard!');
+    }
+    api.post('/reports/' + reportId + '/share').catch(() => {});
+  }
+
+  async function toggleBookmark(reportId, btn) {
+    const icon = btn.querySelector('.material-symbols-outlined');
+    const isBookmarked = icon.textContent === 'bookmark';
+    if (isBookmarked) {
+      await api.delete(`/users/bookmarks/${reportId}`);
+      icon.textContent = 'bookmark_border';
+      btn.style.color = 'inherit';
+      showToast('Bookmark dihapus');
+    } else {
+      await api.post(`/users/bookmarks/${reportId}`);
+      icon.textContent = 'bookmark';
+      btn.style.color = '#7d562d';
+      showToast('Ditambahkan ke bookmark ✓');
+    }
+  }
+
+  function openReport(id) {
+    window.location.href = `/desktop/report-detail.html?id=${id}`;
+  }
+
+  function loadNearbyUsers() {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        const res = await api.get(`/users/nearby?lat=${latitude}&lng=${longitude}&radius=15&limit=10`);
+        renderNearbyUsers(res?.data?.users || []);
+      },
+      () => { document.getElementById('nearby-users-section').classList.add('hidden'); },
+      { timeout: 8000, maximumAge: 300000 }
+    );
+  }
+
+  function renderNearbyUsers(users) {
+    const section = document.getElementById('nearby-users-section');
+    const list = document.getElementById('nearby-users-list');
+    if (!users.length) { section.classList.add('hidden'); return; }
+
+    list.innerHTML = users.map(u => {
+      const avatar = u.avatar_url
+        ? `<img src="${u.avatar_url}" class="w-16 h-16 rounded-full border-2 border-surface-container-lowest object-cover">`
+        : `<div class="w-16 h-16 rounded-full bg-primary-container text-white flex items-center justify-center text-xl font-bold border-2 border-surface-container-lowest">${(u.full_name||u.username||'?')[0].toUpperCase()}</div>`;
+      const firstName = (u.full_name || u.username || '').split(' ')[0];
+      return `<div onclick="window.location.href='/desktop/user-profile.html?id=${u.id}'" class="flex flex-col items-center gap-2 cursor-pointer min-w-[72px]">
+        <div class="w-16 h-16 rounded-full p-[2px] bg-gradient-to-tr from-primary-container to-secondary-container">${avatar}</div>
+        <span class="text-label-caps font-label-caps text-on-surface-variant">${firstName}</span>
+        <span class="text-[10px] text-on-surface-variant">${u.distance_km} km</span>
+      </div>`;
+    }).join('');
+    section.classList.remove('hidden');
+  }
+
+  async function loadMiniProfile() {
+    const res = await api.get('/users/profile');
+    const u = res?.data?.user;
+    if (!u) return;
+    document.getElementById('mini-profile-name').textContent = u.full_name || u.username;
+    document.getElementById('mini-profile-username').textContent = '@' + u.username;
+    const av = document.getElementById('mini-profile-avatar');
+    if (u.avatar_url) av.innerHTML = `<img src="${u.avatar_url}" class="w-full h-full rounded-full object-cover">`;
+    else av.textContent = (u.full_name || u.username || '?')[0].toUpperCase();
+  }
+
+  async function loadCommunityStats() {
+    const [activeRes, resolvedRes] = await Promise.all([
+      api.get('/reports?per_page=1'),
+      api.get('/reports?per_page=1&status=selesai'),
+    ]);
+    document.getElementById('stat-total-reports').textContent = activeRes?.data?.pagination?.total ?? '-';
+    document.getElementById('stat-resolved').textContent = resolvedRes?.data?.pagination?.total ?? '-';
+  }
+</script>
+</body>
+</html>

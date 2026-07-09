@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html class="light" lang="id">
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Status Serah Terima - Winemu</title>
+<script src="/js/device-redirect.js"></script>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Philosopher:ital,wght@0,400;0,700;1,400;1,700&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Noto+Sans+Javanese:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: { extend: {
+            "colors": {
+                    "primary-fixed-dim": "#adccd1","surface-container-lowest": "#ffffff","inverse-on-surface": "#f3f0eb",
+                    "on-primary-fixed": "#001f23","surface-container-highest": "#e5e2dd","on-primary-container": "#a0bec3",
+                    "inverse-surface": "#31302d","surface-container-high": "#ebe8e3","on-tertiary-container": "#ffa182",
+                    "tertiary-fixed": "#ffdbd0","surface-variant": "#e5e2dd","error": "#ba1a1a",
+                    "secondary-fixed-dim": "#f0bd8b","on-secondary-fixed": "#2c1600","tertiary": "#5c1f09",
+                    "on-tertiary-fixed-variant": "#76321b","on-surface-variant": "#414849","on-primary": "#ffffff",
+                    "secondary-fixed": "#ffdcbd","on-error-container": "#93000a","error-container": "#ffdad6",
+                    "on-secondary-container": "#7a532a","surface-bright": "#fcf9f4","on-tertiary-fixed": "#390b00",
+                    "on-secondary": "#ffffff","on-primary-fixed-variant": "#2e4b4f","on-background": "#1c1c19",
+                    "tertiary-container": "#79351d","surface-container": "#f0ede9","outline-variant": "#c1c8c9",
+                    "tertiary-fixed-dim": "#ffb59d","background": "#fcf9f4","on-error": "#ffffff",
+                    "inverse-primary": "#adccd1","surface": "#fcf9f4","primary-container": "#314e52",
+                    "outline": "#727879","surface-tint": "#466367","on-surface": "#1c1c19",
+                    "on-secondary-fixed-variant": "#623f18","surface-container-low": "#f6f3ee","surface-dim": "#dcdad5",
+                    "on-tertiary": "#ffffff","primary-fixed": "#c9e8ed","secondary-container": "#ffca98",
+                    "secondary": "#7d562d","primary": "#1a373b"
+            },
+            "borderRadius": {"DEFAULT": "0.25rem","lg": "0.5rem","xl": "0.75rem","full": "9999px","2xl": "1rem","3xl": "1.5rem"},
+            "spacing": {"stack-md": "24px","stack-lg": "48px","gutter": "16px","base": "8px","stack-sm": "12px","container-margin": "24px"},
+            "fontFamily": {"label-caps": ["Plus Jakarta Sans"],"display-lg-mobile": ["Philosopher"],"body-md": ["Plus Jakarta Sans"],"body-sm": ["Plus Jakarta Sans"],"body-lg": ["Plus Jakarta Sans"],"headline-md": ["Philosopher"],"javanese-script": ["Noto Sans Javanese"],"display-lg": ["Philosopher"]},
+            "fontSize": {
+                    "label-caps": ["12px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "display-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                    "javanese-script": ["1.2em", {"lineHeight": "1.8", "fontWeight": "400"}],
+                    "display-lg": ["40px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+    }}}
+    </script>
+<style>
+        body { background-color: #F8F5F0; }
+        .diffused-shadow { box-shadow: 0 4px 30px rgba(49, 78, 82, 0.08); }
+        .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;display:inline-block;line-height:1;}
+        #handover-map { height: 100%; width: 100%; position:relative; z-index:0; }
+        #handover-map .leaflet-pane, #handover-map .leaflet-top, #handover-map .leaflet-bottom { z-index: 1 !important; }
+<style>
+  /* Handover option cards */
+  .hw-card input[type="radio"] { position:absolute; opacity:0; width:0; height:0; }
+  .hw-card { cursor:pointer; display:block; }
+  .hw-card { cursor:pointer; }
+  .hw-card .hw-icon {
+    background:#f0ede9; color:#1a373b;
+    transition: background 0.2s, color 0.2s;
+  }
+  .hw-card.selected .hw-icon {
+    background:#1a373b !important;
+    color:#fff !important;
+    animation: iconBounce 0.35s cubic-bezier(0.34,1.56,0.64,1) forwards;
+  }
+  @keyframes iconBounce {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.25) rotate(-8deg); }
+    75%  { transform: scale(1.18) rotate(4deg); }
+    100% { transform: scale(1.12) rotate(0deg); }
+  }
+  .hw-card.selected .hw-title { color:#1a373b !important; font-weight:700; }
+</style>
+</style>
+<!-- batik-bg-applied -->
+<style>
+  body { background-color:#fcf9f4; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cg fill='none'%3E%3Ccircle cx='30' cy='30' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='30' cy='30' r='6' stroke='%231a373b' stroke-width='0.4' stroke-opacity='0.05'/%3E%3Ccircle cx='0' cy='0' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='60' cy='0' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='0' cy='60' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='60' cy='60' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Cpath d='M30 20 L40 30 L30 40 L20 30 Z' stroke='%237d562d' stroke-width='0.5' stroke-opacity='0.06' fill='none'/%3E%3Cpath d='M0 0 L10 0 L5 8 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3Cpath d='M60 0 L50 0 L55 8 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3Cpath d='M0 60 L10 60 L5 52 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3Cpath d='M60 60 L50 60 L55 52 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3C/g%3E%3C/svg%3E"); }
+</style>
+</head>
+<body class="text-on-surface font-body-md min-h-screen flex flex-col">
+<div id="desktop-sidebar"></div>
+
+<main class="flex-grow w-full max-w-[1200px] mx-auto px-container-margin py-stack-lg md:ml-64 md:pl-8 flex flex-col gap-stack-lg">
+  <div class="flex flex-col gap-base">
+    <h1 class="font-display-lg text-display-lg text-primary">Status Serah Terima</h1>
+    <p class="font-body-lg text-body-lg text-on-surface-variant">Lacak proses pengembalian barang dan atur metode serah terima yang nyaman untuk Anda.</p>
+  </div>
+
+  <div id="page-content" class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+    <div class="lg:col-span-12 flex justify-center py-20">
+      <div class="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+    </div>
+  </div>
+</main>
+
+<script src="/js/api.js"></script>
+<script src="/desktop/js/desktop-nav.js"></script>
+<script>
+  injectDesktopNav('');
+
+  const params = new URLSearchParams(window.location.search);
+  const claimId = parseInt(params.get('claim_id'));
+  let claimData = null, currentUser = null, isOwnerView = false;
+
+  if (!claimId) window.location.href = '/desktop/feed.html';
+
+  window.addEventListener('DOMContentLoaded', () => {
+    if (!isLoggedIn()) { window.location.href = '/desktop/login.html'; return; }
+    currentUser = api.getUser();
+    loadClaim();
+  });
+
+  async function loadClaim() {
+    const res = await api.get(`/claims/${claimId}`);
+    if (!res?.data?.claim) {
+      document.getElementById('page-content').innerHTML = '<p class="lg:col-span-12 text-center py-20 text-on-surface-variant">Data klaim tidak ditemukan</p>';
+      return;
+    }
+    claimData = res.data.claim;
+    isOwnerView = currentUser?.id !== claimData.claimant?.id;
+    render();
+  }
+
+  function render() {
+    const c = claimData;
+    const lat = c.report?.latitude, lng = c.report?.longitude;
+    const hasLocation = lat && lng;
+    const stepStatus = c.handover_status;
+    const isApproved = c.status === 'approved';
+
+    document.getElementById('page-content').innerHTML = `
+      <div class="lg:col-span-7 flex flex-col gap-6">
+        <div class="w-full h-[400px] md:h-[500px] bg-white rounded-3xl diffused-shadow overflow-hidden relative border border-surface-variant">
+          ${hasLocation ? `<div id="handover-map"></div>` : `
+            <div class="w-full h-full flex items-center justify-center bg-surface-container-low text-on-surface-variant flex-col gap-2">
+              <span class="material-symbols-outlined text-4xl">location_off</span>
+              <p class="text-sm">Lokasi belum tersedia</p>
+            </div>`}
+          <div class="absolute top-4 left-4 right-4 flex justify-between items-start pointer-events-none">
+            <div class="bg-white/90 backdrop-blur-md px-4 py-2 rounded-2xl diffused-shadow pointer-events-auto border border-surface-variant">
+              <span class="font-label-caps text-label-caps text-primary uppercase tracking-widest block mb-1">ID Klaim</span>
+              <span class="font-body-md text-body-md font-semibold text-on-surface">#WNM-${String(c.id).padStart(4,'0')}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl p-6 diffused-shadow flex items-center gap-6 border border-surface-variant transition-transform duration-300 hover:scale-[1.01]">
+          <div class="w-20 h-20 rounded-xl overflow-hidden shrink-0 bg-surface-container flex items-center justify-center">
+            ${c.report?.primary_image ? `<img src="${c.report.primary_image}" class="w-full h-full object-cover">` : `<span class="material-symbols-outlined text-3xl text-outline">inventory_2</span>`}
+          </div>
+          <div class="flex-col flex gap-1">
+            <h3 class="font-headline-md text-headline-md text-primary">${c.report?.title || 'Barang'}</h3>
+            <p class="font-body-sm text-body-sm text-on-surface-variant">${c.report?.location_name || ''}</p>
+            <div class="inline-flex items-center gap-2 mt-2 px-3 py-1 bg-surface-container-low rounded-full w-fit">
+              <span class="material-symbols-outlined text-[16px] text-secondary">person</span>
+              <span class="font-body-sm text-body-sm font-medium text-secondary">${isOwnerView ? 'Pengklaim' : 'Pemilik'}: ${isOwnerView ? (c.claimant?.full_name || c.claimant?.username) : (c.reporter?.full_name || c.reporter?.username || '-')}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="lg:col-span-5 flex flex-col gap-8">
+        <div class="bg-white rounded-3xl p-8 diffused-shadow border border-surface-variant">
+          <h2 class="font-headline-md text-headline-md text-primary mb-8">Status Terkini</h2>
+          <div class="relative flex flex-col gap-10">
+            <div class="absolute left-[15px] top-2 bottom-2 w-0.5 bg-surface-variant">
+              <div class="absolute top-0 left-0 w-full bg-primary" style="height:${stepStatus==='selesai'?'100%':stepStatus==='dalam_proses'||stepStatus==='menunggu_metode'?'50%':'0%'};"></div>
+            </div>
+            ${renderTimelineStep1()}
+            ${renderTimelineStep2(stepStatus)}
+            ${renderTimelineStep3(stepStatus)}
+          </div>
+        </div>
+
+        ${isApproved && stepStatus !== 'selesai' ? renderHandoverOptions(c) : ''}
+        ${stepStatus === 'selesai' ? renderCompletedSection() : ''}
+        ${isApproved && stepStatus === 'dalam_proses' && isOwnerView ? renderCompleteButton() : ''}
+      </div>
+    `;
+
+    if (hasLocation) initMap(lat, lng, c.report?.location_name);
+  }
+
+  function renderTimelineStep1() {
+    return `<div class="relative flex items-start gap-6">
+      <div class="relative z-10 flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white shadow-sm">
+        <span class="material-symbols-outlined text-[18px]">check</span>
+      </div>
+      <div class="flex flex-col gap-1">
+        <h4 class="font-body-lg text-body-lg font-bold text-on-surface">Verifikasi Selesai</h4>
+        <p class="font-body-sm text-body-sm text-on-surface-variant">Kepemilikan barang telah dikonfirmasi oleh pemilik.</p>
+      </div>
+    </div>`;
+  }
+
+  function renderTimelineStep2(stepStatus) {
+    const isActive = stepStatus === 'menunggu_metode' || stepStatus === 'dalam_proses';
+    const isDone = stepStatus === 'selesai';
+    return `<div class="relative flex items-start gap-6 ${!isActive && !isDone ? 'opacity-50' : ''}">
+      <div class="relative z-10 flex items-center justify-center w-8 h-8 rounded-full ${isDone ? 'bg-primary text-white' : isActive ? 'bg-white border-2 border-primary text-primary ring-4 ring-primary/10' : 'bg-surface-container-low border border-outline-variant text-outline'} shadow-sm">
+        <span class="material-symbols-outlined text-[18px] ${isActive ? 'animate-pulse' : ''}">${isDone ? 'check' : isActive ? 'sync' : 'inventory_2'}</span>
+      </div>
+      <div class="flex flex-col gap-1">
+        <h4 class="font-body-lg text-body-lg font-bold ${isActive ? 'text-primary' : 'text-on-surface'}">Dalam Proses Serah Terima</h4>
+        <p class="font-body-sm text-body-sm text-on-surface-variant">${stepStatus === 'menunggu_metode' ? 'Silakan pilih metode pengembalian barang di bawah ini.' : stepStatus === 'dalam_proses' ? 'Metode telah dipilih, menunggu konfirmasi selesai.' : 'Barang telah kembali ke tangan pemilik dengan aman.'}</p>
+        ${isActive ? `<div class="flex items-center gap-2 mt-1"><span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span><span class="font-label-caps text-label-caps text-primary">Sedang Berlangsung</span></div>` : ''}
+      </div>
+    </div>`;
+  }
+
+  function renderTimelineStep3(stepStatus) {
+    const isDone = stepStatus === 'selesai';
+    return `<div class="relative flex items-start gap-6 ${!isDone ? 'opacity-50' : ''}">
+      <div class="relative z-10 flex items-center justify-center w-8 h-8 rounded-full ${isDone ? 'bg-primary text-white' : 'bg-surface-container-low border border-outline-variant text-outline'}">
+        <span class="material-symbols-outlined text-[18px]">${isDone ? 'check' : 'inventory_2'}</span>
+      </div>
+      <div class="flex flex-col gap-1">
+        <h4 class="font-body-lg text-body-lg font-bold text-on-surface">Selesai</h4>
+        <p class="font-body-sm text-body-sm text-on-surface-variant">Barang telah kembali ke tangan Anda dengan aman.</p>
+      </div>
+    </div>`;
+  }
+
+  function renderHandoverOptions(c) {
+    const current = c.handover_method;
+    return `<div class="bg-white rounded-3xl p-8 diffused-shadow border border-surface-variant flex flex-col gap-6">
+      <div>
+        <h2 class="font-headline-md text-headline-md text-primary">Opsi Serah Terima</h2>
+        <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Pilih metode yang paling nyaman untuk Anda.</p>
+      </div>
+      <div class="flex flex-col gap-4" id="handover-options">
+        <div class="hw-card ${current==='cod'?'selected':''}" data-value="cod" onclick="selectHandover(this)">
+          <div class="flex items-center gap-4 p-4 rounded-2xl border-2 transition-all duration-200 ${current==='cod'?'border-primary bg-primary/5':'border-surface-variant hover:border-primary/40 hover:bg-surface'}">
+            <div class="hw-icon w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 transition-all">
+              <span class="material-symbols-outlined">handshake</span>
+            </div>
+            <div class="flex-1">
+              <span class="hw-title font-body-md font-bold block transition-colors">Bertemu Langsung (COD)</span>
+              <span class="font-body-sm text-on-surface-variant">Atur pertemuan langsung lewat chat.</span>
+              <span class="ml-2 text-xs bg-secondary-container text-secondary px-2 py-0.5 rounded-md font-semibold">Direkomendasikan</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="hw-card ${current==='titik_aman'?'selected':''}" data-value="titik_aman" onclick="selectHandover(this)">
+          <div class="flex items-center gap-4 p-4 rounded-2xl border-2 transition-all duration-200 ${current==='titik_aman'?'border-primary bg-primary/5':'border-surface-variant hover:border-primary/40 hover:bg-surface'}">
+            <div class="hw-icon w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 transition-all">
+              <span class="material-symbols-outlined">storefront</span>
+            </div>
+            <div class="flex-1">
+              <span class="hw-title font-body-md font-bold block transition-colors">Titip di Titik Aman</span>
+              <span class="font-body-sm text-on-surface-variant">Polsek, Pos Satpam, atau Fasilitas Umum.</span>
+              <input id="titik-aman-input" value="${c.handover_location || ''}" placeholder="Nama lokasi (mis: Pos Satpam Sektor 2)" class="mt-2 w-full bg-surface border border-outline-variant/50 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary ${current==='titik_aman'?'':'hidden'}" onclick="event.stopPropagation()">
+            </div>
+          </div>
+        </div>
+
+        <div class="hw-card ${current==='kurir'?'selected':''}" data-value="kurir" onclick="selectHandover(this)">
+          <div class="flex items-center gap-4 p-4 rounded-2xl border-2 transition-all duration-200 ${current==='kurir'?'border-primary bg-primary/5':'border-surface-variant hover:border-primary/40 hover:bg-surface'}">
+            <div class="hw-icon w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 transition-all">
+              <span class="material-symbols-outlined">local_shipping</span>
+            </div>
+            <div class="flex-1">
+              <span class="hw-title font-body-md font-bold block transition-colors">Gunakan Kurir Instan</span>
+              <span class="font-body-sm text-on-surface-variant">Biaya ditanggung penerima.</span>
+              <input id="kurir-input" value="${c.handover_tracking || ''}" placeholder="Nomor resi / link tracking" class="mt-2 w-full bg-surface border border-outline-variant/50 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary ${current==='kurir'?'':'hidden'}" onclick="event.stopPropagation()">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p id="handover-error" class="text-red-600 text-sm hidden"></p>
+
+      <button onclick="saveHandoverMethod()" id="save-handover-btn" type="button" class="mt-2 w-full bg-primary hover:bg-primary-container text-white font-body-md text-body-md font-bold py-4 px-6 rounded-xl transition-all duration-300 active:scale-[0.98] diffused-shadow flex justify-center items-center gap-2">
+        <span>Simpan Pilihan</span>
+        <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+      </button>
+    </div>`;
+  }
+
+  function renderCompletedSection() {
+    return `<div class="bg-primary/5 border border-primary/20 rounded-3xl p-8 diffused-shadow flex flex-col items-center text-center gap-3">
+      <span class="material-symbols-outlined text-primary text-4xl" style="font-variation-settings:'FILL' 1;">task_alt</span>
+      <h3 class="font-headline-md text-headline-md text-primary">Serah Terima Selesai</h3>
+      <p class="font-body-sm text-body-sm text-on-surface-variant">Barang telah berhasil dikembalikan. Terima kasih telah menjadi bagian dari komunitas Winemu!</p>
+    </div>`;
+  }
+
+  function renderCompleteButton() {
+    return `<button onclick="completeHandover()" id="complete-btn" type="button" class="w-full bg-secondary text-white py-4 rounded-xl font-label-caps tracking-wider hover:opacity-90 transition-colors flex items-center justify-center gap-2 diffused-shadow">
+      <span class="material-symbols-outlined text-[18px]">check_circle</span>
+      Tandai Barang Sudah Saya Terima
+    </button>`;
+  }
+
+  function initMap(lat, lng, locationName) {
+    setTimeout(() => {
+      const map = L.map('handover-map', { zoomControl: true }).setView([lat, lng], 15);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
+      L.marker([lat, lng]).addTo(map).bindPopup(locationName || 'Lokasi barang').openPopup();
+    }, 100);
+  }
+
+  // Sub-input toggle handled in selectHandover()
+
+  function selectHandover(el) {
+    document.querySelectorAll('.hw-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    // Show/hide sub-inputs
+    const val = el.getAttribute('data-value');
+    const taInput = document.getElementById('titik-aman-input');
+    const kurirInput = document.getElementById('kurir-input');
+    if (taInput) taInput.classList.toggle('hidden', val !== 'titik_aman');
+    if (kurirInput) kurirInput.classList.toggle('hidden', val !== 'kurir');
+  }
+
+  async function saveHandoverMethod() {
+    const selectedCard = document.querySelector('.hw-card.selected');
+    const errEl = document.getElementById('handover-error');
+    errEl.classList.add('hidden');
+
+    if (!selectedCard) { errEl.textContent = 'Pilih salah satu metode serah terima'; errEl.classList.remove('hidden'); return; }
+
+    const method = selectedCard.getAttribute('data-value');
+    const payload = { method };
+    if (method === 'titik_aman') payload.location = document.getElementById('titik-aman-input')?.value || '';
+    if (method === 'kurir') payload.tracking = document.getElementById('kurir-input')?.value || '';
+
+    const btn = document.getElementById('save-handover-btn');
+    btn.innerHTML = '<span>Menyimpan...</span>';
+    btn.disabled = true;
+
+    const res = await api.put(`/claims/${claimId}/handover-method`, payload);
+    if (res?.status === 'success') {
+      showToast('Metode serah terima disimpan ✓');
+      loadClaim();
+    } else {
+      errEl.textContent = res?.message || 'Gagal menyimpan pilihan';
+      errEl.classList.remove('hidden');
+      btn.innerHTML = '<span>Simpan Pilihan</span><span class="material-symbols-outlined text-[20px]">arrow_forward</span>';
+      btn.disabled = false;
+    }
+  }
+
+  async function completeHandover() {
+    if (!confirm('Konfirmasi bahwa barang sudah Anda terima kembali?')) return;
+    const btn = document.getElementById('complete-btn');
+    btn.textContent = 'Memproses...'; btn.disabled = true;
+
+    const res = await api.post(`/claims/${claimId}/handover-complete`);
+    if (res?.status === 'success') {
+      showToast('Serah terima berhasil diselesaikan! 🎉');
+      loadClaim();
+    } else {
+      showToast(res?.message || 'Gagal menyelesaikan serah terima', true);
+      btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">check_circle</span>Tandai Barang Sudah Saya Terima';
+      btn.disabled = false;
+    }
+  }
+</script>
+</body>
+</html>

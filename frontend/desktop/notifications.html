@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Winemu - Notifikasi</title>
+<script src="/js/device-redirect.js"></script>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Javanese&family=Philosopher:ital,wght@0,400;0,700;1,400;1,700&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: { extend: {
+                    "colors": {
+                        "surface": "#fcf9f4","secondary-fixed-dim": "#f0bd8b","outline": "#727879",
+                        "surface-variant": "#e5e2dd","on-tertiary-fixed": "#390b00","inverse-primary": "#adccd1",
+                        "surface-container-lowest": "#ffffff","on-surface-variant": "#414849","inverse-surface": "#31302d",
+                        "on-tertiary": "#ffffff","on-background": "#1c1c19","on-tertiary-fixed-variant": "#76321b",
+                        "on-primary-container": "#a0bec3","surface-dim": "#dcdad5","on-secondary-fixed-variant": "#623f18",
+                        "inverse-on-surface": "#f3f0eb","error": "#ba1a1a","on-tertiary-container": "#ffa182",
+                        "surface-container-highest": "#e5e2dd","on-primary-fixed-variant": "#2e4b4f",
+                        "primary-fixed-dim": "#adccd1","surface-container-low": "#f6f3ee","surface-container": "#f0ede9",
+                        "error-container": "#ffdad6","primary-container": "#314e52","on-surface": "#1c1c19",
+                        "background": "#fcf9f4","on-secondary-container": "#7a532a","on-error-container": "#93000a",
+                        "secondary-container": "#ffca98","on-error": "#ffffff","on-secondary-fixed": "#2c1600",
+                        "surface-bright": "#fcf9f4","tertiary-container": "#79351d","secondary-fixed": "#ffdcbd",
+                        "tertiary": "#5c1f09","on-secondary": "#ffffff","on-primary": "#ffffff","surface-tint": "#466367",
+                        "surface-container-high": "#ebe8e3","primary": "#1a373b","tertiary-fixed-dim": "#ffb59d",
+                        "tertiary-fixed": "#ffdbd0","secondary": "#7d562d","outline-variant": "#c1c8c9",
+                        "primary-fixed": "#c9e8ed","on-primary-fixed": "#001f23"
+                    },
+                    "borderRadius": {"DEFAULT": "0.25rem","lg": "0.5rem","xl": "0.75rem","full": "9999px","2xl": "1rem","3xl": "1.5rem"},
+                    "spacing": {"stack-md": "24px","stack-sm": "12px","stack-lg": "48px","container-margin": "24px","gutter": "16px","base": "8px"},
+                    "fontFamily": {"display-lg": ["Philosopher"],"body-md": ["Plus Jakarta Sans"],"body-sm": ["Plus Jakarta Sans"],"body-lg": ["Plus Jakarta Sans"],"javanese-script": ["Noto Sans Javanese"],"display-lg-mobile": ["Philosopher"],"headline-md": ["Philosopher"],"label-caps": ["Plus Jakarta Sans"]},
+                    "fontSize": {
+                        "display-lg": ["40px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "javanese-script": ["1.2em", {"lineHeight": "1.8", "fontWeight": "400"}],
+                        "display-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                        "label-caps": ["12px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600"}]
+                    },
+                    "boxShadow": { "soft": "0 10px 40px -10px rgba(49, 78, 82, 0.08)" }
+            }}
+        }
+    </script>
+<style>
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;display:inline-block;line-height:1;}
+        .material-symbols-outlined.filled{font-variation-settings:'FILL' 1;}
+</style>
+<!-- batik-bg-applied -->
+<style>
+  body { background-color:#fcf9f4; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cg fill='none'%3E%3Ccircle cx='30' cy='30' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='30' cy='30' r='6' stroke='%231a373b' stroke-width='0.4' stroke-opacity='0.05'/%3E%3Ccircle cx='0' cy='0' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='60' cy='0' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='0' cy='60' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='60' cy='60' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Cpath d='M30 20 L40 30 L30 40 L20 30 Z' stroke='%237d562d' stroke-width='0.5' stroke-opacity='0.06' fill='none'/%3E%3Cpath d='M0 0 L10 0 L5 8 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3Cpath d='M60 0 L50 0 L55 8 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3Cpath d='M0 60 L10 60 L5 52 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3Cpath d='M60 60 L50 60 L55 52 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3C/g%3E%3C/svg%3E"); }
+</style>
+</head>
+<body class="bg-surface text-on-surface font-body-md antialiased flex">
+<div id="desktop-sidebar"></div>
+
+<main class="ml-64 px-8 py-stack-md grid grid-cols-1 lg:grid-cols-12 gap-8 max-w-[1400px]">
+  <div class="lg:col-span-8 flex flex-col gap-stack-md">
+    <div class="mb-4 flex items-center justify-between">
+      <div>
+        <h1 class="font-headline-md text-headline-md text-on-surface mb-2">Notifikasi</h1>
+        <p class="font-body-md text-body-md text-on-surface-variant">Pantau interaksi dan perkembangan terbaru laporan Anda.</p>
+      </div>
+      <div class="flex items-center gap-4">
+        <button onclick="enterSelectMode()" class="text-on-surface-variant text-sm font-semibold hover:text-on-surface transition-colors whitespace-nowrap flex items-center gap-1">
+          <span class="material-symbols-outlined text-[16px]">checklist</span>Pilih
+        </button>
+        <button onclick="markAllRead()" class="text-primary text-sm font-semibold hover:underline whitespace-nowrap">Tandai semua dibaca</button>
+      </div>
+    </div>
+
+    <div id="notif-container" class="w-full space-y-stack-md">
+      <div class="flex justify-center py-12"><div class="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div></div>
+    </div>
+  </div>
+
+  <aside class="hidden lg:block lg:col-span-4 space-y-6 pt-2">
+    <div class="flex items-center gap-4 bg-surface-container-lowest p-4 rounded-2xl shadow-soft">
+      <div id="mini-profile-avatar" class="w-14 h-14 rounded-full bg-primary-container text-white flex items-center justify-center font-bold text-xl">?</div>
+      <div class="flex-1">
+        <p class="font-body-md text-body-md font-bold text-primary" id="mini-profile-name">-</p>
+        <p class="text-body-sm text-on-surface-variant" id="mini-profile-username">-</p>
+      </div>
+      <a href="/desktop/profile.html" class="text-primary font-bold text-body-sm hover:text-primary-container">Ubah</a>
+    </div>
+    <div class="pt-4 text-label-caps font-label-caps text-outline px-2">
+      <p>© 2026 WINEMU DARI NUSANTARA</p>
+    </div>
+  </aside>
+</main>
+
+<script src="/js/api.js"></script>
+<script src="/desktop/js/desktop-nav.js"></script>
+<script>
+  if (!isLoggedIn()) window.location.href = '/desktop/login.html';
+
+  const iconMap = {
+    like: { icon: 'favorite', color: 'text-error' },
+    comment: { icon: 'chat_bubble', color: 'text-primary' },
+    claim: { icon: 'key', color: 'text-secondary' },
+    claim_approved: { icon: 'check_circle', color: 'text-green-600' },
+    claim_rejected: { icon: 'cancel', color: 'text-error' },
+    handover_update: { icon: 'local_shipping', color: 'text-secondary' },
+    handover_complete: { icon: 'task_alt', color: 'text-green-600' },
+    system: { icon: 'info', color: 'text-primary' },
+    found: { icon: 'location_on', color: 'text-secondary' },
+  };
+
+  window.addEventListener('DOMContentLoaded', () => {
+    injectDesktopNav('notifications');
+    loadNotifications();
+    loadMiniProfile();
+  });
+
+  async function loadMiniProfile() {
+    const res = await api.get('/users/profile');
+    const u = res?.data?.user;
+    if (!u) return;
+    document.getElementById('mini-profile-name').textContent = u.full_name || u.username;
+    document.getElementById('mini-profile-username').textContent = '@' + u.username;
+    const av = document.getElementById('mini-profile-avatar');
+    if (u.avatar_url) av.innerHTML = `<img src="${u.avatar_url}" class="w-full h-full rounded-full object-cover">`;
+    else av.textContent = (u.full_name || u.username || '?')[0].toUpperCase();
+  }
+
+  async function loadNotifications() {
+    const res = await api.get('/notifications?per_page=50');
+    const container = document.getElementById('notif-container');
+    if (!res?.data?.notifications?.length) {
+      container.innerHTML = `<div class="flex flex-col items-center justify-center py-20 text-on-surface-variant bg-surface-container-lowest rounded-3xl shadow-soft">
+        <span class="material-symbols-outlined text-6xl mb-4 opacity-40">notifications_off</span>
+        <p>Belum ada notifikasi</p>
+      </div>`;
+      return;
+    }
+
+    const notifs = res.data.notifications;
+    const now = new Date();
+    const todayItems = [], weekItems = [], olderItems = [];
+
+    notifs.forEach(n => {
+      const date = new Date(n.created_at);
+      const diffDays = (now - date) / 86400000;
+      if (diffDays < 1) todayItems.push(n);
+      else if (diffDays < 7) weekItems.push(n);
+      else olderItems.push(n);
+    });
+
+    let html = '';
+    if (todayItems.length) html += renderSection('Baru', todayItems);
+    if (weekItems.length) html += renderSection('Minggu Ini', weekItems);
+    if (olderItems.length) html += renderSection('Lebih Lama', olderItems);
+
+    container.innerHTML = html;
+  }
+
+  function renderSection(title, items) {
+    return `<section aria-labelledby="group-${title}">
+      <h2 class="font-label-caps text-label-caps text-secondary uppercase tracking-wider mb-stack-sm border-b border-surface-variant pb-2">${title}</h2>
+      <div class="space-y-4 mt-4">
+        ${items.map(n => renderItem(n)).join('')}
+      </div>
+    </section>`;
+  }
+
+  // ── Select mode state ─────────────────────────────────────────────────────
+  let selectMode = false;
+  let selectedNotifIds = new Set();
+  let openNotifMenuId = null;
+
+  function renderItem(n) {
+    const meta = iconMap[n.type] || iconMap.system;
+    const actorAv = n.actor?.avatar_url
+      ? `<img alt="${n.actor?.full_name}" class="w-12 h-12 rounded-full object-cover border border-outline-variant/30" src="${n.actor.avatar_url}">`
+      : `<div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center border border-outline-variant/30 text-on-secondary-container font-bold">${(n.actor?.full_name || n.actor?.username || 'W')[0].toUpperCase()}</div>`;
+
+    const reportId = n.data?.report_id;
+    const claimId = n.data?.claim_id;
+    const handoverTypes = ['claim_approved', 'handover_update', 'handover_complete'];
+    let mainAction;
+    if (claimId && handoverTypes.includes(n.type)) mainAction = `goToHandover(${n.id}, ${claimId})`;
+    else if (reportId) mainAction = `goToReport(${n.id}, ${reportId})`;
+    else mainAction = `markRead(${n.id})`;
+
+    const menuId = `notif-menu-${n.id}`;
+    const isSelected = selectedNotifIds.has(n.id);
+
+    return `<div id="notif-card-${n.id}" class="notif-card group bg-surface-container-lowest p-6 rounded-3xl shadow-soft flex items-start gap-4 transition-all relative border ${n.is_read ? 'border-transparent' : 'border-primary/10'} ${isSelected ? 'ring-2 ring-primary bg-primary/5' : ''}">
+      ${!n.is_read && !selectMode ? '<div class="absolute left-0 top-6 bottom-6 w-1 bg-primary rounded-r-2xl"></div>' : ''}
+
+      <!-- Checkbox (select mode) -->
+      <div class="select-checkbox flex-shrink-0 ${selectMode ? '' : 'hidden'}" onclick="toggleSelectNotif(${n.id}, event)">
+        <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center cursor-pointer transition-all ${isSelected ? 'bg-primary border-primary' : 'border-outline hover:border-primary'}">
+          ${isSelected ? '<span class="material-symbols-outlined text-[14px] text-white">check</span>' : ''}
+        </div>
+      </div>
+
+      <!-- Avatar -->
+      <div class="relative w-12 h-12 flex-shrink-0 cursor-pointer" onclick="${selectMode ? `toggleSelectNotif(${n.id}, event)` : mainAction}">
+        ${actorAv}
+        <div class="absolute -bottom-1 -right-1 bg-surface-container-lowest rounded-full p-0.5 border border-outline-variant/20">
+          <span class="material-symbols-outlined text-[14px] filled ${meta.color}">${meta.icon}</span>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div class="flex-grow cursor-pointer min-w-0" onclick="${selectMode ? `toggleSelectNotif(${n.id}, event)` : mainAction}">
+        <p class="font-body-md text-body-md text-on-surface"><strong class="text-primary">${n.actor?.full_name || n.actor?.username || 'Winemu'}</strong> ${n.message || n.title || ''}</p>
+        <span class="font-body-sm text-body-sm text-on-surface-variant">${timeAgo(n.created_at)}</span>
+      </div>
+
+      <!-- Unread dot + three-dot menu -->
+      <div class="flex items-center gap-2 flex-shrink-0">
+        ${!n.is_read ? '<div class="w-2 h-2 rounded-full bg-primary mt-1"></div>' : ''}
+        <div class="relative ${selectMode ? 'hidden' : ''}">
+          <button onclick="toggleNotifMenu('${menuId}', event)" class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors opacity-0 group-hover:opacity-100">
+            <span class="material-symbols-outlined text-[18px]">more_vert</span>
+          </button>
+          <div id="${menuId}" class="hidden absolute right-0 top-full mt-1 w-44 bg-surface-container-lowest rounded-2xl shadow-2xl border border-outline-variant/20 overflow-hidden z-50">
+            <button onclick="enterSelectFromMenu(${n.id}); closeNotifMenu()" class="w-full flex items-center gap-2.5 px-4 py-3 text-sm text-on-surface hover:bg-surface-container-low transition-colors text-left">
+              <span class="material-symbols-outlined text-[16px] text-on-surface-variant flex-shrink-0">checklist</span>
+              <span>Pilih</span>
+            </button>
+            ${!n.is_read ? `<button onclick="markRead(${n.id}); closeNotifMenu()" class="w-full flex items-center gap-2.5 px-4 py-3 text-sm text-on-surface hover:bg-surface-container-low transition-colors text-left">
+              <span class="material-symbols-outlined text-[16px] text-on-surface-variant flex-shrink-0">done_all</span>
+              <span>Tandai dibaca</span>
+            </button>` : ''}
+            <div class="h-px bg-outline-variant/20 mx-3"></div>
+            <button onclick="deleteNotifConfirm(${n.id}); closeNotifMenu()" class="w-full flex items-center gap-2.5 px-4 py-3 text-sm text-error hover:bg-error-container/20 transition-colors text-left">
+              <span class="material-symbols-outlined text-[16px] flex-shrink-0">delete</span>
+              <span>Hapus</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  // ── Dropdown menu ──────────────────────────────────────────────────────────
+  function toggleNotifMenu(menuId, event) {
+    event.stopPropagation();
+    if (openNotifMenuId && openNotifMenuId !== menuId) {
+      document.getElementById(openNotifMenuId)?.classList.add('hidden');
+    }
+    const menu = document.getElementById(menuId);
+    if (!menu) return;
+    menu.classList.toggle('hidden');
+    openNotifMenuId = menu.classList.contains('hidden') ? null : menuId;
+  }
+  function closeNotifMenu() {
+    if (openNotifMenuId) document.getElementById(openNotifMenuId)?.classList.add('hidden');
+    openNotifMenuId = null;
+  }
+  document.addEventListener('click', () => closeNotifMenu());
+
+  // ── Select mode ────────────────────────────────────────────────────────────
+  function enterSelectMode() {
+    selectMode = true;
+    selectedNotifIds.clear();
+    renderSelectToolbar();
+    loadNotifications();
+  }
+  function enterSelectFromMenu(notifId) {
+    selectMode = true;
+    selectedNotifIds = new Set([notifId]);
+    renderSelectToolbar();
+    loadNotifications();
+  }
+  function exitSelectMode() {
+    selectMode = false;
+    selectedNotifIds.clear();
+    document.getElementById('select-toolbar')?.remove();
+    loadNotifications();
+  }
+  function toggleSelectNotif(id, event) {
+    event.stopPropagation();
+    if (selectedNotifIds.has(id)) selectedNotifIds.delete(id);
+    else selectedNotifIds.add(id);
+    const card = document.getElementById(`notif-card-${id}`);
+    if (card) {
+      card.classList.toggle('ring-2', selectedNotifIds.has(id));
+      card.classList.toggle('ring-primary', selectedNotifIds.has(id));
+      card.classList.toggle('bg-primary/5', selectedNotifIds.has(id));
+      const cb = card.querySelector('.select-checkbox > div');
+      if (cb) {
+        const sel = selectedNotifIds.has(id);
+        cb.className = `w-6 h-6 rounded-full border-2 flex items-center justify-center cursor-pointer transition-all ${sel ? 'bg-primary border-primary' : 'border-outline hover:border-primary'}`;
+        cb.innerHTML = sel ? '<span class="material-symbols-outlined text-[14px] text-white">check</span>' : '';
+      }
+    }
+    const countEl = document.getElementById('select-count');
+    if (countEl) countEl.textContent = `${selectedNotifIds.size} dipilih`;
+  }
+  function renderSelectToolbar() {
+    document.getElementById('select-toolbar')?.remove();
+    const toolbar = document.createElement('div');
+    toolbar.id = 'select-toolbar';
+    toolbar.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:#1a373b;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:16px 24px;gap:12px;z-index:100;';
+    toolbar.innerHTML = `
+      <span id="select-count" style="font-size:14px;font-weight:600;">0 dipilih</span>
+      <div style="display:flex;gap:12px;">
+        <button onclick="deleteSelectedNotifs()" style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.15);border:none;color:#fff;padding:8px 16px;border-radius:20px;font-size:14px;font-weight:600;cursor:pointer;">
+          <span class="material-symbols-outlined" style="font-size:18px;">delete</span>Hapus
+        </button>
+        <button onclick="exitSelectMode()" style="background:transparent;border:1px solid rgba(255,255,255,0.4);color:#fff;padding:8px 16px;border-radius:20px;font-size:14px;font-weight:600;cursor:pointer;">Batal</button>
+      </div>`;
+    document.body.appendChild(toolbar);
+  }
+
+  // ── Delete actions ─────────────────────────────────────────────────────────
+  function deleteNotifConfirm(id) {
+    if (!confirm('Hapus notifikasi ini?')) return;
+    api.delete(`/notifications/${id}`).then(() => {
+      document.getElementById(`notif-card-${id}`)?.remove();
+      showToast('Notifikasi dihapus');
+    });
+  }
+  async function deleteSelectedNotifs() {
+    if (!selectedNotifIds.size) return;
+    if (!confirm(`Hapus ${selectedNotifIds.size} notifikasi?`)) return;
+    const ids = [...selectedNotifIds];
+    await api.post('/notifications/bulk-delete', { ids });
+    exitSelectMode();
+    showToast(`${ids.length} notifikasi dihapus`);
+  }
+
+  async function markRead(id) {
+    await api.post(`/notifications/${id}/read`);
+    const card = document.getElementById(`notif-card-${id}`);
+    if (card) {
+      card.querySelector('.absolute.left-0')?.remove();
+      card.querySelector('.w-2.h-2.rounded-full.bg-primary')?.remove();
+      card.classList.remove('border-primary/10');
+      card.classList.add('border-transparent');
+    }
+  }
+
+  async function goToReport(notifId, reportId) {
+    await markRead(notifId);
+    window.location.href = `/desktop/report-detail.html?id=${reportId}`;
+  }
+  async function goToHandover(notifId, claimId) {
+    await markRead(notifId);
+    window.location.href = `/desktop/status-serah-terima.html?claim_id=${claimId}`;
+  }
+  async function markAllRead() {
+    const res = await api.post('/notifications/read-all');
+    if (res?.status === 'success') { showToast('Semua notifikasi ditandai dibaca'); loadNotifications(); }
+  }
+</script>
+</body>
+</html>
