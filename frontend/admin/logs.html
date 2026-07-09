@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Winemu Admin - Log Sistem</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Philosopher:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<script>
+tailwind.config={darkMode:"class",theme:{extend:{colors:{
+  "surface-container-lowest":"#ffffff","surface":"#fcf9f4","background":"#fcf9f4",
+  "primary-container":"#314e52","on-primary":"#ffffff","outline-variant":"#c1c8c9",
+  "on-surface":"#1c1c19","outline":"#727879","primary":"#1a373b","on-surface-variant":"#414849",
+  "secondary":"#7d562d","surface-container-low":"#f6f3ee","surface-container-high":"#ebe8e3",
+  "surface-container":"#f0ede9","surface-container-highest":"#e5e2dd","secondary-container":"#ffca98",
+  "on-secondary-container":"#7a532a","primary-fixed":"#c9e8ed","primary-fixed-dim":"#adccd1",
+  "error-container":"#ffdad6","on-error-container":"#93000a","error":"#ba1a1a",
+  "tertiary-container":"#79351d","on-tertiary-container":"#ffa182","secondary-fixed":"#ffdcbd",
+  "secondary-fixed-dim":"#f0bd8b"
+},fontFamily:{"headline-md":["Philosopher"],"display-lg":["Philosopher"],"body-sm":["Plus Jakarta Sans"],"body-md":["Plus Jakarta Sans"],"body-lg":["Plus Jakarta Sans"],"label-caps":["Plus Jakarta Sans"]},
+fontSize:{"display-lg":["40px",{"lineHeight":"1.2","letterSpacing":"-0.02em","fontWeight":"700"}]}}}}
+</script>
+<style>
+.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;display:inline-block;line-height:1;}
+.soft-shadow{box-shadow:0 10px 40px -10px rgba(49,78,82,0.08);}
+</style>
+</head>
+<body class="antialiased min-h-screen flex bg-background text-on-background">
+
+<!-- SideNav -->
+<nav class="fixed left-0 top-0 h-full w-64 bg-primary text-on-primary flex flex-col py-6 px-2 shadow-md z-50">
+  <div class="mb-8 px-4 flex items-center gap-3">
+    <div class="w-10 h-10 rounded-full overflow-hidden"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="20" fill="#314e52"/><text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" fill="white" font-size="18" font-weight="bold">W</text></svg></div>
+    <div><h1 class="text-lg font-bold text-on-primary leading-none">Winemu</h1><p class="text-xs text-on-primary/80 mt-0.5">Admin Console</p></div>
+  </div>
+  <a href="/report.html" class="mb-4 mx-4 bg-primary-container text-on-primary-container py-3 px-4 rounded-xl flex items-center justify-center gap-2"><span class="material-symbols-outlined">add</span><span class="font-bold">New Report</span></a>
+  <div class="flex-1 space-y-1">
+    <a href="/admin/dashboard.html" class="flex items-center gap-3 px-4 py-3 text-on-primary/80 hover:bg-primary-fixed-dim/20 rounded-lg cursor-pointer"><span class="material-symbols-outlined">dashboard</span><span>Dashboard</span></a>
+    <a href="/admin/reports.html" class="flex items-center gap-3 px-4 py-3 text-on-primary/80 hover:bg-primary-fixed-dim/20 rounded-lg cursor-pointer"><span class="material-symbols-outlined">assessment</span><span>Reports</span></a>
+    <a href="/admin/conflicts.html" class="flex items-center gap-3 px-4 py-3 text-on-primary/80 hover:bg-primary-fixed-dim/20 rounded-lg cursor-pointer"><span class="material-symbols-outlined">gavel</span><span>Conflict Resolution</span></a>
+    <a href="/admin/users.html" class="flex items-center gap-3 px-4 py-3 text-on-primary/80 hover:bg-primary-fixed-dim/20 rounded-lg cursor-pointer"><span class="material-symbols-outlined">group</span><span>User Management</span></a>
+    <a href="/admin/logs.html" class="flex items-center gap-3 px-4 py-3 bg-primary-container text-on-primary-container rounded-lg font-bold"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">history</span><span>System Logs</span></a>
+  </div>
+  <div class="mt-auto pt-4 border-t border-on-primary/10 space-y-1">
+    <a href="/admin/settings.html" class="flex items-center gap-3 px-4 py-3 text-on-primary/80 hover:bg-primary-fixed-dim/20 rounded-lg cursor-pointer"><span class="material-symbols-outlined">settings</span><span>Settings</span></a>
+    <button onclick="adminLogout()" class="w-full flex items-center gap-3 px-4 py-3 text-on-primary/80 hover:bg-primary-fixed-dim/20 rounded-lg cursor-pointer"><span class="material-symbols-outlined">logout</span><span>Logout</span></button>
+  </div>
+</nav>
+
+<!-- Main Wrapper -->
+<div class="ml-64 flex-1 flex flex-col min-h-screen">
+  <header class="sticky top-0 z-40 w-full bg-surface-container-lowest flex items-center justify-between px-6 py-3 shadow-sm border-b border-surface-container-highest">
+    <div class="flex-1 flex items-center max-w-xl">
+      <div class="relative w-full">
+        <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">search</span>
+        <input id="global-search" type="text" placeholder="Cari laporan, pengguna, atau area..."
+          class="w-full bg-surface-container-low text-on-surface placeholder:text-outline border border-outline-variant/50 rounded-full py-3 pl-12 pr-4 focus:outline-none focus:bg-surface-container-lowest transition-colors text-sm">
+      </div>
+    </div>
+    <div class="flex items-center gap-4 ml-8">
+      <button class="p-2 text-outline hover:text-primary transition-colors hover:bg-surface-container-low rounded-full">
+        <span class="material-symbols-outlined">notifications</span>
+      </button>
+      <button class="p-2 text-outline hover:text-primary transition-colors hover:bg-surface-container-low rounded-full">
+        <span class="material-symbols-outlined">help</span>
+      </button>
+      <div class="h-8 w-px bg-outline-variant/30 mx-2"></div>
+      <div class="flex items-center gap-3 cursor-pointer">
+        <div class="text-right hidden md:block">
+          <p class="text-sm font-bold text-on-surface" id="admin-name">Admin</p>
+          <p class="text-xs text-outline" id="admin-role">Super Admin</p>
+        </div>
+        <div class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold" id="admin-avatar">A</div>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1 p-6 md:p-10 overflow-y-auto">
+    <div class="mb-8">
+      <h2 class="font-display-lg text-3xl text-primary mb-2">Log Sistem</h2>
+      <p class="text-on-surface-variant text-lg">Rekam jejak aktivitas pengguna dan sistem secara real-time.</p>
+    </div>
+
+    <!-- Filter Cards -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <button onclick="setActionFilter('')" id="card-all" class="bg-surface-container-lowest soft-shadow rounded-2xl p-6 text-left border-2 border-primary transition-colors group">
+        <div class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"><span class="material-symbols-outlined">list_alt</span></div>
+        <h3 class="font-headline-md text-lg text-primary mb-1">Semua Log</h3>
+        <p class="text-sm text-on-surface-variant" id="count-all">- entri</p>
+      </button>
+      <button onclick="setActionFilter('login')" id="card-login" class="bg-surface-container-lowest soft-shadow rounded-2xl p-6 text-left border border-outline-variant hover:border-primary transition-colors group">
+        <div class="w-10 h-10 rounded-full bg-error-container text-on-error-container flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"><span class="material-symbols-outlined">security</span></div>
+        <h3 class="font-headline-md text-lg text-primary mb-1">Login</h3>
+        <p class="text-sm text-on-surface-variant" id="count-login">- sesi</p>
+      </button>
+      <button onclick="setActionFilter('register')" id="card-register" class="bg-surface-container-lowest soft-shadow rounded-2xl p-6 text-left border border-outline-variant hover:border-primary transition-colors group">
+        <div class="w-10 h-10 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"><span class="material-symbols-outlined">person_add</span></div>
+        <h3 class="font-headline-md text-lg text-primary mb-1">Registrasi</h3>
+        <p class="text-sm text-on-surface-variant" id="count-register">- pengguna baru</p>
+      </button>
+      <button onclick="setActionFilter('logout')" id="card-logout" class="bg-surface-container-lowest soft-shadow rounded-2xl p-6 text-left border border-outline-variant hover:border-primary transition-colors group">
+        <div class="w-10 h-10 rounded-full bg-tertiary-container text-on-tertiary-container flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"><span class="material-symbols-outlined">logout</span></div>
+        <h3 class="font-headline-md text-lg text-primary mb-1">Logout</h3>
+        <p class="text-sm text-on-surface-variant" id="count-logout">- sesi keluar</p>
+      </button>
+    </div>
+
+    <!-- Advanced Filters -->
+    <div class="bg-surface-container-lowest soft-shadow rounded-xl p-4 mb-6 flex flex-wrap gap-4 items-center justify-between border border-outline-variant/30">
+      <div class="flex flex-wrap gap-3">
+        <div class="relative">
+          <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-sm">calendar_today</span>
+          <select id="date-filter" onchange="loadLogs()" class="pl-9 pr-8 py-2 rounded-lg border border-outline-variant bg-surface focus:border-primary focus:ring-1 focus:ring-primary text-sm appearance-none">
+            <option value="all">Semua Waktu</option>
+            <option value="today">Hari Ini</option>
+            <option value="week">7 Hari Terakhir</option>
+            <option value="month">Bulan Ini</option>
+          </select>
+        </div>
+      </div>
+      <button onclick="exportLogs()" class="text-primary hover:text-primary-container font-semibold text-sm flex items-center space-x-1">
+        <span class="material-symbols-outlined text-sm">download</span><span>Ekspor CSV</span>
+      </button>
+    </div>
+
+    <!-- Timeline -->
+    <div class="bg-surface-container-lowest soft-shadow rounded-2xl border border-outline-variant/30 overflow-hidden">
+      <div class="p-6">
+        <div id="timeline-container" class="relative border-l-2 border-surface-variant ml-4 space-y-8 pb-4">
+          <div class="flex justify-center py-12"><div class="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div></div>
+        </div>
+      </div>
+      <div class="bg-surface border-t border-outline-variant p-4 flex justify-center">
+        <button onclick="loadMore()" id="load-more-btn" class="px-6 py-2 rounded-full border border-outline hover:border-primary text-on-surface hover:text-primary text-sm transition-colors flex items-center space-x-2">
+          <span>Muat Lebih Banyak</span><span class="material-symbols-outlined text-sm">expand_more</span>
+        </button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="/js/api.js"></script>
+<script>
+let logsPage = 1, logsPerPage = 20, actionFilter = '', searchQuery = '', allLogs = [];
+
+window.addEventListener('DOMContentLoaded', () => {
+    // Set admin info in header
+    const _adminUser = api.getUser();
+    if (_adminUser) {
+      const _nameEl = document.getElementById('admin-name');
+      const _roleEl = document.getElementById('admin-role');
+      const _avEl   = document.getElementById('admin-avatar');
+      if (_nameEl) _nameEl.textContent = _adminUser.full_name || _adminUser.username || 'Admin';
+      if (_roleEl) _roleEl.textContent = _adminUser.role === 'admin' ? 'Super Admin' : _adminUser.role;
+      if (_avEl) {
+        if (_adminUser.avatar_url) {
+          _avEl.innerHTML = `<img src="${_adminUser.avatar_url}" class="w-full h-full object-cover rounded-full">`;
+        } else {
+          _avEl.textContent = (_adminUser.full_name || _adminUser.username || 'A')[0].toUpperCase();
+        }
+      }
+    }
+  if (!api.getToken()) { window.location.href = '/login.html'; return; }
+  const u = api.getUser();
+  if (!u || u.role !== 'admin') { window.location.href = '/feed.html'; return; }
+  loadLogs();
+});
+
+// Since there's no dedicated /admin/logs endpoint, we derive activity from
+// recent reports + dashboard stats to populate a meaningful system log view.
+async function loadLogs() {
+  const container = document.getElementById('timeline-container');
+  container.innerHTML = '<div class="flex justify-center py-12"><div class="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div></div>';
+
+  const [reportsRes, dashRes] = await Promise.all([
+    api.get('/reports?per_page=50'),
+    api.get('/admin/dashboard'),
+  ]);
+
+  const entries = [];
+
+  if (reportsRes?.data?.items) {
+    reportsRes.data.items.forEach(r => {
+      entries.push({
+        type: 'report',
+        action: r.type === 'hilang' ? 'lapor_hilang' : 'lapor_ditemukan',
+        actor: r.author?.full_name || r.author?.username || 'Pengguna',
+        message: `melaporkan barang ${r.type === 'hilang' ? 'hilang' : 'ditemukan'}: "${r.title}"`,
+        timestamp: r.created_at,
+        icon: r.type === 'hilang' ? 'package_2' : 'redeem',
+        color: r.type === 'hilang' ? 'error' : 'primary',
+      });
+      if (r.is_verified) {
+        entries.push({
+          type: 'verify', action: 'login',
+          actor: 'Admin', message: `memverifikasi laporan "${r.title}"`,
+          timestamp: r.updated_at || r.created_at,
+          icon: 'verified', color: 'primary',
+        });
+      }
+    });
+  }
+
+  if (dashRes?.data?.stats) {
+    const s = dashRes.data.stats;
+    entries.push({
+      type: 'system', action: 'register',
+      actor: 'Sistem', message: `${s.new_users_week} pengguna baru terdaftar minggu ini`,
+      timestamp: new Date().toISOString(), icon: 'group', color: 'secondary',
+    });
+  }
+
+  entries.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+  allLogs = entries;
+
+  updateCounts();
+  renderTimeline();
+}
+
+function updateCounts() {
+  document.getElementById('count-all').textContent = `${allLogs.length} entri`;
+  document.getElementById('count-login').textContent = `${allLogs.filter(l => l.action==='login').length} sesi`;
+  document.getElementById('count-register').textContent = `${allLogs.filter(l => l.action==='register').length} pengguna baru`;
+  document.getElementById('count-logout').textContent = `${allLogs.filter(l => l.action==='logout').length} sesi keluar`;
+}
+
+function setActionFilter(action) {
+  actionFilter = action;
+  ['all','login','register','logout'].forEach(a => {
+    const card = document.getElementById('card-' + a);
+    if (a === (action || 'all')) card.className = 'bg-surface-container-lowest soft-shadow rounded-2xl p-6 text-left border-2 border-primary transition-colors group';
+    else card.className = 'bg-surface-container-lowest soft-shadow rounded-2xl p-6 text-left border border-outline-variant hover:border-primary transition-colors group';
+  });
+  renderTimeline();
+}
+
+let debTimer = null;
+function debounceSearch() {
+  clearTimeout(debTimer);
+  debTimer = setTimeout(() => {
+    searchQuery = document.getElementById('log-search').value.toLowerCase();
+    renderTimeline();
+  }, 300);
+}
+
+function renderTimeline() {
+  let filtered = allLogs;
+  if (actionFilter) filtered = filtered.filter(l => l.action === actionFilter);
+  if (searchQuery) filtered = filtered.filter(l =>
+    l.actor.toLowerCase().includes(searchQuery) || l.message.toLowerCase().includes(searchQuery)
+  );
+
+  const visible = filtered.slice(0, logsPage * logsPerPage);
+  const container = document.getElementById('timeline-container');
+
+  if (!visible.length) {
+    container.innerHTML = '<p class="text-center text-on-surface-variant py-12 pl-4">Tidak ada log ditemukan</p>';
+    document.getElementById('load-more-btn').style.display = 'none';
+    return;
+  }
+
+  const colorMap = {
+    error: { bg: 'bg-error-container', text: 'text-on-error-container', tagBg: 'bg-error-container', tagText: 'text-error' },
+    primary: { bg: 'bg-primary-container', text: 'text-on-primary-container', tagBg: 'bg-primary-fixed', tagText: 'text-primary' },
+    secondary: { bg: 'bg-secondary-container', text: 'text-on-secondary-container', tagBg: 'bg-secondary-fixed', tagText: 'text-secondary' },
+  };
+
+  container.innerHTML = visible.map(log => {
+    const c = colorMap[log.color] || colorMap.primary;
+    const label = log.action === 'lapor_hilang' ? 'HILANG' : log.action === 'lapor_ditemukan' ? 'DITEMUKAN' : log.action === 'register' ? 'PENGGUNA' : 'SISTEM';
+    return `<div class="relative pl-8">
+      <div class="absolute -left-[17px] top-1 w-8 h-8 rounded-full ${c.bg} border-4 border-surface-container-lowest flex items-center justify-center shadow-sm">
+        <span class="material-symbols-outlined ${c.text} text-sm">${log.icon}</span>
+      </div>
+      <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
+        <div>
+          <div class="flex items-center space-x-2 mb-1">
+            <span class="text-xs font-bold ${c.tagText} ${c.tagBg} px-2 py-0.5 rounded-sm tracking-wide">${label}</span>
+            <span class="text-sm text-on-surface-variant">${timeAgo(log.timestamp)}</span>
+          </div>
+          <p class="text-on-surface">
+            <strong class="font-semibold text-primary">[${log.actor}]</strong> ${log.message}.
+          </p>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('load-more-btn').style.display = visible.length >= filtered.length ? 'none' : 'flex';
+}
+
+function loadMore() { logsPage++; renderTimeline(); }
+
+function exportLogs() {
+  const rows = allLogs.map(l => `${l.timestamp},${l.action},${l.actor},"${l.message.replace(/"/g,'""')}"`);
+  const csv = 'timestamp,action,actor,message\n' + rows.join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'winemu-logs.csv'; a.click();
+  URL.revokeObjectURL(url);
+}
+
+function timeAgo(dateStr) {
+  const date = new Date(dateStr), now = new Date();
+  const diff = Math.floor((now - date) / 1000);
+  if (diff < 60) return 'Baru saja';
+  if (diff < 3600) return `${Math.floor(diff/60)} menit lalu`;
+  if (diff < 86400) return `${Math.floor(diff/3600)} jam lalu`;
+  if (diff < 604800) return `${Math.floor(diff/86400)} hari lalu`;
+  return date.toLocaleDateString('id-ID');
+}
+
+function adminLogout() { api.clearTokens(); window.location.href = '/login.html'; }
+</script>
+</body>
+</html>

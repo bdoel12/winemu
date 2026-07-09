@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Winemu Admin - Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Javanese&family=Philosopher:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+tailwind.config = {
+  darkMode:"class",
+  theme:{ extend:{
+    colors:{
+      "on-error":"#ffffff","surface-bright":"#fcf9f4","surface-variant":"#e5e2dd",
+      "inverse-on-surface":"#f3f0eb","background":"#fcf9f4","on-surface":"#1c1c19",
+      "inverse-primary":"#adccd1","surface":"#fcf9f4","primary":"#1a373b",
+      "on-secondary":"#ffffff","surface-container-low":"#f6f3ee","primary-container":"#314e52",
+      "on-background":"#1c1c19","surface-container-high":"#ebe8e3","secondary-fixed-dim":"#f0bd8b",
+      "tertiary":"#5c1f09","on-tertiary":"#ffffff","surface-tint":"#466367","primary-fixed":"#c9e8ed",
+      "outline":"#727879","outline-variant":"#c1c8c9","on-primary":"#ffffff",
+      "on-surface-variant":"#414849","surface-dim":"#dcdad5","inverse-surface":"#31302d",
+      "primary-fixed-dim":"#adccd1","on-primary-fixed-variant":"#2e4b4f","error-container":"#ffdad6",
+      "on-primary-container":"#a0bec3","error":"#ba1a1a","surface-container-highest":"#e5e2dd",
+      "secondary-container":"#ffca98","tertiary-container":"#79351d","secondary-fixed":"#ffdcbd",
+      "surface-container-lowest":"#ffffff","on-error-container":"#93000a","surface-container":"#f0ede9",
+      "on-secondary-container":"#7a532a","on-primary-fixed":"#001f23","tertiary-fixed-dim":"#ffb59d",
+      "secondary":"#7d562d","tertiary-fixed":"#ffdbd0","on-tertiary-container":"#ffa182",
+      "on-tertiary-fixed":"#390b00","on-secondary-fixed":"#2c1600","on-secondary-fixed-variant":"#623f18"
+    },
+    fontFamily:{"headline-md":["Philosopher"],"display-lg":["Philosopher"],"body-sm":["Plus Jakarta Sans"],"body-md":["Plus Jakarta Sans"],"body-lg":["Plus Jakarta Sans"],"label-caps":["Plus Jakarta Sans"]},
+    fontSize:{
+      "headline-md":["24px",{"lineHeight":"1.3","fontWeight":"700"}],
+      "display-lg":["40px",{"lineHeight":"1.2","letterSpacing":"-0.02em","fontWeight":"700"}],
+      "body-sm":["14px",{"lineHeight":"1.5","fontWeight":"400"}],
+      "body-md":["16px",{"lineHeight":"1.6","fontWeight":"400"}],
+      "body-lg":["18px",{"lineHeight":"1.6","fontWeight":"400"}],
+      "label-caps":["12px",{"lineHeight":"1.2","letterSpacing":"0.05em","fontWeight":"600"}]
+    }
+  }}
+}
+</script>
+<style>
+.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;display:inline-block;line-height:1;}
+.diffused-shadow{box-shadow:0 10px 40px -10px rgba(49,78,82,0.08);}
+#admin-map{height:100%;min-height:300px;}
+.chart-bar{transition:height 0.6s cubic-bezier(0.34,1.56,0.64,1);}
+@keyframes countUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.count-anim{animation:countUp 0.5s ease-out forwards;}
+</style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex">
+
+<!-- SideNavBar -->
+<nav class="fixed left-0 top-0 h-full w-64 bg-primary text-on-primary flex flex-col py-6 px-2 shadow-md z-50">
+  <div class="mb-8 px-4 flex items-center gap-3">
+    <div class="w-10 h-10 rounded-full bg-secondary-fixed-dim flex items-center justify-center overflow-hidden">
+      <svg viewBox="0 0 40 40" class="w-full h-full"><circle cx="20" cy="20" r="20" fill="#314e52"/><text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" fill="white" font-size="18" font-weight="bold">W</text></svg>
+    </div>
+    <div>
+      <h1 class="font-headline-md text-lg text-on-primary leading-none">Winemu</h1>
+      <p class="text-xs text-on-primary/80 mt-0.5 font-semibold tracking-wide">Admin Console</p>
+    </div>
+  </div>
+
+  <a href="/report.html" class="mb-4 mx-4 bg-primary-container text-on-primary-container py-3 px-4 rounded-xl flex items-center justify-center gap-2 hover:scale-[1.02] transition-transform cursor-pointer active:scale-95">
+    <span class="material-symbols-outlined">add</span>
+    <span class="font-body-md font-bold">New Report</span>
+  </a>
+
+  <div class="flex-1 space-y-1">
+    <a href="/admin/dashboard.html" id="nav-dashboard" class="flex items-center gap-3 px-4 py-3 bg-primary-container text-on-primary-container rounded-lg font-bold">
+      <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">dashboard</span>
+      <span>Dashboard</span>
+    </a>
+    <a href="/admin/reports.html" class="flex items-center gap-3 px-4 py-3 text-on-primary/80 hover:bg-primary-fixed-dim/20 rounded-lg hover:scale-[1.02] transition-transform cursor-pointer">
+      <span class="material-symbols-outlined">assessment</span>
+      <span>Reports</span>
+    </a>
+    <a href="/admin/conflicts.html" class="flex items-center gap-3 px-4 py-3 text-on-primary/80 hover:bg-primary-fixed-dim/20 rounded-lg hover:scale-[1.02] transition-transform cursor-pointer">
+      <span class="material-symbols-outlined">gavel</span>
+      <span>Conflict Resolution</span>
+    </a>
+    <a href="/admin/users.html" class="flex items-center gap-3 px-4 py-3 text-on-primary/80 hover:bg-primary-fixed-dim/20 rounded-lg hover:scale-[1.02] transition-transform cursor-pointer">
+      <span class="material-symbols-outlined">group</span>
+      <span>User Management</span>
+    </a>
+    <a href="/admin/logs.html" class="flex items-center gap-3 px-4 py-3 text-on-primary/80 hover:bg-primary-fixed-dim/20 rounded-lg hover:scale-[1.02] transition-transform cursor-pointer">
+      <span class="material-symbols-outlined">history</span>
+      <span>System Logs</span>
+    </a>
+  </div>
+
+  <div class="mt-auto pt-4 border-t border-on-primary/10 space-y-1">
+    <a href="/admin/settings.html" class="flex items-center gap-3 px-4 py-3 text-on-primary/80 hover:bg-primary-fixed-dim/20 rounded-lg cursor-pointer">
+      <span class="material-symbols-outlined">settings</span><span>Settings</span>
+    </a>
+    <button onclick="adminLogout()" class="w-full flex items-center gap-3 px-4 py-3 text-on-primary/80 hover:bg-primary-fixed-dim/20 rounded-lg cursor-pointer">
+      <span class="material-symbols-outlined">logout</span><span>Logout</span>
+    </button>
+  </div>
+</nav>
+
+<!-- Main Wrapper -->
+<div class="flex-1 ml-64 flex flex-col min-h-screen">
+
+  <!-- TopAppBar -->
+  <header class="sticky top-0 z-40 w-full bg-surface-container-lowest flex items-center justify-between px-6 py-3 shadow-sm border-b border-surface-container-highest">
+    <div class="flex-1 flex items-center max-w-xl">
+      <div class="relative w-full">
+        <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">search</span>
+        <input id="global-search" type="text" placeholder="Cari laporan, pengguna, atau area..."
+          class="w-full bg-surface-container-low text-on-surface placeholder:text-outline border border-outline-variant/50 rounded-full py-3 pl-12 pr-4 focus:outline-none focus:bg-surface-container-lowest transition-colors text-sm">
+      </div>
+    </div>
+    <div class="flex items-center gap-4 ml-8">
+      <button class="p-2 text-outline hover:text-primary transition-colors hover:bg-surface-container-low rounded-full">
+        <span class="material-symbols-outlined">notifications</span>
+      </button>
+      <button class="p-2 text-outline hover:text-primary transition-colors hover:bg-surface-container-low rounded-full">
+        <span class="material-symbols-outlined">help</span>
+      </button>
+      <div class="h-8 w-px bg-outline-variant/30 mx-2"></div>
+      <div class="flex items-center gap-3 cursor-pointer">
+        <div class="text-right hidden md:block">
+          <p class="text-sm font-bold text-on-surface" id="admin-name">Admin</p>
+          <p class="text-xs text-outline" id="admin-role">Super Admin</p>
+        </div>
+        <div class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold" id="admin-avatar">A</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Canvas -->
+  <main class="flex-1 p-6 md:p-8 max-w-[1400px] mx-auto w-full flex flex-col gap-8">
+
+    <!-- Page Header -->
+    <div class="flex justify-between items-start">
+      <div>
+        <h2 class="font-headline-md text-headline-md text-on-surface">Ringkasan Operasional</h2>
+        <p class="text-on-surface-variant mt-1 text-sm">Pantau status laporan dan aktivitas sistem hari ini.</p>
+      </div>
+      <div class="flex items-center gap-2 text-sm text-on-surface-variant bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-2">
+        <span class="material-symbols-outlined text-[16px]">calendar_today</span>
+        <span id="current-date"></span>
+      </div>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="bg-surface-container-lowest rounded-2xl p-6 diffused-shadow border border-surface-variant/30 flex flex-col hover:scale-[1.02] transition-transform duration-300">
+        <div class="flex justify-between items-start mb-4">
+          <div class="p-3 bg-primary-fixed/30 rounded-xl">
+            <span class="material-symbols-outlined text-primary-container" style="font-variation-settings:'FILL' 1;">description</span>
+          </div>
+          <span class="text-xs font-semibold text-primary bg-primary-fixed/20 px-2 py-1 rounded-full" id="badge-reports">+0%</span>
+        </div>
+        <p class="text-sm text-on-surface-variant">Total Laporan</p>
+        <p class="font-headline-md text-[32px] text-on-surface mt-1 count-anim" id="kpi-total">-</p>
+      </div>
+      <div class="bg-surface-container-lowest rounded-2xl p-6 diffused-shadow border border-surface-variant/30 flex flex-col hover:scale-[1.02] transition-transform duration-300">
+        <div class="flex justify-between items-start mb-4">
+          <div class="p-3 bg-secondary-fixed/30 rounded-xl">
+            <span class="material-symbols-outlined text-on-secondary-container" style="font-variation-settings:'FILL' 1;">search_activity</span>
+          </div>
+          <span class="text-xs font-semibold text-outline bg-surface-container-high px-2 py-1 rounded-full">Aktif</span>
+        </div>
+        <p class="text-sm text-on-surface-variant">Laporan Hilang</p>
+        <p class="font-headline-md text-[32px] text-on-surface mt-1 count-anim" id="kpi-hilang">-</p>
+      </div>
+      <div class="bg-surface-container-lowest rounded-2xl p-6 diffused-shadow border border-surface-variant/30 flex flex-col hover:scale-[1.02] transition-transform duration-300 relative overflow-hidden">
+        <div class="absolute right-0 top-0 w-24 h-24 bg-tertiary-fixed/20 rounded-bl-full -z-0"></div>
+        <div class="flex justify-between items-start mb-4 relative z-10">
+          <div class="p-3 bg-tertiary-fixed/30 rounded-xl">
+            <span class="material-symbols-outlined text-tertiary-container" style="font-variation-settings:'FILL' 1;">task_alt</span>
+          </div>
+          <span class="text-xs font-semibold text-secondary bg-secondary-fixed/30 px-2 py-1 rounded-full" id="badge-found">+0 minggu ini</span>
+        </div>
+        <p class="text-sm text-on-surface-variant">Barang Ditemukan</p>
+        <p class="font-headline-md text-[32px] text-on-surface mt-1 count-anim" id="kpi-ditemukan">-</p>
+      </div>
+      <div class="bg-surface-container-lowest rounded-2xl p-6 diffused-shadow border border-error-container/50 flex flex-col hover:scale-[1.02] transition-transform duration-300">
+        <div class="flex justify-between items-start mb-4">
+          <div class="p-3 bg-error-container/50 rounded-xl">
+            <span class="material-symbols-outlined text-error" style="font-variation-settings:'FILL' 1;">verified_user</span>
+          </div>
+          <span class="text-xs font-semibold text-green-700 bg-green-50 px-2 py-1 rounded-full" id="badge-solved">0 selesai</span>
+        </div>
+        <p class="text-sm text-on-surface-variant">Total Pengguna</p>
+        <p class="font-headline-md text-[32px] text-on-surface mt-1 count-anim" id="kpi-users">-</p>
+      </div>
+    </div>
+
+    <!-- Chart + Map Row -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+      <!-- Bar Chart - Reports per week -->
+      <div class="lg:col-span-1 bg-surface-container-lowest rounded-2xl diffused-shadow border border-surface-variant/30 p-6 flex flex-col">
+        <h3 class="font-headline-md text-[18px] text-on-surface mb-1">Laporan Minggu Ini</h3>
+        <p class="text-sm text-on-surface-variant mb-6">Perbandingan hilang vs ditemukan</p>
+        <div class="flex-1 flex items-end gap-3 px-2" id="bar-chart" style="min-height:160px;">
+          <!-- bars injected -->
+        </div>
+        <div class="flex gap-4 mt-4">
+          <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-sm bg-primary"></div><span class="text-xs text-on-surface-variant">Hilang</span></div>
+          <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-sm bg-secondary"></div><span class="text-xs text-on-surface-variant">Ditemukan</span></div>
+        </div>
+      </div>
+
+      <!-- Operational Map -->
+      <div class="lg:col-span-2 bg-surface-container-lowest rounded-2xl diffused-shadow border border-surface-variant/30 overflow-hidden flex flex-col" style="height:360px;">
+        <div class="p-5 border-b border-surface-variant/50 flex justify-between items-center flex-shrink-0">
+          <div>
+            <h3 class="font-headline-md text-[18px] text-on-surface">Peta Operasional</h3>
+            <p class="text-sm text-on-surface-variant mt-0.5">Distribusi laporan secara geografis</p>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="filterMap('all')" id="map-all" class="text-xs font-semibold px-3 py-1.5 rounded-full bg-primary text-on-primary transition-colors">Semua</button>
+            <button onclick="filterMap('hilang')" id="map-hilang" class="text-xs font-semibold px-3 py-1.5 rounded-full bg-surface-container-high text-on-surface-variant hover:bg-primary hover:text-on-primary transition-colors">Hilang</button>
+            <button onclick="filterMap('ditemukan')" id="map-ditemukan" class="text-xs font-semibold px-3 py-1.5 rounded-full bg-surface-container-high text-on-surface-variant hover:bg-primary hover:text-on-primary transition-colors">Ditemukan</button>
+          </div>
+        </div>
+        <div class="flex-1" id="admin-map"></div>
+      </div>
+    </div>
+
+    <!-- Recent Activity + Verification Queue Row -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+      <!-- Recent Activity -->
+      <div class="bg-surface-container-lowest rounded-2xl diffused-shadow border border-surface-variant/30 flex flex-col">
+        <div class="p-5 border-b border-surface-variant/50 flex justify-between items-center">
+          <h3 class="font-headline-md text-[18px] text-on-surface">Aktivitas Terbaru</h3>
+          <a href="/admin/logs.html" class="text-primary text-sm font-semibold hover:underline">Lihat Semua</a>
+        </div>
+        <div class="flex-1 overflow-y-auto p-5 space-y-5" id="activity-list" style="max-height:360px;">
+          <div class="flex items-center justify-center py-8">
+            <div class="w-6 h-6 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Verification Queue -->
+      <div class="lg:col-span-2 bg-surface-container-lowest rounded-2xl diffused-shadow border border-surface-variant/30 flex flex-col overflow-hidden">
+        <div class="p-5 border-b border-surface-variant/50 flex justify-between items-center">
+          <div>
+            <h3 class="font-headline-md text-[18px] text-on-surface">Laporan Terbaru</h3>
+            <p class="text-sm text-on-surface-variant mt-0.5">Perlu verifikasi atau tindakan admin</p>
+          </div>
+          <a href="/admin/reports.html" class="text-primary text-sm font-semibold hover:underline">Lihat Semua</a>
+        </div>
+        <div class="overflow-x-auto flex-1">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-surface-container-low text-on-surface-variant text-xs border-b border-surface-variant/50">
+                <th class="p-4 font-semibold tracking-wide">ID</th>
+                <th class="p-4 font-semibold tracking-wide">Pelapor</th>
+                <th class="p-4 font-semibold tracking-wide">Barang</th>
+                <th class="p-4 font-semibold tracking-wide">Tipe</th>
+                <th class="p-4 font-semibold tracking-wide">Status</th>
+                <th class="p-4 font-semibold tracking-wide text-right">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="queue-tbody" class="text-sm">
+              <tr><td colspan="6" class="text-center py-8 text-on-surface-variant">Memuat...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Row: Donut + Top Locations -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+      <!-- Category breakdown donut -->
+      <div class="bg-surface-container-lowest rounded-2xl diffused-shadow border border-surface-variant/30 p-6">
+        <h3 class="font-headline-md text-[18px] text-on-surface mb-1">Distribusi Kategori</h3>
+        <p class="text-sm text-on-surface-variant mb-4">Laporan berdasarkan kategori barang</p>
+        <div class="flex items-center gap-6">
+          <svg viewBox="0 0 120 120" class="w-32 h-32 flex-shrink-0" id="donut-svg">
+            <circle cx="60" cy="60" r="45" fill="none" stroke="#e5e2dd" stroke-width="18"/>
+          </svg>
+          <div id="donut-legend" class="flex-1 space-y-2"></div>
+        </div>
+      </div>
+
+      <!-- User growth mini -->
+      <div class="bg-surface-container-lowest rounded-2xl diffused-shadow border border-surface-variant/30 p-6">
+        <h3 class="font-headline-md text-[18px] text-on-surface mb-1">Pertumbuhan Pengguna</h3>
+        <p class="text-sm text-on-surface-variant mb-4">7 hari terakhir</p>
+        <div class="space-y-3" id="user-growth-list">
+          <div class="flex items-center justify-center py-8"><div class="w-6 h-6 border-4 border-primary border-t-transparent rounded-full animate-spin"></div></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="/js/api.js"></script>
+<script>
+  // Auth guard for admin
+  window.addEventListener('DOMContentLoaded', () => {
+    if (!api.getToken()) { window.location.href = '/login.html'; return; }
+    const user = api.getUser();
+    if (!user || user.role !== 'admin') { window.location.href = '/feed.html'; return; }
+
+    // Set admin info
+    document.getElementById('admin-name').textContent = user.full_name || user.username;
+    document.getElementById('admin-role').textContent = 'Super Admin';
+    const av = document.getElementById('admin-avatar');
+    if (user.avatar_url) av.innerHTML = `<img src="${user.avatar_url}" class="w-full h-full object-cover rounded-full">`;
+    else av.textContent = (user.full_name || user.username || 'A')[0].toUpperCase();
+
+    // Date
+    document.getElementById('current-date').textContent = new Date().toLocaleDateString('id-ID', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+
+    loadDashboard();
+    initMap();
+  });
+
+  let mapInstance = null, allReports = [], mapMarkers = [];
+
+  async function loadDashboard() {
+    const res = await api.get('/admin/dashboard');
+    if (!res?.data) return;
+    const s = res.data.stats;
+
+    // KPIs
+    animateCount('kpi-total', s.total_reports);
+    animateCount('kpi-hilang', s.hilang_count);
+    animateCount('kpi-ditemukan', s.ditemukan_count);
+    animateCount('kpi-users', s.total_users);
+
+    document.getElementById('badge-reports').textContent = `+${s.new_reports_week} minggu ini`;
+    document.getElementById('badge-found').textContent = `+${s.new_users_week} minggu ini`;
+    document.getElementById('badge-solved').textContent = `${s.solved_reports} selesai`;
+
+    // Recent reports in queue
+    renderQueue(res.data.recent_reports || []);
+
+    // Load additional data
+    loadActivity();
+    loadMapReports();
+    loadChartData(); // fetch real chart data from backend
+  }
+
+  async function loadChartData() {
+    const res = await api.get('/admin/chart-data');
+    if (!res?.data) return;
+    loadBarChart(res.data.weekly_reports);
+    loadUserGrowth(res.data.user_growth);
+    loadCategoryChart(res.data.category_distribution);
+  }
+
+  function animateCount(id, target) {
+    const el = document.getElementById(id);
+    if (!el || !target) { el.textContent = target || 0; return; }
+    let start = 0;
+    const duration = 800;
+    const step = target / (duration / 16);
+    const timer = setInterval(() => {
+      start += step;
+      if (start >= target) { el.textContent = target.toLocaleString('id-ID'); clearInterval(timer); }
+      else el.textContent = Math.floor(start).toLocaleString('id-ID');
+    }, 16);
+  }
+
+  function renderQueue(reports) {
+    const tbody = document.getElementById('queue-tbody');
+    if (!reports.length) { tbody.innerHTML = '<tr><td colspan="6" class="text-center py-8 text-on-surface-variant">Tidak ada laporan</td></tr>'; return; }
+
+    tbody.innerHTML = reports.map((r, i) => {
+      const badgeType = r.type === 'hilang'
+        ? `<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-error-container text-on-error-container">Hilang</span>`
+        : `<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-primary-container text-on-primary-container">Ditemukan</span>`;
+      const badgeStatus = r.is_verified
+        ? `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-primary-fixed text-on-primary-fixed"><span class="w-1.5 h-1.5 rounded-full bg-primary"></span>Terverifikasi</span>`
+        : `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-secondary-container text-on-secondary-container"><span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>Menunggu</span>`;
+      const avatar = r.author?.avatar_url
+        ? `<img src="${r.author.avatar_url}" class="w-8 h-8 rounded-full object-cover">`
+        : `<div class="w-8 h-8 rounded-full bg-secondary-fixed/50 flex items-center justify-center text-on-secondary-container font-bold text-xs">${(r.author?.full_name||'?')[0]}</div>`;
+      return `<tr class="border-b border-surface-variant/30 hover:bg-surface-bright transition-colors cursor-pointer" onclick="window.location.href='/report-detail.html?id=${r.id}'">
+        <td class="p-4 font-bold text-primary text-xs">#${String(r.id).padStart(4,'0')}</td>
+        <td class="p-4"><div class="flex items-center gap-2">${avatar}<span>${r.author?.full_name||r.author?.username||'Pengguna'}</span></div></td>
+        <td class="p-4 text-on-surface-variant truncate max-w-[160px]">${r.title}</td>
+        <td class="p-4">${badgeType}</td>
+        <td class="p-4">${badgeStatus}</td>
+        <td class="p-4 text-right">
+          <button onclick="event.stopPropagation();verifyReport(${r.id},this)" class="bg-primary text-on-primary px-3 py-1.5 rounded-lg text-xs hover:scale-[1.02] transition-transform mr-1 ${r.is_verified?'opacity-50 cursor-not-allowed':''}" ${r.is_verified?'disabled':''}>Verifikasi</button>
+          <button onclick="event.stopPropagation();removeReport(${r.id},this)" class="bg-error-container text-on-error-container px-3 py-1.5 rounded-lg text-xs hover:scale-[1.02] transition-transform">Hapus</button>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  async function verifyReport(id, btn) {
+    btn.textContent = '...'; btn.disabled = true;
+    const res = await api.post(`/admin/reports/${id}/verify`);
+    if (res?.status === 'success') { showToast('Laporan diverifikasi ✓'); loadDashboard(); }
+  }
+
+  async function removeReport(id, btn) {
+    if (!confirm('Hapus laporan ini?')) return;
+    const res = await api.delete(`/admin/reports/${id}`);
+    if (res?.status === 'success') { showToast('Laporan dihapus'); loadDashboard(); }
+  }
+
+  async function loadActivity() {
+    const list = document.getElementById('activity-list');
+    // Use recent reports as activity
+    const res = await api.get('/reports?per_page=8');
+    if (!res?.data?.items?.length) { list.innerHTML = '<p class="text-center text-on-surface-variant text-sm">Tidak ada aktivitas</p>'; return; }
+
+    list.innerHTML = res.data.items.map(r => {
+      const color = r.type === 'hilang' ? 'bg-error-container text-error' : 'bg-primary-fixed/30 text-primary-container';
+      const icon = r.type === 'hilang' ? 'package_2' : 'redeem';
+      return `<div class="flex gap-4">
+        <div class="flex flex-col items-center">
+          <div class="w-9 h-9 rounded-full ${color} flex items-center justify-center flex-shrink-0 z-10">
+            <span class="material-symbols-outlined text-[16px]">${icon}</span>
+          </div>
+          <div class="w-px flex-1 bg-surface-variant mt-1"></div>
+        </div>
+        <div class="pb-3">
+          <p class="text-sm font-bold text-on-surface">${r.type === 'hilang' ? 'Laporan Hilang' : 'Barang Ditemukan'}</p>
+          <p class="text-xs text-on-surface-variant mt-0.5">${r.title} — ${r.author?.full_name||'Pengguna'}</p>
+          <span class="text-xs text-outline mt-1 block">${timeAgo(r.created_at)}</span>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  function loadBarChart(data) {
+    const container = document.getElementById('bar-chart');
+    if (!data) { container.innerHTML = '<p class="text-xs text-outline px-2">Tidak ada data</p>'; return; }
+    const labels = data.labels || [];
+    const hilangData = data.hilang || [];
+    const ditemukanData = data.ditemukan || [];
+    const maxVal = Math.max(...hilangData, ...ditemukanData, 1);
+    container.innerHTML = labels.map((d, i) => `
+      <div class="flex-1 flex flex-col items-center gap-1">
+        <div class="w-full flex flex-col gap-1 items-center">
+          <div class="w-full rounded-t-md bg-primary chart-bar" style="height:${(hilangData[i]/maxVal)*120}px;min-height:4px;" title="Hilang: ${hilangData[i]}"></div>
+          <div class="w-full rounded-t-md bg-secondary chart-bar" style="height:${(ditemukanData[i]/maxVal)*120}px;min-height:4px;" title="Ditemukan: ${ditemukanData[i]}"></div>
+        </div>
+        <span class="text-[10px] text-on-surface-variant font-semibold">${d}</span>
+      </div>
+    `).join('');
+  }
+
+  function initMap() {
+    setTimeout(() => {
+      mapInstance = L.map('admin-map').setView([-7.797068, 110.370529], 11);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution:'© OpenStreetMap' }).addTo(mapInstance);
+    }, 200);
+  }
+
+  async function loadMapReports() {
+    const res = await api.get('/reports?per_page=100');
+    if (!res?.data?.items) return;
+    allReports = res.data.items;
+    renderMapMarkers('all');
+  }
+
+  function renderMapMarkers(filter) {
+    if (!mapInstance) return;
+    mapMarkers.forEach(m => mapInstance.removeLayer(m));
+    mapMarkers = [];
+    const filtered = filter === 'all' ? allReports : allReports.filter(r => r.type === filter);
+    filtered.forEach(r => {
+      if (!r.latitude || !r.longitude) return;
+      const color = r.type === 'hilang' ? '#C06C50' : '#7d562d';
+      const icon = L.divIcon({
+        html: `<div style="width:14px;height:14px;background:${color};border-radius:50%;border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,.25);"></div>`,
+        className: '', iconSize: [14,14], iconAnchor: [7,7]
+      });
+      const m = L.marker([r.latitude, r.longitude], {icon}).addTo(mapInstance)
+        .bindPopup(`<b>${r.title}</b><br><small style="color:${color};font-weight:600;">${r.type.toUpperCase()}</small><br><a href="/report-detail.html?id=${r.id}" style="color:#314e52;font-weight:bold;font-size:12px;">Lihat Detail →</a>`);
+      mapMarkers.push(m);
+    });
+  }
+
+  function filterMap(type) {
+    ['all','hilang','ditemukan'].forEach(t => {
+      const btn = document.getElementById('map-' + t);
+      if (t === type) btn.className = 'text-xs font-semibold px-3 py-1.5 rounded-full bg-primary text-on-primary transition-colors';
+      else btn.className = 'text-xs font-semibold px-3 py-1.5 rounded-full bg-surface-container-high text-on-surface-variant hover:bg-primary hover:text-on-primary transition-colors';
+    });
+    renderMapMarkers(type);
+  }
+
+  function loadCategoryChart(catData) {
+    const colors = ['#1a373b','#314e52','#7d562d','#C06C50','#5c1f09','#466367'];
+    const svg = document.getElementById('donut-svg');
+    const legend = document.getElementById('donut-legend');
+    // Clear old rings (keep centre text if any)
+    svg.querySelectorAll('circle.ring').forEach(c => c.remove());
+
+    if (!catData || catData.length === 0) {
+      legend.innerHTML = '<p class="text-xs text-outline">Belum ada data kategori</p>';
+      return;
+    }
+
+    const vals = catData.map(c => c.count);
+    const sum = vals.reduce((a, b) => a + b, 0) || 1;
+    let offset = -Math.PI / 2;
+    const r = 45, cx = 60, cy = 60, strokeW = 18;
+    const circumference = 2 * Math.PI * r;
+
+    catData.forEach((cat, i) => {
+      const pct = cat.count / sum;
+      const dash = pct * circumference;
+      const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      circle.setAttribute('cx', cx); circle.setAttribute('cy', cy); circle.setAttribute('r', r);
+      circle.setAttribute('fill', 'none');
+      circle.setAttribute('stroke', colors[i % colors.length]);
+      circle.setAttribute('stroke-width', strokeW);
+      circle.setAttribute('stroke-dasharray', `${dash} ${circumference - dash}`);
+      circle.setAttribute('stroke-dashoffset', -offset * r);
+      circle.setAttribute('transform', `rotate(${offset * 180 / Math.PI + 90} ${cx} ${cy})`);
+      circle.classList.add('ring');
+      svg.appendChild(circle);
+      offset += pct * 2 * Math.PI;
+    });
+
+    legend.innerHTML = catData.map((cat, i) => `
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <div class="w-2.5 h-2.5 rounded-full flex-shrink-0" style="background:${colors[i % colors.length]};"></div>
+          <span class="text-xs text-on-surface truncate max-w-[120px]">${cat.name}</span>
+        </div>
+        <span class="text-xs font-bold text-on-surface-variant">${cat.count > 0 ? Math.round(cat.count/sum*100) : 0}%</span>
+      </div>
+    `).join('');
+  }
+
+  function loadUserGrowth(data) {
+    if (!data) return;
+    const labels = data.labels || [];
+    const vals = data.values || [];
+    const max = Math.max(...vals, 1);
+    document.getElementById('user-growth-list').innerHTML = labels.map((d, i) => `
+      <div class="flex items-center gap-3">
+        <span class="text-xs text-on-surface-variant w-12 flex-shrink-0">${d}</span>
+        <div class="flex-1 h-2 bg-surface-container rounded-full overflow-hidden">
+          <div class="h-full bg-primary rounded-full transition-all duration-700" style="width:${(vals[i]/max)*100}%"></div>
+        </div>
+        <span class="text-xs font-bold text-on-surface w-6 text-right">${vals[i]}</span>
+      </div>
+    `).join('');
+  }
+
+  function adminLogout() {
+    api.clearTokens();
+    window.location.href = '/login.html';
+  }
+
+  function timeAgo(dateStr) {
+    if (!dateStr) return '';
+    const date = new Date(dateStr), now = new Date();
+    const diff = Math.floor((now - date) / 1000);
+    if (diff < 60) return 'Baru saja';
+    if (diff < 3600) return `${Math.floor(diff/60)} menit lalu`;
+    if (diff < 86400) return `${Math.floor(diff/3600)} jam lalu`;
+    return `${Math.floor(diff/86400)} hari lalu`;
+  }
+
+  function showToast(msg) {
+    const el = document.createElement('div');
+    el.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#314e52;color:white;padding:12px 24px;border-radius:12px;font-family:"Plus Jakarta Sans",sans-serif;font-size:14px;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.15);';
+    el.textContent = msg;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 3000);
+  }
+</script>
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script>
+  // Admin realtime: get notified when new report is submitted
+  (function() {
+    const user = api.getUser();
+    if (!user) return;
+    const socket = io({ transports: ['websocket', 'polling'] });
+    socket.on('connect', () => socket.emit('join_user_room', { user_id: user.id }));
+    socket.on('new_notification', (data) => {
+      // Refresh dashboard data silently
+      loadDashboard();
+      // Show floating toast
+      const toast = document.createElement('div');
+      toast.style.cssText = 'position:fixed;top:1rem;right:1rem;z-index:9999;max-width:300px;background:#1a373b;color:#fff;border-radius:1rem;padding:0.875rem 1rem;display:flex;align-items:center;gap:0.75rem;box-shadow:0 8px 32px rgba(0,0,0,0.25);animation:slideIn 0.35s ease;';
+      toast.innerHTML = `<span class="material-symbols-outlined" style="font-size:20px;">notifications</span><div><div style="font-weight:700;font-size:13px;">${data.title||'Notifikasi baru'}</div><div style="font-size:12px;opacity:0.8;">${data.message||''}</div></div>`;
+      if (!document.getElementById('_adminToastStyle')) {
+        const s = document.createElement('style'); s.id = '_adminToastStyle';
+        s.textContent = '@keyframes slideIn{from{transform:translateX(110%);opacity:0}to{transform:translateX(0);opacity:1}}';
+        document.head.appendChild(s);
+      }
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 5000);
+    });
+    window._adminSocket = socket;
+  })();
+</script>
+</body>
+</html>

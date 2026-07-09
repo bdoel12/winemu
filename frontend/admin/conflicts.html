@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Resolusi Konflik - Winemu Admin</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Philosopher:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<script>
+tailwind.config={darkMode:"class",theme:{extend:{colors:{
+  "primary-fixed":"#c9e8ed","outline-variant":"#c1c8c9","error":"#ba1a1a","on-primary-container":"#a0bec3",
+  "error-container":"#ffdad6","surface":"#fcf9f4","primary-fixed-dim":"#adccd1","tertiary-container":"#79351d",
+  "on-tertiary-container":"#ffa182","on-surface-variant":"#414849","surface-container-highest":"#e5e2dd",
+  "surface-container-low":"#f6f3ee","primary-container":"#314e52","on-secondary":"#ffffff",
+  "surface-container-lowest":"#ffffff","surface-container":"#f0ede9","secondary-container":"#ffca98",
+  "on-primary":"#ffffff","on-background":"#1c1c19","outline":"#727879","on-surface":"#1c1c19",
+  "on-error":"#ffffff","primary":"#1a373b","secondary":"#7d562d","surface-variant":"#e5e2dd",
+  "on-secondary-container":"#7a532a","surface-container-high":"#ebe8e3","background":"#fcf9f4","tertiary":"#5c1f09"
+},fontFamily:{"display-lg-mobile":["Philosopher"],"display-lg":["Philosopher"],"headline-md":["Philosopher"],"body-md":["Plus Jakarta Sans"],"label-caps":["Plus Jakarta Sans"],"body-sm":["Plus Jakarta Sans"],"body-lg":["Plus Jakarta Sans"]},
+fontSize:{"display-lg":["40px",{"lineHeight":"1.2","letterSpacing":"-0.02em","fontWeight":"700"}],"headline-md":["24px",{"lineHeight":"1.3","fontWeight":"700"}]}}}}
+</script>
+<style>
+body{background-color:#F8F5F0;}
+.custom-shadow{box-shadow:0 10px 40px -10px rgba(49,78,82,0.08);}
+.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;display:inline-block;line-height:1;}
+.hide-scrollbar::-webkit-scrollbar{display:none;}
+</style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex">
+
+<!-- SideNav -->
+<nav class="fixed left-0 top-0 h-full w-64 bg-primary text-on-primary flex flex-col py-6 px-2 shadow-md z-50">
+  <div class="mb-8 px-4 flex items-center gap-3">
+    <div class="w-10 h-10 rounded-full overflow-hidden"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="20" fill="#314e52"/><text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" fill="white" font-size="18" font-weight="bold">W</text></svg></div>
+    <div><h1 class="text-lg font-bold text-on-primary leading-none">Winemu</h1><p class="text-xs text-on-primary/80 mt-0.5">Admin Console</p></div>
+  </div>
+  <a href="/report.html" class="mb-4 mx-4 bg-primary-container text-on-primary-container py-3 px-4 rounded-xl flex items-center justify-center gap-2"><span class="material-symbols-outlined">add</span><span class="font-bold">New Report</span></a>
+  <div class="flex-1 space-y-1">
+    <a href="/admin/dashboard.html" class="flex items-center gap-3 px-4 py-3 text-on-primary/80 hover:bg-primary-fixed-dim/20 rounded-lg cursor-pointer"><span class="material-symbols-outlined">dashboard</span><span>Dashboard</span></a>
+    <a href="/admin/reports.html" class="flex items-center gap-3 px-4 py-3 text-on-primary/80 hover:bg-primary-fixed-dim/20 rounded-lg cursor-pointer"><span class="material-symbols-outlined">assessment</span><span>Reports</span></a>
+    <a href="/admin/conflicts.html" class="flex items-center gap-3 px-4 py-3 bg-primary-container text-on-primary-container rounded-lg font-bold"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">gavel</span><span>Conflict Resolution</span></a>
+    <a href="/admin/users.html" class="flex items-center gap-3 px-4 py-3 text-on-primary/80 hover:bg-primary-fixed-dim/20 rounded-lg cursor-pointer"><span class="material-symbols-outlined">group</span><span>User Management</span></a>
+    <a href="/admin/logs.html" class="flex items-center gap-3 px-4 py-3 text-on-primary/80 hover:bg-primary-fixed-dim/20 rounded-lg cursor-pointer"><span class="material-symbols-outlined">history</span><span>System Logs</span></a>
+  </div>
+  <div class="mt-auto pt-4 border-t border-on-primary/10 space-y-1">
+    <a href="/admin/settings.html" class="flex items-center gap-3 px-4 py-3 text-on-primary/80 hover:bg-primary-fixed-dim/20 rounded-lg cursor-pointer"><span class="material-symbols-outlined">settings</span><span>Settings</span></a>
+    <button onclick="adminLogout()" class="w-full flex items-center gap-3 px-4 py-3 text-on-primary/80 hover:bg-primary-fixed-dim/20 rounded-lg cursor-pointer"><span class="material-symbols-outlined">logout</span><span>Logout</span></button>
+  </div>
+</nav>
+
+<!-- Main -->
+<div class="flex-1 ml-64 flex flex-col min-h-screen">
+  <header class="sticky top-0 z-40 w-full bg-surface-container-lowest flex items-center justify-between px-6 py-3 shadow-sm border-b border-surface-container-highest">
+    <div class="flex-1 flex items-center max-w-xl">
+      <div class="relative w-full">
+        <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">search</span>
+        <input id="global-search" type="text" placeholder="Cari laporan, pengguna, atau area..."
+          class="w-full bg-surface-container-low text-on-surface placeholder:text-outline border border-outline-variant/50 rounded-full py-3 pl-12 pr-4 focus:outline-none focus:bg-surface-container-lowest transition-colors text-sm">
+      </div>
+    </div>
+    <div class="flex items-center gap-4 ml-8">
+      <button class="p-2 text-outline hover:text-primary transition-colors hover:bg-surface-container-low rounded-full">
+        <span class="material-symbols-outlined">notifications</span>
+      </button>
+      <button class="p-2 text-outline hover:text-primary transition-colors hover:bg-surface-container-low rounded-full">
+        <span class="material-symbols-outlined">help</span>
+      </button>
+      <div class="h-8 w-px bg-outline-variant/30 mx-2"></div>
+      <div class="flex items-center gap-3 cursor-pointer">
+        <div class="text-right hidden md:block">
+          <p class="text-sm font-bold text-on-surface" id="admin-name">Admin</p>
+          <p class="text-xs text-outline" id="admin-role">Super Admin</p>
+        </div>
+        <div class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold" id="admin-avatar">A</div>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1 p-6 overflow-y-auto">
+    <!-- KPI Cards -->
+    <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div class="bg-surface-container-lowest rounded-2xl p-6 custom-shadow relative overflow-hidden group hover:scale-[1.01] transition-transform duration-300">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-full -mr-8 -mt-8"></div>
+        <div class="flex items-center gap-4 mb-4 relative z-10">
+          <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary"><span class="material-symbols-outlined">gavel</span></div>
+          <div><p class="text-xs text-outline uppercase tracking-wider font-semibold">Total Sengketa Aktif</p><h3 class="font-display-lg text-3xl text-on-surface mt-1" id="kpi-active">-</h3></div>
+        </div>
+      </div>
+      <div class="bg-surface-container-lowest rounded-2xl p-6 custom-shadow relative overflow-hidden group hover:scale-[1.01] transition-transform duration-300">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-error/5 rounded-bl-full -mr-8 -mt-8"></div>
+        <div class="flex items-center gap-4 mb-4 relative z-10">
+          <div class="w-12 h-12 rounded-full bg-error/10 flex items-center justify-center text-error"><span class="material-symbols-outlined">warning</span></div>
+          <div><p class="text-xs text-outline uppercase tracking-wider font-semibold">Butuh Perhatian Segera</p><h3 class="font-display-lg text-3xl text-on-surface mt-1" id="kpi-urgent">-</h3></div>
+        </div>
+        <p class="text-sm text-outline-variant flex items-center gap-1 relative z-10"><span class="material-symbols-outlined text-[16px] text-outline">schedule</span>Mendekati batas waktu</p>
+      </div>
+      <div class="bg-surface-container-lowest rounded-2xl p-6 custom-shadow relative overflow-hidden group hover:scale-[1.01] transition-transform duration-300">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-secondary/5 rounded-bl-full -mr-8 -mt-8"></div>
+        <div class="flex items-center gap-4 mb-4 relative z-10">
+          <div class="w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center text-secondary"><span class="material-symbols-outlined">task_alt</span></div>
+          <div><p class="text-xs text-outline uppercase tracking-wider font-semibold">Selesai Hari Ini</p><h3 class="font-display-lg text-3xl text-on-surface mt-1" id="kpi-resolved">-</h3></div>
+        </div>
+      </div>
+      <div class="bg-surface-container-lowest rounded-2xl p-6 custom-shadow relative overflow-hidden group hover:scale-[1.01] transition-transform duration-300">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-tertiary/5 rounded-bl-full -mr-8 -mt-8"></div>
+        <div class="flex items-center gap-4 mb-4 relative z-10">
+          <div class="w-12 h-12 rounded-full bg-tertiary/10 flex items-center justify-center text-tertiary"><span class="material-symbols-outlined">timer</span></div>
+          <div><p class="text-xs text-outline uppercase tracking-wider font-semibold">Rata-rata Waktu Resolusi</p><h3 class="font-headline-md text-xl text-on-surface mt-1 pt-1"><span id="kpi-avg">-</span> <span class="text-sm text-outline-variant font-normal">Hari</span></h3></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Filters -->
+    <div class="flex flex-col md:flex-row justify-between items-center mb-6 border-b border-outline-variant/20 pb-4 gap-4">
+      <div class="flex gap-6 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 hide-scrollbar">
+        <button onclick="setStatusFilter('')" id="tab-all" class="text-sm font-semibold text-primary border-b-2 border-primary pb-2 uppercase tracking-wider px-1 shrink-0">Semua Sengketa</button>
+        <button onclick="setStatusFilter('disputed')" id="tab-disputed" class="text-sm text-outline hover:text-on-surface transition-colors pb-2 uppercase tracking-wider px-1 shrink-0 border-b-2 border-transparent">Urgent</button>
+        <button onclick="setStatusFilter('pending')" id="tab-pending" class="text-sm text-outline hover:text-on-surface transition-colors pb-2 uppercase tracking-wider px-1 shrink-0 border-b-2 border-transparent">Pending</button>
+        <button onclick="setStatusFilter('approved')" id="tab-approved" class="text-sm text-outline hover:text-on-surface transition-colors pb-2 uppercase tracking-wider px-1 shrink-0 border-b-2 border-transparent">Selesai</button>
+      </div>
+    </div>
+
+    <!-- Disputes List -->
+    <div id="disputes-list" class="space-y-4">
+      <div class="flex justify-center py-12"><div class="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div></div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="mt-8 flex justify-center items-center gap-2" id="pagination-container"></div>
+  </main>
+</div>
+
+<!-- Review Modal -->
+<div id="review-modal" class="hidden fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
+  <div class="bg-surface-container-lowest rounded-2xl p-6 w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="font-headline-md text-lg text-primary">Tinjau Sengketa</h3>
+      <button onclick="closeReview()" class="text-on-surface-variant hover:text-error"><span class="material-symbols-outlined">close</span></button>
+    </div>
+    <div id="review-content" class="flex flex-col gap-4"></div>
+  </div>
+</div>
+
+<script src="/js/api.js"></script>
+<script>
+let page = 1, perPage = 10, totalPages = 1, statusFilter = '', searchQuery = '', debTimer = null;
+
+window.addEventListener('DOMContentLoaded', () => {
+    // Set admin info in header
+    const _adminUser = api.getUser();
+    if (_adminUser) {
+      const _nameEl = document.getElementById('admin-name');
+      const _roleEl = document.getElementById('admin-role');
+      const _avEl   = document.getElementById('admin-avatar');
+      if (_nameEl) _nameEl.textContent = _adminUser.full_name || _adminUser.username || 'Admin';
+      if (_roleEl) _roleEl.textContent = _adminUser.role === 'admin' ? 'Super Admin' : _adminUser.role;
+      if (_avEl) {
+        if (_adminUser.avatar_url) {
+          _avEl.innerHTML = `<img src="${_adminUser.avatar_url}" class="w-full h-full object-cover rounded-full">`;
+        } else {
+          _avEl.textContent = (_adminUser.full_name || _adminUser.username || 'A')[0].toUpperCase();
+        }
+      }
+    }
+  if (!api.getToken()) { window.location.href = '/login.html'; return; }
+  const u = api.getUser();
+  if (!u || u.role !== 'admin') { window.location.href = '/feed.html'; return; }
+  loadStats();
+  loadDisputes();
+});
+
+async function loadStats() {
+  const res = await api.get('/admin/conflicts/stats');
+  if (!res?.data) return;
+  document.getElementById('kpi-active').textContent = res.data.active_disputes;
+  document.getElementById('kpi-urgent').textContent = res.data.urgent;
+  document.getElementById('kpi-resolved').textContent = res.data.resolved_today;
+  document.getElementById('kpi-avg').textContent = res.data.avg_resolution_days || '0';
+}
+
+function setStatusFilter(status) {
+  statusFilter = status;
+  ['all','disputed','pending','approved'].forEach(s => {
+    const tab = document.getElementById('tab-' + s);
+    const key = s === 'all' ? '' : s;
+    if (key === status) tab.className = 'text-sm font-semibold text-primary border-b-2 border-primary pb-2 uppercase tracking-wider px-1 shrink-0';
+    else tab.className = 'text-sm text-outline hover:text-on-surface transition-colors pb-2 uppercase tracking-wider px-1 shrink-0 border-b-2 border-transparent';
+  });
+  page = 1;
+  loadDisputes();
+}
+
+function debounceSearch() {
+  clearTimeout(debTimer);
+  debTimer = setTimeout(() => {
+    searchQuery = document.getElementById('search-input').value;
+    page = 1; loadDisputes();
+  }, 400);
+}
+
+async function loadDisputes() {
+  const list = document.getElementById('disputes-list');
+  list.innerHTML = '<div class="flex justify-center py-12"><div class="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div></div>';
+
+  let url = `/admin/conflicts?page=${page}&per_page=${perPage}`;
+  if (statusFilter) url += `&status=${statusFilter}`;
+  if (searchQuery) url += `&q=${encodeURIComponent(searchQuery)}`;
+
+  const res = await api.get(url);
+  if (!res?.data) { list.innerHTML = '<p class="text-center text-on-surface-variant py-12">Gagal memuat data</p>'; return; }
+
+  const { items, pagination } = res.data;
+  totalPages = pagination.pages || 1;
+
+  if (!items.length) {
+    list.innerHTML = `<div class="bg-surface-container-lowest rounded-2xl p-12 text-center custom-shadow">
+      <span class="material-symbols-outlined text-5xl text-outline-variant block mb-3">check_circle</span>
+      <p class="text-on-surface-variant">Tidak ada sengketa yang perlu ditinjau</p>
+    </div>`;
+    renderPagination();
+    return;
+  }
+
+  list.innerHTML = items.map(c => renderDisputeCard(c)).join('');
+  renderPagination();
+}
+
+function renderDisputeCard(c) {
+  const priorityMap = {
+    tinggi: { label: 'Tinggi', bg: 'bg-error/10', text: 'text-error' },
+    sedang: { label: 'Sedang', bg: 'bg-secondary/10', text: 'text-secondary' },
+    rendah: { label: 'Rendah', bg: 'bg-primary/10', text: 'text-primary' },
+  };
+  const p = priorityMap[c.priority] || priorityMap.sedang;
+
+  let deadlineStr = '';
+  let deadlineColor = 'text-outline-variant';
+  if (c.deadline) {
+    const diff = new Date(c.deadline) - new Date();
+    const hours = Math.floor(diff / 3600000);
+    if (hours < 0) { deadlineStr = 'Lewat batas waktu'; deadlineColor = 'text-error'; }
+    else if (hours < 24) { deadlineStr = `Sisa ${hours} jam`; deadlineColor = 'text-error'; }
+    else { deadlineStr = `Sisa ${Math.floor(hours/24)} hari ${hours%24} jam`; deadlineColor = 'text-outline-variant'; }
+  }
+
+  const reporterAv = c.reporter?.avatar_url
+    ? `<img src="${c.reporter.avatar_url}" class="w-10 h-10 rounded-full object-cover">`
+    : `<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">${(c.reporter?.full_name||'?')[0]}</div>`;
+  const claimantAv = c.claimant?.avatar_url
+    ? `<img src="${c.claimant.avatar_url}" class="w-10 h-10 rounded-full object-cover">`
+    : `<div class="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center text-secondary font-bold">${(c.claimant?.full_name||'?')[0]}</div>`;
+
+  const statusBadge = c.status === 'approved'
+    ? '<span class="bg-green-50 text-green-700 text-xs px-2 py-1 rounded-full font-bold uppercase">Disetujui</span>'
+    : c.status === 'rejected'
+      ? '<span class="bg-surface-variant text-on-surface-variant text-xs px-2 py-1 rounded-full font-bold uppercase">Ditolak</span>'
+      : '';
+
+  return `<div class="bg-surface-container-lowest rounded-2xl p-6 custom-shadow flex flex-col lg:flex-row gap-6 items-start lg:items-center justify-between hover:scale-[1.005] transition-transform duration-200">
+    <div class="flex flex-col gap-2 min-w-[200px]">
+      <div class="flex items-center gap-3">
+        <span class="${p.bg} ${p.text} text-[10px] px-2 py-1 rounded-full uppercase font-bold tracking-wide">${p.label}</span>
+        <span class="text-sm text-outline font-medium">#KLM-${String(c.id).padStart(4,'0')}</span>
+        ${statusBadge}
+      </div>
+      <h4 class="font-headline-md text-xl text-on-surface">${c.report?.title || 'Barang'}</h4>
+      ${deadlineStr ? `<p class="text-sm ${deadlineColor} flex items-center gap-1 mt-1"><span class="material-symbols-outlined text-[16px]">schedule</span>${deadlineStr}</p>` : ''}
+    </div>
+    <div class="flex-1 flex items-center justify-center gap-8 px-4 w-full lg:w-auto">
+      <div class="flex items-center gap-3">
+        ${reporterAv}
+        <div class="hidden sm:block">
+          <p class="text-sm text-on-surface font-semibold">${c.reporter?.full_name || c.reporter?.username || '-'}</p>
+          <p class="text-[10px] text-outline uppercase">Pelapor</p>
+        </div>
+      </div>
+      <div class="flex flex-col items-center px-4">
+        <div class="h-[2px] w-12 bg-outline-variant/30 rounded-full relative">
+          <span class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-surface-container-lowest px-2 text-xs text-outline">VS</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-3 flex-row-reverse sm:flex-row text-right sm:text-left">
+        ${claimantAv}
+        <div class="hidden sm:block">
+          <p class="text-sm text-on-surface font-semibold">${c.claimant?.full_name || c.claimant?.username || '-'}</p>
+          <p class="text-[10px] text-outline uppercase">Pengklaim</p>
+        </div>
+      </div>
+    </div>
+    <div class="w-full lg:w-auto mt-4 lg:mt-0 flex justify-end">
+      <button onclick='openReview(${JSON.stringify(c).replace(/'/g,"&#39;")})' class="${c.status==='pending'||c.status==='disputed' ? 'bg-primary text-on-primary hover:bg-primary-container' : 'bg-surface text-primary border border-primary/20 hover:bg-primary/5'} text-sm px-6 py-3 rounded-lg transition-colors shadow-sm w-full lg:w-auto font-medium">
+        ${c.status==='pending'||c.status==='disputed' ? 'Tinjau Sengketa' : 'Lihat Detail'}
+      </button>
+    </div>
+  </div>`;
+}
+
+function renderPagination() {
+  const container = document.getElementById('pagination-container');
+  const pages = Array.from({length: Math.min(totalPages, 5)}, (_, i) => i + 1);
+  container.innerHTML = `
+    <button onclick="changePage(${page-1})" class="p-2 rounded-lg text-outline hover:bg-surface-variant/50 ${page<=1?'opacity-50':''}" ${page<=1?'disabled':''}><span class="material-symbols-outlined">chevron_left</span></button>
+    ${pages.map(p => `<button onclick="changePage(${p})" class="w-8 h-8 rounded-lg ${p===page?'bg-primary text-on-primary':'text-on-surface hover:bg-surface-variant/50'} text-sm font-medium flex items-center justify-center">${p}</button>`).join('')}
+    ${totalPages > 5 ? '<span class="text-outline mx-1">...</span>' : ''}
+    <button onclick="changePage(${page+1})" class="p-2 rounded-lg text-outline hover:bg-surface-variant/50 ${page>=totalPages?'opacity-50':''}" ${page>=totalPages?'disabled':''}><span class="material-symbols-outlined">chevron_right</span></button>`;
+}
+
+function changePage(p) { if (p < 1 || p > totalPages) return; page = p; loadDisputes(); }
+
+function openReview(claim) {
+  const content = document.getElementById('review-content');
+  content.innerHTML = `
+    <div class="bg-surface-container-low rounded-xl p-4">
+      <p class="text-xs text-on-surface-variant font-semibold mb-1">Barang</p>
+      <p class="font-bold text-primary">${claim.report?.title || '-'}</p>
+    </div>
+    <div class="bg-surface-container-low rounded-xl p-4">
+      <p class="text-xs text-on-surface-variant font-semibold mb-1 flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">help</span>Pertanyaan Verifikasi</p>
+      <p class="text-on-surface font-semibold">${claim.report?.verification_question || '-'}</p>
+    </div>
+    <div class="grid grid-cols-2 gap-3">
+      <div class="bg-primary-fixed/20 rounded-xl p-4 border border-primary/20">
+        <p class="text-xs text-on-surface-variant font-semibold mb-1 flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">verified</span>Jawaban Benar (Pemilik)</p>
+        <p class="text-on-surface italic">"${claim.report?.verification_answer || '-'}"</p>
+      </div>
+      <div class="bg-secondary-container/30 rounded-xl p-4 border border-secondary/20">
+        <p class="text-xs text-on-surface-variant font-semibold mb-1 flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">edit_note</span>Jawaban Pengklaim</p>
+        <p class="text-on-surface italic">"${claim.answer || '-'}"</p>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 gap-3">
+      <div class="bg-surface-container-low rounded-xl p-4">
+        <p class="text-xs text-on-surface-variant font-semibold mb-1">Pelapor</p>
+        <p class="font-semibold text-on-surface">${claim.reporter?.full_name || claim.reporter?.username || '-'}</p>
+      </div>
+      <div class="bg-surface-container-low rounded-xl p-4">
+        <p class="text-xs text-on-surface-variant font-semibold mb-1">Pengklaim</p>
+        <p class="font-semibold text-on-surface">${claim.claimant?.full_name || claim.claimant?.username || '-'}</p>
+      </div>
+    </div>
+    <div class="flex flex-col gap-2">
+      <label class="text-xs font-semibold text-on-surface-variant">Catatan Admin</label>
+      <textarea id="admin-notes-input" rows="3" class="w-full border border-outline-variant rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary resize-none" placeholder="Tambahkan catatan internal...">${claim.admin_notes || ''}</textarea>
+    </div>
+    ${claim.status === 'pending' || claim.status === 'disputed' ? `
+      <div class="flex gap-3 mt-2">
+        <button onclick="resolveClaim(${claim.id}, 'reject')" class="flex-1 py-3 border-2 border-error text-error rounded-lg font-semibold hover:bg-error/5 transition-colors">Tolak Klaim</button>
+        <button onclick="resolveClaim(${claim.id}, 'approve')" class="flex-1 py-3 bg-primary text-on-primary rounded-lg font-semibold hover:bg-primary-container transition-colors">Setujui Klaim</button>
+      </div>
+    ` : `<p class="text-center text-sm text-on-surface-variant py-2">Status: <span class="font-bold">${claim.status === 'approved' ? 'Disetujui' : 'Ditolak'}</span></p>`}
+  `;
+  document.getElementById('review-modal').classList.remove('hidden');
+  document.getElementById('review-modal').dataset.claimId = claim.id;
+}
+
+function closeReview() { document.getElementById('review-modal').classList.add('hidden'); }
+
+async function resolveClaim(claimId, action) {
+  const notes = document.getElementById('admin-notes-input').value;
+  if (notes) await api.put(`/admin/conflicts/${claimId}/notes`, { admin_notes: notes });
+
+  const res = await api.post(`/admin/conflicts/${claimId}/${action}`);
+  if (res?.status === 'success') {
+    showToast(action === 'approve' ? 'Klaim disetujui ✓' : 'Klaim ditolak');
+    closeReview();
+    loadStats();
+    loadDisputes();
+  } else {
+    showToast(res?.message || 'Gagal memproses', true);
+  }
+}
+
+function showToast(msg, isError = false) {
+  const el = document.createElement('div');
+  el.style.cssText = `position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:${isError?'#ba1a1a':'#314e52'};color:white;padding:12px 24px;border-radius:12px;font-family:"Plus Jakarta Sans",sans-serif;font-size:14px;font-weight:600;z-index:9999;`;
+  el.textContent = msg; document.body.appendChild(el);
+  setTimeout(() => el.remove(), 3000);
+}
+
+function adminLogout() { api.clearTokens(); window.location.href = '/login.html'; }
+</script>
+</body>
+</html>
