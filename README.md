@@ -61,7 +61,7 @@ Edit file `.env` sesuaikan kredensial MySQL Anda:
 
 ```env
 DB_HOST=localhost
-DB_PORT=3308
+DB_PORT=3306
 DB_NAME=winemu
 DB_USER=root
 DB_PASSWORD=
