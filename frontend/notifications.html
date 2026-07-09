@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<script src="/js/device-redirect.js"></script>
+<title>Winemu - Notifikasi</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600&family=Philosopher:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<script>
+tailwind.config={darkMode:"class",theme:{extend:{colors:{
+  "secondary-fixed":"#ffdcbd","secondary":"#7d562d","on-primary-fixed-variant":"#2e4b4f",
+  "inverse-surface":"#31302d","on-secondary-fixed-variant":"#623f18","on-primary-container":"#a0bec3",
+  "tertiary-fixed":"#ffdbd0","on-tertiary-fixed-variant":"#76321b","on-error":"#ffffff",
+  "surface-dim":"#dcdad5","outline":"#727879","error-container":"#ffdad6","on-surface-variant":"#414849",
+  "tertiary-container":"#79351d","surface":"#fcf9f4","secondary-fixed-dim":"#f0bd8b",
+  "primary-fixed-dim":"#adccd1","secondary-container":"#ffca98","on-background":"#1c1c19",
+  "surface-container-low":"#f6f3ee","on-secondary-fixed":"#2c1600","outline-variant":"#c1c8c9",
+  "surface-container-high":"#ebe8e3","primary-container":"#314e52","on-tertiary-container":"#ffa182",
+  "on-tertiary":"#ffffff","primary-fixed":"#c9e8ed","inverse-on-surface":"#f3f0eb","surface-tint":"#466367",
+  "surface-variant":"#e5e2dd","on-secondary-container":"#7a532a","surface-container-lowest":"#ffffff",
+  "on-error-container":"#93000a","surface-container":"#f0ede9","on-primary-fixed":"#001f23",
+  "tertiary-fixed-dim":"#ffb59d","on-surface":"#1c1c19","tertiary":"#5c1f09","on-secondary":"#ffffff",
+  "surface-container-highest":"#e5e2dd","error":"#ba1a1a","surface-bright":"#fcf9f4",
+  "background":"#fcf9f4","on-primary":"#ffffff","primary":"#1a373b"
+},fontFamily:{"body-lg":["Plus Jakarta Sans"],"headline-md":["Philosopher"],"body-sm":["Plus Jakarta Sans"],"label-caps":["Plus Jakarta Sans"],"body-md":["Plus Jakarta Sans"]}}}}
+</script>
+<style>.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;display:inline-block;line-height:1;}.material-symbols-outlined.filled{font-variation-settings:'FILL' 1;}</style>
+<!-- batik-bg-applied -->
+<style>
+  body { background-color:#fcf9f4; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cg fill='none'%3E%3Ccircle cx='30' cy='30' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='30' cy='30' r='6' stroke='%231a373b' stroke-width='0.4' stroke-opacity='0.05'/%3E%3Ccircle cx='0' cy='0' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='60' cy='0' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='0' cy='60' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='60' cy='60' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Cpath d='M30 20 L40 30 L30 40 L20 30 Z' stroke='%237d562d' stroke-width='0.5' stroke-opacity='0.06' fill='none'/%3E%3Cpath d='M0 0 L10 0 L5 8 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3Cpath d='M60 0 L50 0 L55 8 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3Cpath d='M0 60 L10 60 L5 52 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3Cpath d='M60 60 L50 60 L55 52 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3C/g%3E%3C/svg%3E"); }
+</style>
+</head>
+<body class="bg-surface text-on-surface font-body-md min-h-screen pb-24">
+<header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-md shadow-[0_20px_40px_rgba(49,78,82,0.05)]">
+  <div class="flex justify-between items-center px-6 py-3 max-w-screen-md mx-auto">
+    <button onclick="history.back()" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-variant/50 transition-colors text-on-surface-variant">
+      <span class="material-symbols-outlined text-2xl">arrow_back</span>
+    </button>
+    <h1 class="font-headline-md text-lg text-primary tracking-tight">Notifikasi</h1>
+    <div class="flex items-center gap-2">
+      <button onclick="enterSelectMode()" class="w-9 h-9 flex items-center justify-center rounded-full hover:bg-surface-variant/50 text-on-surface-variant transition-colors">
+        <span class="material-symbols-outlined text-[20px]">checklist</span>
+      </button>
+      <button onclick="markAllRead()" class="text-primary text-sm font-semibold">Tandai dibaca</button>
+    </div>
+  </div>
+</header>
+
+<main class="pt-[80px] pb-[40px] max-w-screen-md mx-auto px-6 flex flex-col gap-8" id="notif-container">
+  <div class="flex justify-center py-12"><div class="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div></div>
+</main>
+
+<script src="/js/api.js"></script>
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+  if (!isLoggedIn()) { window.location.href = '/login.html'; return; }
+  loadNotifications();
+});
+
+const iconMap = {
+  like: { icon: 'favorite', color: 'text-error' },
+  comment: { icon: 'chat_bubble', color: 'text-primary' },
+  claim: { icon: 'key', color: 'text-secondary' },
+  claim_approved: { icon: 'check_circle', color: 'text-green-600' },
+  claim_rejected: { icon: 'cancel', color: 'text-error' },
+  handover_update: { icon: 'local_shipping', color: 'text-secondary' },
+  handover_complete: { icon: 'task_alt', color: 'text-green-600' },
+  system: { icon: 'info', color: 'text-primary' },
+  found: { icon: 'location_on', color: 'text-secondary' },
+};
+
+async function loadNotifications() {
+  const res = await api.get('/notifications?per_page=50');
+  const container = document.getElementById('notif-container');
+  if (!res?.data?.notifications?.length) {
+    container.innerHTML = `<div class="flex flex-col items-center justify-center py-20 text-on-surface-variant">
+      <span class="material-symbols-outlined text-6xl mb-4 opacity-40">notifications_off</span>
+      <p>Belum ada notifikasi</p>
+    </div>`;
+    return;
+  }
+
+  const notifs = res.data.notifications;
+  const now = new Date();
+  const todayItems = [], weekItems = [], olderItems = [];
+
+  notifs.forEach(n => {
+    const date = new Date(n.created_at);
+    const diffDays = (now - date) / 86400000;
+    if (diffDays < 1) todayItems.push(n);
+    else if (diffDays < 7) weekItems.push(n);
+    else olderItems.push(n);
+  });
+
+  let html = '';
+  if (todayItems.length) html += renderSection('Baru', todayItems);
+  if (weekItems.length) html += renderSection('Minggu Ini', weekItems);
+  if (olderItems.length) html += renderSection('Lebih Lama', olderItems);
+
+  container.innerHTML = html;
+}
+
+function renderSection(title, items) {
+  return `<section class="flex flex-col gap-3">
+    <h2 class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1">${title}</h2>
+    <div class="flex flex-col gap-0 bg-surface-container-lowest rounded-2xl shadow-[0_20px_40px_rgba(49,78,82,0.05)] overflow-hidden border border-outline-variant/30">
+      ${items.map((n, i) => renderItem(n, i < items.length - 1)).join('')}
+    </div>
+  </section>`;
+}
+
+// ── Select mode state ──────────────────────────────────────────────────────
+let selectMode = false;
+let selectedNotifIds = new Set();
+let openNotifMenuId = null;
+
+function renderItem(n, hasBorder) {
+  const meta = iconMap[n.type] || iconMap.system;
+  const actorAv = n.actor?.avatar_url
+    ? `<img alt="${n.actor?.full_name}" class="w-12 h-12 rounded-full object-cover border-2 border-surface" src="${n.actor.avatar_url}">`
+    : `<div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center border-2 border-surface text-on-secondary-container font-bold">${(n.actor?.full_name || n.actor?.username || 'W')[0].toUpperCase()}</div>`;
+
+  const reportId = n.data?.report_id;
+  const claimId = n.data?.claim_id;
+  const handoverTypes = ['claim_approved', 'handover_update', 'handover_complete'];
+  let mainAction;
+  if (claimId && handoverTypes.includes(n.type)) mainAction = `goToHandover(${n.id}, ${claimId})`;
+  else if (reportId) mainAction = `goToReport(${n.id}, ${reportId})`;
+  else mainAction = `markRead(${n.id})`;
+
+  const menuId = `notif-menu-${n.id}`;
+  const isSelected = selectedNotifIds.has(n.id);
+
+  return `<div id="notif-card-${n.id}" class="flex items-start gap-3 p-4 ${n.is_read ? '' : 'bg-primary-fixed/10'} transition-colors ${hasBorder ? 'border-b border-outline-variant/20' : ''} ${isSelected ? 'bg-primary/5' : ''}">
+
+    <!-- Unread dot OR checkbox -->
+    ${selectMode
+      ? `<div onclick="toggleSelectNotif(${n.id}, event)" class="w-6 h-6 rounded-full border-2 flex items-center justify-center cursor-pointer flex-shrink-0 mt-3 transition-all ${isSelected ? 'bg-primary border-primary' : 'border-outline'}">
+           ${isSelected ? '<span class="material-symbols-outlined text-[12px] text-white">check</span>' : ''}
+         </div>`
+      : `${!n.is_read ? '<div class="w-2 h-2 rounded-full bg-primary mt-3 flex-shrink-0"></div>' : '<div class="w-2 flex-shrink-0"></div>'}`
+    }
+
+    <!-- Avatar -->
+    <div class="relative w-11 h-11 flex-shrink-0 cursor-pointer" onclick="${selectMode ? `toggleSelectNotif(${n.id}, event)` : mainAction}">
+      ${actorAv}
+      <div class="absolute -bottom-1 -right-1 bg-surface rounded-full p-0.5">
+        <span class="material-symbols-outlined text-[13px] filled ${meta.color}">${meta.icon}</span>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="flex-1 min-w-0 cursor-pointer" onclick="${selectMode ? `toggleSelectNotif(${n.id}, event)` : mainAction}">
+      <p class="text-on-surface text-sm leading-snug">
+        <span class="font-bold text-primary">${n.actor?.full_name || n.actor?.username || 'Winemu'}</span> ${n.message || n.title || ''}
+      </p>
+      <p class="text-xs text-outline mt-1">${timeAgo(n.created_at)}</p>
+    </div>
+
+    <!-- Three-dot menu -->
+    ${!selectMode ? `<div class="relative flex-shrink-0">
+      <button onclick="toggleNotifMenu('${menuId}', event)" class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors">
+        <span class="material-symbols-outlined text-[18px]">more_vert</span>
+      </button>
+      <div id="${menuId}" class="hidden absolute right-0 top-full mt-1 w-44 bg-surface-container-lowest rounded-2xl shadow-2xl border border-outline-variant/20 overflow-hidden z-50">
+        <button onclick="enterSelectFromMenu(${n.id}); closeNotifMenu()" class="w-full flex items-center gap-2.5 px-4 py-3 text-sm text-on-surface hover:bg-surface-container-low transition-colors text-left">
+          <span class="material-symbols-outlined text-[16px] text-on-surface-variant flex-shrink-0">checklist</span>
+          <span>Pilih</span>
+        </button>
+        ${!n.is_read ? `<button onclick="markRead(${n.id}); closeNotifMenu()" class="w-full flex items-center gap-2.5 px-4 py-3 text-sm text-on-surface hover:bg-surface-container-low transition-colors text-left">
+          <span class="material-symbols-outlined text-[16px] text-on-surface-variant flex-shrink-0">done_all</span>
+          <span>Tandai dibaca</span>
+        </button>` : ''}
+        <div class="h-px bg-outline-variant/20 mx-3"></div>
+        <button onclick="deleteNotifConfirm(${n.id}); closeNotifMenu()" class="w-full flex items-center gap-2.5 px-4 py-3 text-sm text-error hover:bg-error-container/20 transition-colors text-left">
+          <span class="material-symbols-outlined text-[16px] flex-shrink-0">delete</span>
+          <span>Hapus</span>
+        </button>
+      </div>
+    </div>` : ''}
+  </div>`;
+}
+
+function toggleNotifMenu(menuId, event) {
+  event.stopPropagation();
+  if (openNotifMenuId && openNotifMenuId !== menuId) {
+    document.getElementById(openNotifMenuId)?.classList.add('hidden');
+  }
+  const menu = document.getElementById(menuId);
+  if (!menu) return;
+  menu.classList.toggle('hidden');
+  openNotifMenuId = menu.classList.contains('hidden') ? null : menuId;
+}
+function closeNotifMenu() {
+  if (openNotifMenuId) document.getElementById(openNotifMenuId)?.classList.add('hidden');
+  openNotifMenuId = null;
+}
+document.addEventListener('click', () => closeNotifMenu());
+
+function enterSelectMode() {
+  selectMode = true; selectedNotifIds.clear();
+  renderSelectToolbar(); loadNotifications();
+}
+function enterSelectFromMenu(notifId) {
+  selectMode = true; selectedNotifIds = new Set([notifId]);
+  renderSelectToolbar(); loadNotifications();
+}
+function exitSelectMode() {
+  selectMode = false; selectedNotifIds.clear();
+  document.getElementById('select-toolbar')?.remove();
+  loadNotifications();
+}
+function toggleSelectNotif(id, event) {
+  event.stopPropagation();
+  if (selectedNotifIds.has(id)) selectedNotifIds.delete(id);
+  else selectedNotifIds.add(id);
+  const card = document.getElementById(`notif-card-${id}`);
+  if (card) {
+    card.classList.toggle('bg-primary/5', selectedNotifIds.has(id));
+    const cb = card.querySelector('div[onclick*="toggleSelectNotif"]');
+    if (cb) {
+      const sel = selectedNotifIds.has(id);
+      cb.className = `w-6 h-6 rounded-full border-2 flex items-center justify-center cursor-pointer flex-shrink-0 mt-3 transition-all ${sel ? 'bg-primary border-primary' : 'border-outline'}`;
+      cb.innerHTML = sel ? '<span class="material-symbols-outlined text-[12px] text-white">check</span>' : '';
+    }
+  }
+  const countEl = document.getElementById('select-count');
+  if (countEl) countEl.textContent = `${selectedNotifIds.size} dipilih`;
+}
+function renderSelectToolbar() {
+  document.getElementById('select-toolbar')?.remove();
+  const toolbar = document.createElement('div');
+  toolbar.id = 'select-toolbar';
+  toolbar.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:#1a373b;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:14px 20px;gap:12px;z-index:100;';
+  toolbar.innerHTML = `
+    <span id="select-count" style="font-size:14px;font-weight:600;">0 dipilih</span>
+    <div style="display:flex;gap:10px;">
+      <button onclick="deleteSelectedNotifs()" style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.15);border:none;color:#fff;padding:8px 14px;border-radius:20px;font-size:14px;font-weight:600;cursor:pointer;">
+        <span class="material-symbols-outlined" style="font-size:18px;">delete</span>Hapus
+      </button>
+      <button onclick="exitSelectMode()" style="background:transparent;border:1px solid rgba(255,255,255,0.4);color:#fff;padding:8px 14px;border-radius:20px;font-size:14px;font-weight:600;cursor:pointer;">Batal</button>
+    </div>`;
+  document.body.appendChild(toolbar);
+}
+
+function deleteNotifConfirm(id) {
+  if (!confirm('Hapus notifikasi ini?')) return;
+  api.delete(`/notifications/${id}`).then(() => {
+    document.getElementById(`notif-card-${id}`)?.remove();
+    showToast('Notifikasi dihapus');
+  });
+}
+async function deleteSelectedNotifs() {
+  if (!selectedNotifIds.size) return;
+  if (!confirm(`Hapus ${selectedNotifIds.size} notifikasi?`)) return;
+  const ids = [...selectedNotifIds];
+  await api.post('/notifications/bulk-delete', { ids });
+  exitSelectMode();
+  showToast(`${ids.length} notifikasi dihapus`);
+}
+
+async function markRead(id) {
+  await api.post(`/notifications/${id}/read`);
+  const card = document.getElementById(`notif-card-${id}`);
+  if (card) {
+    card.classList.remove('bg-primary-fixed/10');
+    card.querySelector('.bg-primary.rounded-full')?.remove();
+  }
+}
+async function goToReport(notifId, reportId) {
+  await markRead(notifId);
+  window.location.href = `/report-detail.html?id=${reportId}`;
+}
+async function goToHandover(notifId, claimId) {
+  await markRead(notifId);
+  window.location.href = `/status-serah-terima.html?claim_id=${claimId}`;
+}
+async function markAllRead() {
+  const res = await api.post('/notifications/read-all');
+  if (res?.status === 'success') {
+    showToast('Semua notifikasi ditandai dibaca');
+    loadNotifications();
+  }
+}
+</script>
+</body>
+</html>

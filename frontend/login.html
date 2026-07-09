@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html class="light" lang="id">
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<script src="/js/device-redirect.js"></script>
+<title>Winemu - Masuk</title>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Javanese&family=Philosopher:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "surface": "#fcf9f4",
+                        "on-tertiary-container": "#ffa182",
+                        "surface-container": "#f0ede9",
+                        "error": "#ba1a1a",
+                        "primary-fixed-dim": "#adccd1",
+                        "on-primary-fixed-variant": "#2e4b4f",
+                        "on-primary": "#ffffff",
+                        "on-secondary-fixed": "#2c1600",
+                        "on-tertiary-fixed": "#390b00",
+                        "surface-variant": "#e5e2dd",
+                        "surface-tint": "#466367",
+                        "background": "#fcf9f4",
+                        "primary-container": "#314e52",
+                        "tertiary-fixed-dim": "#ffb59d",
+                        "surface-container-high": "#ebe8e3",
+                        "surface-container-highest": "#e5e2dd",
+                        "tertiary-container": "#79351d",
+                        "on-secondary-container": "#7a532a",
+                        "on-primary-container": "#a0bec3",
+                        "outline-variant": "#c1c8c9",
+                        "surface-bright": "#fcf9f4",
+                        "error-container": "#ffdad6",
+                        "secondary-fixed": "#ffdcbd",
+                        "on-surface": "#1c1c19",
+                        "surface-dim": "#dcdad5",
+                        "inverse-primary": "#adccd1",
+                        "secondary-container": "#ffca98",
+                        "inverse-surface": "#31302d",
+                        "inverse-on-surface": "#f3f0eb",
+                        "outline": "#727879",
+                        "on-secondary-fixed-variant": "#623f18",
+                        "surface-container-low": "#f6f3ee",
+                        "secondary-fixed-dim": "#f0bd8b",
+                        "primary-fixed": "#c9e8ed",
+                        "tertiary-fixed": "#ffdbd0",
+                        "tertiary": "#5c1f09",
+                        "primary": "#1a373b",
+                        "on-surface-variant": "#414849",
+                        "on-tertiary-fixed-variant": "#76321b",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed": "#001f23",
+                        "on-error": "#ffffff",
+                        "secondary": "#7d562d",
+                        "on-error-container": "#93000a",
+                        "on-background": "#1c1c19"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px",
+                        "2xl": "1rem"
+                    },
+                    "spacing": {
+                        "gutter": "16px",
+                        "container-margin": "24px",
+                        "stack-md": "24px",
+                        "stack-lg": "48px",
+                        "base": "8px",
+                        "stack-sm": "12px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Philosopher"],
+                        "display-lg": ["Philosopher"],
+                        "body-sm": ["Plus Jakarta Sans"],
+                        "display-lg-mobile": ["Philosopher"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "label-caps": ["Plus Jakarta Sans"],
+                        "javanese-script": ["Noto Sans Javanese"],
+                        "body-lg": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "700" }],
+                        "display-lg": ["40px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "display-lg-mobile": ["32px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-caps": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "javanese-script": ["1.2em", { "lineHeight": "1.8", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;display:inline-block;line-height:1;}
+        .input-field {
+            width: 100%;
+            background-color: #fcf9f4;
+            border: 1px solid #c1c8c9;
+            color: #1c1c19;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            border-radius: 9999px;
+            padding: 1rem 1.5rem;
+            outline: none;
+            transition: all 300ms;
+        }
+        .input-field:focus {
+            border-color: #1a373b;
+            box-shadow: 0 0 0 4px rgba(26, 55, 59, 0.1);
+        }
+        .floating-label {
+            position: absolute;
+            left: 1.5rem;
+            top: 1rem;
+            color: #414849;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 14px;
+            transition: all 300ms;
+            pointer-events: none;
+        }
+        .input-field:focus + .floating-label,
+        .input-field:not(:placeholder-shown) + .floating-label {
+            top: -0.5rem;
+            left: 1rem;
+            font-size: 11px;
+            background-color: #fcf9f4;
+            padding: 0 0.5rem;
+            color: #1a373b;
+            font-weight: 600;
+        }
+        .ambient-shadow {
+            box-shadow: 0 20px 40px rgba(49, 78, 82, 0.05);
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col items-center justify-center p-container-margin md:p-stack-lg font-body-md">
+<main class="w-full max-w-[480px] flex flex-col items-center gap-stack-lg" style="animation: fadeIn 0.5s ease-out;">
+  <header class="flex flex-col items-center justify-center pt-8">
+    <a href="/" class="font-headline-md text-3xl text-primary">Winemu</a>
+  </header>
+
+  <div class="w-full bg-surface-container-lowest rounded-[2rem] p-8 md:p-10 ambient-shadow flex flex-col gap-6">
+    <div class="text-center mb-2">
+      <h1 class="font-display-lg-mobile md:font-display-lg text-on-surface mb-2">Selamat Datang</h1>
+      <p class="font-body-md text-on-surface-variant">Lanjutkan langkahmu menemukan barang.</p>
+    </div>
+
+    <div class="flex flex-col gap-5 w-full">
+      <div class="relative">
+        <input id="email" class="input-field" type="email" placeholder=" " autocomplete="email">
+        <label class="floating-label" for="email">Alamat Email</label>
+      </div>
+
+      <div class="relative">
+        <input id="password" class="input-field pr-12" type="password" placeholder=" " autocomplete="current-password">
+        <label class="floating-label" for="password">Kata Sandi</label>
+        <button aria-label="Toggle password visibility" class="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary transition-colors focus:outline-none" type="button" onclick="togglePass()">
+          <span class="material-symbols-outlined" id="pass-icon" style="font-variation-settings: 'FILL' 0;">visibility_off</span>
+        </button>
+      </div>
+
+      <div class="flex justify-end w-full">
+        <a class="font-body-sm text-primary hover:text-primary-container font-semibold transition-colors" href="/forgot-password.html">Lupa Password?</a>
+      </div>
+
+      <p id="error-msg" class="text-red-600 text-sm hidden text-center"></p>
+
+      <button class="w-full bg-primary text-on-primary font-headline-md py-4 hover:opacity-90 active:scale-[0.98] transition-all duration-200 mt-2 shadow-lg shadow-primary/20 rounded-full" type="button" id="submit-btn" onclick="handleLogin()">
+        Masuk
+      </button>
+    </div>
+
+    <div class="relative flex items-center py-4">
+      <div class="flex-grow border-t border-outline-variant"></div>
+      <span class="flex-shrink-0 mx-4 text-on-surface-variant font-body-sm bg-surface-container-lowest px-2">Atau lanjutkan dengan</span>
+      <div class="flex-grow border-t border-outline-variant"></div>
+    </div>
+
+    <div class="flex gap-4">
+      <button class="flex-1 flex items-center justify-center gap-2 bg-surface border border-outline-variant py-3 hover:bg-surface-container-high transition-colors text-on-surface font-body-sm font-semibold rounded-full" type="button" onclick="showToast('Login dengan Google segera hadir')">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
+          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"></path>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path>
+        </svg>
+        Google
+      </button>
+      <button class="flex-1 flex items-center justify-center gap-2 bg-surface border border-outline-variant py-3 hover:bg-surface-container-high transition-colors text-on-surface font-body-sm font-semibold rounded-full" type="button" onclick="showToast('Login dengan Facebook segera hadir')">
+        <svg class="w-5 h-5" fill="#1877F2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"></path></svg>
+        Facebook
+      </button>
+    </div>
+
+    <p class="text-center font-body-sm text-on-surface-variant mt-4">
+      Belum punya akun? <a class="text-primary font-semibold hover:underline" href="/register.html">Daftar</a>
+    </p>
+  </div>
+</main>
+
+<script src="/js/api.js"></script>
+<script>
+  if (api.getToken()) {
+    const existingUser = api.getUser();
+    window.location.href = (existingUser && existingUser.role === 'admin') ? '/admin/dashboard.html' : '/feed.html';
+  }
+
+  // Password toggle handled by inline onclick="togglePass()" below
+
+  function togglePass() {
+    const inp = document.getElementById('password');
+    const icon = document.getElementById('pass-icon');
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+    icon.textContent = inp.type === 'password' ? 'visibility_off' : 'visibility';
+  }
+
+  async function handleLogin() {
+    const btn = document.getElementById('submit-btn');
+    const errEl = document.getElementById('error-msg');
+    errEl.classList.add('hidden');
+
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+
+    if (!email || !password) { errEl.textContent = 'Email dan password wajib diisi'; errEl.classList.remove('hidden'); return; }
+
+    btn.textContent = 'Memproses...';
+    btn.disabled = true;
+
+    const result = await api.post('/auth/login', { email, password });
+
+    if (result && result.status === 'success') {
+      api.setTokens(result.data.access_token, result.data.refresh_token);
+      api.setUser(result.data.user);
+      showToast('Berhasil masuk! Selamat datang kembali 👋');
+      const destination = result.data.user && result.data.user.role === 'admin' ? '/admin/dashboard.html' : '/feed.html';
+      setTimeout(() => window.location.href = destination, 800);
+    } else {
+      errEl.textContent = result?.message || 'Email atau password salah';
+      errEl.classList.remove('hidden');
+      btn.textContent = 'Masuk';
+      btn.disabled = false;
+    }
+  }
+
+  document.addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
+</script>
+</body>
+</html>

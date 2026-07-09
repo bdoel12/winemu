@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<script src="/js/device-redirect.js"></script>
+<title>Winemu - Setelan</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Philosopher:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<script>
+tailwind.config={darkMode:"class",theme:{extend:{colors:{
+  "surface-bright":"#fcf9f4","on-tertiary-fixed-variant":"#76321b","outline":"#727879",
+  "on-surface":"#1c1c19","primary":"#1a373b","on-primary":"#ffffff","tertiary":"#5c1f09",
+  "surface-variant":"#e5e2dd","secondary":"#7d562d","surface":"#fcf9f4","primary-fixed-dim":"#adccd1",
+  "tertiary-container":"#79351d","primary-fixed":"#c9e8ed","error":"#ba1a1a","outline-variant":"#c1c8c9",
+  "on-error":"#ffffff","surface-dim":"#dcdad5","tertiary-fixed-dim":"#ffb59d","surface-container-lowest":"#ffffff",
+  "inverse-surface":"#31302d","surface-container":"#f0ede9","secondary-container":"#ffca98",
+  "surface-container-highest":"#e5e2dd","on-surface-variant":"#414849","surface-container-low":"#f6f3ee",
+  "primary-container":"#314e52","tertiary-fixed":"#ffdbd0"
+},fontFamily:{"label-caps":["Plus Jakarta Sans"],"headline-md":["Philosopher"],"body-md":["Plus Jakarta Sans"]},
+fontSize:{"label-caps":["12px",{"lineHeight":"1.2","letterSpacing":"0.05em","fontWeight":"600"}],"headline-md":["24px",{"lineHeight":"1.3","fontWeight":"700"}],"body-md":["16px",{"lineHeight":"1.6","fontWeight":"400"}]}}}}
+</script>
+<style>.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;display:inline-block;line-height:1;}.scrolled-header{box-shadow:0 4px 20px rgba(49,78,82,0.05);}</style>
+<!-- batik-bg-applied -->
+<style>
+  body { background-color:#fcf9f4; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cg fill='none'%3E%3Ccircle cx='30' cy='30' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='30' cy='30' r='6' stroke='%231a373b' stroke-width='0.4' stroke-opacity='0.05'/%3E%3Ccircle cx='0' cy='0' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='60' cy='0' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='0' cy='60' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='60' cy='60' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Cpath d='M30 20 L40 30 L30 40 L20 30 Z' stroke='%237d562d' stroke-width='0.5' stroke-opacity='0.06' fill='none'/%3E%3Cpath d='M0 0 L10 0 L5 8 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3Cpath d='M60 0 L50 0 L55 8 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3Cpath d='M0 60 L10 60 L5 52 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3Cpath d='M60 60 L50 60 L55 52 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3C/g%3E%3C/svg%3E"); }
+</style>
+</head>
+<body class="bg-surface-bright text-on-surface font-body-md antialiased min-h-screen pb-24">
+<header class="fixed top-0 w-full z-50 transition-all duration-300 bg-surface" id="top-app-bar">
+  <div class="flex justify-between items-center px-6 py-3 w-full max-w-3xl mx-auto">
+    <div class="flex items-center gap-4">
+      <button onclick="history.back()" class="p-2 -ml-2 rounded-full hover:bg-surface-container-high transition-colors active:scale-90">
+        <span class="material-symbols-outlined text-primary">arrow_back</span>
+      </button>
+      <h1 class="font-headline-md text-headline-md text-primary">Setelan</h1>
+    </div>
+  </div>
+</header>
+
+<main class="pt-24 pb-32 px-6 max-w-3xl mx-auto">
+  <!-- Profile Card -->
+  <div class="bg-surface-container-lowest rounded-3xl p-6 mb-6 flex items-center gap-4 shadow-[0_4px_30px_rgba(49,78,82,0.04)] border border-surface-container">
+    <div id="settings-avatar" class="w-16 h-16 rounded-full bg-primary-container text-white flex items-center justify-center text-2xl font-bold overflow-hidden border-2 border-primary-fixed">?</div>
+    <div class="flex-1">
+      <h2 class="text-lg font-bold text-primary" id="settings-name">Loading...</h2>
+      <p class="text-on-surface-variant text-sm" id="settings-email"></p>
+    </div>
+  </div>
+
+  <!-- Akun -->
+  <section class="mb-6">
+    <h3 class="text-xs font-semibold text-on-surface-variant mb-3 px-2 tracking-widest uppercase">Akun</h3>
+    <div class="bg-surface-container-lowest rounded-3xl overflow-hidden shadow-[0_4px_30px_rgba(49,78,82,0.04)] border border-surface-container">
+      <a href="/profile.html" class="w-full flex items-center justify-between p-5 hover:bg-surface-container-low transition-colors group">
+        <div class="flex items-center gap-4"><span class="material-symbols-outlined text-primary opacity-80">person_edit</span><span>Edit Profil</span></div>
+        <span class="material-symbols-outlined text-outline-variant">chevron_right</span>
+      </a>
+      <div class="h-px bg-surface-container mx-5"></div>
+      <button onclick="openPasswordModal()" class="w-full flex items-center justify-between p-5 hover:bg-surface-container-low transition-colors group">
+        <div class="flex items-center gap-4"><span class="material-symbols-outlined text-primary opacity-80">lock_open</span><span>Keamanan &amp; Kata Sandi</span></div>
+        <span class="material-symbols-outlined text-outline-variant">chevron_right</span>
+      </button>
+      <div class="h-px bg-surface-container mx-5"></div>
+      <div class="w-full flex items-center justify-between p-5">
+        <div class="flex items-center gap-4"><span class="material-symbols-outlined text-primary opacity-80">badge</span><span>Verifikasi Identitas</span></div>
+        <div class="flex items-center gap-2">
+          <span class="text-sm" id="verify-status">-</span>
+          <span class="material-symbols-outlined text-outline-variant">chevron_right</span>
+        </div>
+      </div>
+      <div class="h-px bg-surface-container mx-5"></div>
+      <button onclick="updateMyLocation()" class="w-full flex items-center justify-between p-5 hover:bg-surface-container-low transition-colors group">
+        <div class="flex items-center gap-4">
+          <span class="material-symbols-outlined text-primary opacity-80">my_location</span>
+          <div class="text-left">
+            <span class="block">Lokasi Saya</span>
+            <span class="block text-xs text-on-surface-variant" id="my-location-text">Belum diatur</span>
+          </div>
+        </div>
+        <span id="location-update-icon" class="material-symbols-outlined text-outline-variant">chevron_right</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- Preferensi -->
+  <section class="mb-6">
+    <h3 class="text-xs font-semibold text-on-surface-variant mb-3 px-2 tracking-widest uppercase">Preferensi</h3>
+    <div class="bg-surface-container-lowest rounded-3xl overflow-hidden shadow-[0_4px_30px_rgba(49,78,82,0.04)] border border-surface-container">
+      <div class="w-full flex items-center justify-between p-5">
+        <div class="flex items-center gap-4"><span class="material-symbols-outlined text-primary opacity-80">notifications_active</span><span>Notifikasi</span></div>
+        <label class="relative inline-flex items-center cursor-pointer">
+          <input checked class="sr-only peer" id="notif-toggle" type="checkbox">
+          <div class="w-11 h-6 bg-surface-container-high rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+        </label>
+      </div>
+      <div class="h-px bg-surface-container mx-5"></div>
+      <div class="w-full flex items-center justify-between p-5">
+        <div class="flex items-center gap-4"><span class="material-symbols-outlined text-primary opacity-80">translate</span><span>Bahasa</span></div>
+        <span class="text-sm text-on-surface-variant">Bahasa Indonesia</span>
+      </div>
+      <div class="h-px bg-surface-container mx-5"></div>
+      <div class="w-full flex items-center justify-between p-5">
+        <div class="flex items-center gap-4"><span class="material-symbols-outlined text-primary opacity-80">dark_mode</span><span>Tampilan Gelap</span></div>
+        <label class="relative inline-flex items-center cursor-pointer">
+          <input class="sr-only peer" id="dark-mode-toggle" type="checkbox">
+          <div class="w-11 h-6 bg-surface-container-high rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <!-- Bantuan -->
+  <section class="mb-6">
+    <h3 class="text-xs font-semibold text-on-surface-variant mb-3 px-2 tracking-widest uppercase">Bantuan &amp; Kebijakan</h3>
+    <div class="bg-surface-container-lowest rounded-3xl overflow-hidden shadow-[0_4px_30px_rgba(49,78,82,0.04)] border border-surface-container">
+      <a href="#" class="w-full flex items-center justify-between p-5 hover:bg-surface-container-low transition-colors group">
+        <div class="flex items-center gap-4"><span class="material-symbols-outlined text-primary opacity-80">help_center</span><span>Pusat Bantuan</span></div>
+        <span class="material-symbols-outlined text-outline-variant">chevron_right</span>
+      </a>
+      <div class="h-px bg-surface-container mx-5"></div>
+      <a href="#" class="w-full flex items-center justify-between p-5 hover:bg-surface-container-low transition-colors group">
+        <div class="flex items-center gap-4"><span class="material-symbols-outlined text-primary opacity-80">report_problem</span><span>Laporkan Masalah</span></div>
+        <span class="material-symbols-outlined text-outline-variant">chevron_right</span>
+      </a>
+      <div class="h-px bg-surface-container mx-5"></div>
+      <a href="#" class="w-full flex items-center justify-between p-5 hover:bg-surface-container-low transition-colors group">
+        <div class="flex items-center gap-4"><span class="material-symbols-outlined text-primary opacity-80">article</span><span>Ketentuan Layanan</span></div>
+        <span class="material-symbols-outlined text-outline-variant">chevron_right</span>
+      </a>
+      <div class="h-px bg-surface-container mx-5"></div>
+      <a href="#" class="w-full flex items-center justify-between p-5 hover:bg-surface-container-low transition-colors group">
+        <div class="flex items-center gap-4"><span class="material-symbols-outlined text-primary opacity-80">privacy_tip</span><span>Kebijakan Privasi</span></div>
+        <span class="material-symbols-outlined text-outline-variant">chevron_right</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="mb-10">
+    <button onclick="handleLogout()" class="w-full flex items-center justify-center gap-2 p-5 bg-tertiary-fixed text-on-tertiary-fixed-variant rounded-3xl hover:opacity-90 transition-all active:scale-95 shadow-sm">
+      <span class="material-symbols-outlined">logout</span><span class="font-bold">Keluar</span>
+    </button>
+    <p class="text-center mt-6 text-on-surface-variant text-xs opacity-50">Winemu Versi 1.0.0</p>
+  </section>
+</main>
+
+<!-- Password Modal -->
+<div id="password-modal" class="hidden fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
+  <div class="bg-surface-container-lowest rounded-2xl p-6 w-full max-w-sm shadow-2xl">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="font-headline-md text-lg text-primary">Ubah Password</h3>
+      <button onclick="closePasswordModal()" class="text-on-surface-variant hover:text-error"><span class="material-symbols-outlined">close</span></button>
+    </div>
+    <p class="text-sm text-on-surface-variant mb-4">Masukkan email Anda untuk menerima tautan reset password.</p>
+    <input id="reset-email" type="email" placeholder="Email Anda" class="w-full px-4 py-3 border border-outline-variant rounded-xl focus:outline-none focus:border-primary mb-4">
+    <button onclick="sendResetLink()" class="w-full py-3 bg-primary text-on-primary rounded-xl font-bold hover:bg-primary-container transition-colors">Kirim Tautan Reset</button>
+  </div>
+</div>
+
+<script src="/js/api.js"></script>
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+  if (!isLoggedIn()) { window.location.href = '/login.html'; return; }
+  loadUser();
+
+  // Dark mode toggle persistence
+  const dm = localStorage.getItem('winemu-dark-mode') === 'true';
+  document.getElementById('dark-mode-toggle').checked = dm;
+  document.getElementById('dark-mode-toggle').addEventListener('change', e => {
+    localStorage.setItem('winemu-dark-mode', e.target.checked);
+    document.documentElement.classList.toggle('dark', e.target.checked);
+  });
+
+  window.addEventListener('scroll', () => {
+    document.getElementById('top-app-bar').classList.toggle('scrolled-header', window.scrollY > 10);
+  });
+});
+
+async function loadUser() {
+  const res = await api.get('/users/profile');
+  if (!res?.data?.user) return;
+  const u = res.data.user;
+  document.getElementById('settings-name').textContent = u.full_name || u.username;
+  document.getElementById('settings-email').textContent = u.email || '';
+  document.getElementById('reset-email').value = u.email || '';
+  document.getElementById('verify-status').textContent = u.is_verified ? 'Terverifikasi' : 'Belum Verifikasi';
+  document.getElementById('verify-status').className = u.is_verified ? 'text-sm text-green-600 font-semibold' : 'text-sm text-tertiary';
+  document.getElementById('my-location-text').textContent = u.location
+    ? u.location
+    : (u.latitude && u.longitude ? 'Lokasi tersimpan' : 'Belum diatur, ketuk untuk mengatur');
+
+  const av = document.getElementById('settings-avatar');
+  if (u.avatar_url) av.innerHTML = `<img src="${u.avatar_url}" class="w-full h-full object-cover">`;
+  else av.textContent = (u.full_name || u.username || '?')[0].toUpperCase();
+}
+
+function openPasswordModal() { document.getElementById('password-modal').classList.remove('hidden'); }
+function closePasswordModal() { document.getElementById('password-modal').classList.add('hidden'); }
+
+async function sendResetLink() {
+  const email = document.getElementById('reset-email').value.trim();
+  if (!email) return;
+  const res = await api.post('/auth/forgot-password', { email });
+  if (res?.status === 'success') {
+    showToast('Tautan reset password telah dikirim');
+    closePasswordModal();
+  }
+}
+
+function handleLogout() {
+  if (!confirm('Yakin ingin keluar?')) return;
+  api.post('/auth/logout').finally(() => {
+    api.clearTokens();
+    window.location.href = '/login.html';
+  });
+}
+
+function updateMyLocation() {
+  if (!navigator.geolocation) {
+    showToast('Browser Anda tidak mendukung deteksi lokasi', true);
+    return;
+  }
+
+  const icon = document.getElementById('location-update-icon');
+  const textEl = document.getElementById('my-location-text');
+  icon.textContent = 'sync';
+  icon.classList.add('animate-spin');
+  textEl.textContent = 'Mendeteksi lokasi...';
+
+  navigator.geolocation.getCurrentPosition(
+    async (position) => {
+      const { latitude, longitude } = position.coords;
+      let locationName = `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
+
+      // Reverse geocoding opsional via Nominatim (OpenStreetMap) untuk nama lokasi yang lebih manusiawi.
+      try {
+        const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=14`);
+        const geoData = await geoRes.json();
+        if (geoData?.address) {
+          const a = geoData.address;
+          locationName = a.suburb || a.city_district || a.city || a.county || locationName;
+        }
+      } catch (e) {
+        // Reverse geocoding gagal (misal offline) - tetap lanjut dengan koordinat mentah.
+      }
+
+      const res = await api.put('/users/profile', { latitude, longitude, location: locationName });
+      icon.classList.remove('animate-spin');
+      icon.textContent = 'chevron_right';
+
+      if (res?.status === 'success') {
+        textEl.textContent = locationName;
+        showToast('Lokasi berhasil diperbarui ✓');
+      } else {
+        textEl.textContent = 'Gagal menyimpan lokasi';
+        showToast(res?.message || 'Gagal menyimpan lokasi', true);
+      }
+    },
+    () => {
+      icon.classList.remove('animate-spin');
+      icon.textContent = 'chevron_right';
+      textEl.textContent = 'Izin lokasi ditolak';
+      showToast('Izin akses lokasi diperlukan untuk fitur ini', true);
+    },
+    { timeout: 10000 }
+  );
+}
+</script>
+</body>
+</html>

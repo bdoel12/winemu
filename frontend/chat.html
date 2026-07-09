@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html class="light" lang="id">
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<script src="/js/device-redirect.js"></script>
+<title>Winemu - Chat</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Philosopher:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script>
+tailwind.config={darkMode:"class",theme:{extend:{colors:{
+  "surface-container-lowest":"#ffffff","surface":"#fcf9f4","background":"#fcf9f4",
+  "primary-container":"#314e52","on-primary":"#ffffff","outline-variant":"#c1c8c9",
+  "on-surface":"#1c1c19","outline":"#727879","primary":"#1a373b","on-surface-variant":"#414849",
+  "secondary":"#7d562d","surface-container-low":"#f6f3ee","surface-container-high":"#ebe8e3",
+  "surface-container":"#f0ede9","surface-container-highest":"#e5e2dd","secondary-container":"#ffca98",
+  "tertiary-container":"#79351d","on-tertiary-container":"#ffa182","mori":"#F8F5F0","tarum":"#314E52"
+},fontFamily:{"headline-md":["Philosopher"],"body-sm":["Plus Jakarta Sans"],"body-md":["Plus Jakarta Sans"],"label-caps":["Plus Jakarta Sans"]},
+fontSize:{
+  "headline-md":["24px",{"lineHeight":"1.3","fontWeight":"700"}],
+  "body-sm":["14px",{"lineHeight":"1.5","fontWeight":"400"}],
+  "body-md":["16px",{"lineHeight":"1.6","fontWeight":"400"}],
+  "label-caps":["12px",{"lineHeight":"1.2","letterSpacing":"0.05em","fontWeight":"600"}]
+}}}}
+</script>
+<style>
+.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;display:inline-block;line-height:1;}
+.chat-bubble-right{border-radius:12px 12px 0 12px;}
+.chat-bubble-left{border-radius:12px 12px 12px 0;}
+</style>
+<!-- batik-bg-applied -->
+<style>
+  body { background-color:#fcf9f4; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cg fill='none'%3E%3Ccircle cx='30' cy='30' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='30' cy='30' r='6' stroke='%231a373b' stroke-width='0.4' stroke-opacity='0.05'/%3E%3Ccircle cx='0' cy='0' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='60' cy='0' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='0' cy='60' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='60' cy='60' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Cpath d='M30 20 L40 30 L30 40 L20 30 Z' stroke='%237d562d' stroke-width='0.5' stroke-opacity='0.06' fill='none'/%3E%3Cpath d='M0 0 L10 0 L5 8 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3Cpath d='M60 0 L50 0 L55 8 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3Cpath d='M0 60 L10 60 L5 52 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3Cpath d='M60 60 L50 60 L55 52 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3C/g%3E%3C/svg%3E"); }
+</style>
+</head>
+<body class="antialiased text-on-surface font-body-md min-h-screen pb-20" style="background:#F4F1EC;">
+  <!-- Chat List View -->
+  <div id="list-view">
+    <div id="top-bar"></div>
+    <main class="max-w-screen-md mx-auto px-4 pt-[80px] pb-20">
+      <div class="mt-4 mb-6">
+        <div class="relative">
+          <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">search</span>
+          <input type="text" placeholder="Cari atau mulai obrolan baru" class="w-full bg-surface-container-low border border-outline-variant/30 rounded-full py-3 pl-12 pr-4 text-body-md focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors placeholder:text-outline-variant">
+        </div>
+      </div>
+      <div id="conversations-list" class="flex flex-col gap-2">
+        <div class="flex items-center justify-center py-12">
+          <div class="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      </div>
+    </main>
+    <div id="bottom-nav"></div>
+  </div>
+
+  <!-- Conversation View -->
+  <div id="conv-view" class="hidden fixed inset-0 flex flex-col max-w-md mx-auto" style="background:#F4F1EC;">
+    <header class="sticky top-0 z-50 bg-white border-b border-surface-variant px-4 py-3 flex items-center justify-between shadow-sm">
+      <div class="flex items-center gap-3 flex-1 min-w-0">
+        <button onclick="closeConv()" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container transition-colors flex-shrink-0">
+          <span class="material-symbols-outlined text-on-surface-variant">arrow_back</span>
+        </button>
+        <div id="conv-item-thumb" class="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-surface-container cursor-pointer" onclick="if(activeReportId) window.location.href='/report-detail.html?id='+activeReportId"></div>
+        <div class="flex flex-col min-w-0 cursor-pointer" onclick="if(activeReportId) window.location.href='/report-detail.html?id='+activeReportId">
+          <span id="conv-item-title" class="font-body-md text-on-surface font-bold truncate"></span>
+          <span id="conv-item-status" class="text-on-surface-variant text-[10px] font-label-caps"></span>
+        </div>
+      </div>
+      <div class="flex items-center gap-1 flex-shrink-0">
+        <button class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container transition-colors">
+          <span class="material-symbols-outlined">videocam</span>
+        </button>
+        <button class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container transition-colors">
+          <span class="material-symbols-outlined">call</span>
+        </button>
+        <div class="relative" id="header-menu-wrapper">
+          <button onclick="toggleHeaderMenu()" class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container transition-colors">
+            <span class="material-symbols-outlined">more_vert</span>
+          </button>
+          <div id="header-dropdown" class="hidden absolute right-0 top-full mt-1 w-56 bg-surface-container-lowest rounded-2xl shadow-2xl border border-outline-variant/20 overflow-hidden z-50">
+            <button onclick="enterSelectMode(); closeHeaderMenu()" class="w-full flex items-center gap-3 px-4 py-3 text-sm text-on-surface hover:bg-surface-container-low transition-colors text-left">
+              <span class="material-symbols-outlined text-[18px] text-on-surface-variant flex-shrink-0">checklist</span>
+              <span>Pilih pesan</span>
+            </button>
+            <button onclick="if(activeOtherUserId) window.location.href='/user-profile.html?id='+activeOtherUserId; closeHeaderMenu()" class="w-full flex items-center gap-3 px-4 py-3 text-sm text-on-surface hover:bg-surface-container-low transition-colors text-left">
+              <span class="material-symbols-outlined text-[18px] text-on-surface-variant flex-shrink-0">person</span>
+              <span>Lihat profil</span>
+            </button>
+            <button onclick="clearChatConfirm(); closeHeaderMenu()" class="w-full flex items-center gap-3 px-4 py-3 text-sm text-on-surface hover:bg-surface-container-low transition-colors text-left">
+              <span class="material-symbols-outlined text-[18px] text-on-surface-variant flex-shrink-0">delete_sweep</span>
+              <span>Hapus semua percakapan</span>
+            </button>
+            <button onclick="deleteConvConfirm(); closeHeaderMenu()" class="w-full flex items-center gap-3 px-4 py-3 text-sm text-on-surface hover:bg-surface-container-low transition-colors text-left">
+              <span class="material-symbols-outlined text-[18px] text-on-surface-variant flex-shrink-0">delete_forever</span>
+              <span>Hapus chat dengan pengguna</span>
+            </button>
+            <div class="h-px bg-outline-variant/20 mx-4"></div>
+            <button onclick="blockUserConfirm(); closeHeaderMenu()" class="w-full flex items-center gap-3 px-4 py-3 text-sm text-on-surface hover:bg-surface-container-low transition-colors text-left">
+              <span class="material-symbols-outlined text-[18px] text-on-surface-variant flex-shrink-0">block</span>
+              <span>Blokir pengguna</span>
+            </button>
+            <button onclick="reportUserConfirm(); closeHeaderMenu()" class="w-full flex items-center gap-3 px-4 py-3 text-sm text-error hover:bg-error-container/20 transition-colors text-left">
+              <span class="material-symbols-outlined text-[18px] flex-shrink-0">flag</span>
+              <span>Laporkan pengguna</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main id="messages-area" class="flex-1 overflow-y-auto p-4 space-y-4 flex flex-col"></main>
+
+    <!-- Verification Answer Modal -->
+    <div id="verify-modal" class="hidden fixed inset-0 flex items-center justify-center bg-black/40 p-4" style="z-index:2000;">
+      <div class="w-full max-w-sm bg-surface-container-lowest rounded-2xl p-6 shadow-2xl">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="font-headline-md text-lg text-primary flex items-center gap-2"><span class="material-symbols-outlined text-secondary">key</span>Verifikasi Kepemilikan</h3>
+          <button onclick="closeVerifyModal()" class="text-on-surface-variant"><span class="material-symbols-outlined">close</span></button>
+        </div>
+        <div class="bg-secondary-container/30 border border-secondary/20 rounded-xl p-4 mb-4">
+          <p class="text-xs text-on-surface-variant font-semibold mb-1 flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">help</span>Pertanyaan dari pemilik barang</p>
+          <p id="verify-question-text" class="text-on-surface font-semibold">Memuat pertanyaan...</p>
+        </div>
+        <textarea id="verify-answer" rows="3" placeholder="Tuliskan jawaban Anda..." class="w-full border border-outline-variant rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-primary resize-none mb-4"></textarea>
+        <p id="verify-error" class="text-red-600 text-sm hidden mb-2"></p>
+        <button onclick="submitVerifyAnswer()" id="verify-submit-btn" class="w-full py-3 bg-primary text-on-primary rounded-xl font-bold hover:bg-primary-container transition-colors">Kirim Jawaban</button>
+      </div>
+    </div>
+
+    <!-- Reply preview -->
+    <div id="reply-preview-bar" style="display:none;" class="sticky bottom-0 z-40 px-3 pt-2 bg-white/90 backdrop-blur-sm border-t border-surface-variant">
+      <div class="flex items-center gap-2 bg-surface-container-low rounded-lg px-3 py-2">
+        <div class="w-0.5 h-7 bg-primary rounded-full flex-shrink-0"></div>
+        <div class="flex-1 min-w-0">
+          <p id="reply-preview-sender" class="text-[11px] font-semibold text-primary truncate"></p>
+          <p id="reply-preview-content" class="text-[11px] text-on-surface-variant truncate"></p>
+        </div>
+        <button onclick="cancelReply()" class="text-on-surface-variant p-1">
+          <span class="material-symbols-outlined" style="font-size:18px;">close</span>
+        </button>
+      </div>
+    </div>
+    <footer class="border-surface-variant p-3 flex items-center gap-2 sticky bottom-0 z-50 bg-white/90 backdrop-blur-sm">
+      <div class="flex-1 flex items-center bg-white rounded-full px-2 py-1 shadow-sm border border-surface-variant">
+        <button class="w-10 h-10 flex items-center justify-center text-on-surface-variant">
+          <span class="material-symbols-outlined">mood</span>
+        </button>
+        <input id="msg-input" class="flex-1 bg-transparent border-none focus:ring-0 text-on-surface font-body-sm py-2 px-2" placeholder="Ketik pesan..." type="text" onkeydown="if(event.key==='Enter')sendMessage()">
+        <button class="w-10 h-10 flex items-center justify-center text-on-surface-variant">
+          <span class="material-symbols-outlined">attach_file</span>
+        </button>
+      </div>
+      <button onclick="sendMessage()" class="shrink-0 w-12 h-12 flex items-center justify-center rounded-full text-white shadow-md" style="background:#314E52;">
+        <span class="material-symbols-outlined text-2xl">send</span>
+      </button>
+    </footer>
+  </div>
+
+<script src="/js/api.js"></script>
+<script src="/js/nav.js"></script>
+<script>
+  let socket = null, activeConvId = null, currentUser = null, activeOtherUserId = null, activeReportId = null, activeReportData = null;
+  let allConversations = [];
+
+  window.addEventListener('DOMContentLoaded', async () => {
+    injectNav('chat');
+    if (!isLoggedIn()) { window.location.href = '/login.html'; return; }
+    currentUser = api.getUser();
+
+    const params = new URLSearchParams(window.location.search);
+    const targetConvId = params.get('conv');
+    const targetUserId = params.get('user');
+    const reportId = params.get('report');
+
+    await loadConversations();
+
+    if (targetConvId) {
+      await openConv(parseInt(targetConvId));
+    } else if (targetUserId) {
+      await startConversation(parseInt(targetUserId), reportId ? parseInt(reportId) : null);
+    }
+
+    initSocket();
+  });
+
+  function initSocket() {
+    socket = io({ auth: { token: api.getToken() } });
+    if (currentUser) socket.emit('join_user_room', { user_id: currentUser.id });
+    socket.on('new_message', msg => {
+      const convId = Number(msg?.conversation_id);
+      const currentConvId = activeConvId ? Number(activeConvId) : null;
+      if (currentConvId && convId === currentConvId) {
+        appendMessage(msg, false);
+        return;
+      }
+      // Jika pesan masuk untuk percakapan lain, abaikan tampilan.
+      // (Notifikasi badge/toast ditangani oleh endpoint/room user.)
+    });
+    socket.on('message_deleted', data => {
+      document.querySelector(`[data-msg-id="${data.message_id}"]`)?.remove();
+    });
+    socket.on('message_pinned', data => {
+      const el = document.querySelector(`[data-msg-id="${data.message_id}"]`);
+      if (el) el.setAttribute('data-pinned', data.is_pinned ? '1' : '0');
+    });
+  }
+
+  async function loadConversations() {
+    const res = await api.get('/chat/conversations?per_page=30');
+    const list = document.getElementById('conversations-list');
+    if (!res?.data?.items) { list.innerHTML = '<p class="text-center text-on-surface-variant py-12">Belum ada obrolan</p>'; return; }
+
+    list.innerHTML = res.data.items.length === 0
+      ? '<p class="text-center text-on-surface-variant py-12">Belum ada obrolan</p>'
+      : res.data.items.map(c => {
+          const other = c.other_user;
+          const av = other?.avatar_url
+            ? `<img src="${other.avatar_url}" class="w-12 h-12 rounded-full object-cover mr-4">`
+            : `<div class="w-12 h-12 rounded-full bg-secondary-container text-on-surface flex items-center justify-center font-bold mr-4">${(other?.full_name||other?.username||'?')[0]}</div>`;
+          const unread = c.unread_count > 0 ? `<div class="w-5 h-5 bg-primary text-on-primary rounded-full flex items-center justify-center text-[10px] font-bold">${c.unread_count}</div>` : '';
+          const lastMsg = c.last_message ? c.last_message.content.substring(0,40) : 'Mulai percakapan';
+          return `<div onclick="openConv(${c.id})" class="flex items-center p-3 rounded-2xl bg-surface hover:bg-surface-container-low transition-colors cursor-pointer">
+            ${av}
+            <div class="flex-1 min-w-0">
+              <div class="flex justify-between items-baseline mb-1">
+                <h3 class="font-body-md font-semibold text-on-surface truncate">${other?.full_name||other?.username||'Pengguna'}</h3>
+                <span class="font-label-caps text-xs ${c.unread_count>0?'text-primary font-bold':'text-outline'} shrink-0 ml-2">${c.last_message_at?timeAgo(c.last_message_at):''}</span>
+              </div>
+              <div class="flex items-center justify-between gap-2">
+                <p class="text-on-surface-variant text-sm truncate ${c.unread_count>0?'font-semibold text-on-surface':''}">${lastMsg}</p>
+                ${unread}
+              </div>
+            </div>
+          </div>`;
+        }).join('');
+  }
+
+  async function startConversation(userId, reportId) {
+    const uid = parseInt(userId);
+    const rid = reportId ? parseInt(reportId) : null;
+    if (!uid || isNaN(uid)) { showToast('ID pengguna tidak valid'); return; }
+    
+    let res;
+    try {
+      res = await api.post('/chat/conversations', { user_id: uid, report_id: rid });
+    } catch(e) {
+      showToast('Koneksi gagal. Coba lagi.', 'error');
+      return;
+    }
+
+    if (res?.data?.conversation) {
+      const conv = res.data.conversation;
+      if (!allConversations.find(c => c.id === conv.id)) {
+        allConversations = [conv, ...allConversations];
+      }
+      await openConv(conv.id);
+    } else if (res?.status === 'error') {
+      showToast(res?.message || 'Gagal membuka percakapan', 'error');
+    } else {
+      await loadConversations();
+    }
+  }
+
+  async function openConv(convId) {
+    activeConvId = convId;
+    renderedMessageIds = new Set();
+    document.getElementById('list-view').classList.add('hidden');
+    document.getElementById('conv-view').classList.remove('hidden');
+
+    if (socket) socket.emit('join_conversation', { conversation_id: convId });
+
+    // Load conversation info - use local cache first
+    let conv = allConversations.find(c => c.id === convId) || null;
+    if (!conv) {
+      const convRes = await api.get(`/chat/conversations?per_page=50`);
+      if (convRes?.data?.items) {
+        allConversations = convRes.data.items;
+        conv = allConversations.find(c => c.id === convId);
+      }
+    }
+
+    if (conv?.other_user) {
+      const other = conv.other_user;
+      activeOtherUserId = other.id;
+    }
+
+    activeReportData = conv?.report || null;
+    activeReportId = activeReportData?.id || null;
+
+    const thumbEl = document.getElementById('conv-item-thumb');
+    const titleEl = document.getElementById('conv-item-title');
+    const statusEl = document.getElementById('conv-item-status');
+
+    if (activeReportData) {
+      thumbEl.innerHTML = activeReportData.primary_image
+        ? `<img src="${activeReportData.primary_image}" class="w-full h-full object-cover">`
+        : `<div class="w-full h-full flex items-center justify-center bg-primary-container text-white"><span class="material-symbols-outlined text-[18px]">inventory_2</span></div>`;
+      titleEl.textContent = activeReportData.title;
+      const statusLabel = {
+        aktif: 'Menunggu Verifikasi',
+        proses: 'Dalam Proses Klaim',
+        selesai: 'Selesai',
+        ditutup: 'Ditutup',
+      }[activeReportData.status] || '';
+      statusEl.textContent = statusLabel;
+    } else if (conv?.other_user) {
+      const other = conv.other_user;
+      thumbEl.innerHTML = other.avatar_url
+        ? `<img src="${other.avatar_url}" class="w-full h-full object-cover">`
+        : `<div class="w-full h-full flex items-center justify-center bg-primary-container text-white font-bold">${(other.full_name||other.username||'?')[0].toUpperCase()}</div>`;
+      titleEl.textContent = other.full_name || other.username;
+      statusEl.textContent = '';
+    }
+
+    // Load messages
+    const msgRes = await api.get(`/chat/conversations/${convId}/messages?per_page=50`);
+    const area = document.getElementById('messages-area');
+    area.innerHTML = '<div class="flex justify-center"><span class="bg-surface-variant text-on-surface-variant text-xs font-label-caps px-3 py-1 rounded-full">Hari ini</span></div>';
+    if (msgRes?.data?.items) {
+      msgRes.data.items.forEach(m => appendMessage(m, false));
+    }
+
+    // Tampilkan bubble sistem jika laporan masih butuh verifikasi kepemilikan
+    // dan obrolan ini bukan dengan pemilik laporan itu sendiri (current user = calon pengklaim).
+    if (activeReportData && activeReportData.status === 'aktif' && currentUser?.id !== activeReportData.owner_id) {
+      appendSystemVerifyBubble();
+    }
+
+    area.scrollTop = area.scrollHeight;
+  }
+
+  function appendSystemVerifyBubble() {
+    const area = document.getElementById('messages-area');
+    const div = document.createElement('div');
+    div.className = 'flex justify-center w-full my-4';
+    div.innerHTML = `<div class="bg-surface-container-high rounded-xl p-4 w-full max-w-[90%] flex flex-col items-center gap-3 text-center shadow-sm">
+      <span class="material-symbols-outlined text-[#C06C50] text-2xl">shield</span>
+      <p class="text-sm italic text-on-surface-variant">Sistem memerlukan verifikasi kepemilikan sebelum barang diserahkan.</p>
+      <button onclick="openVerifyModal()" class="w-full bg-[#C06C50] text-white font-bold text-sm py-2.5 px-4 rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+        <span class="material-symbols-outlined text-sm">assignment_turned_in</span>
+        Jawab Pertanyaan Verifikasi
+      </button>
+    </div>`;
+    area.appendChild(div);
+  }
+
+  function openVerifyModal() {
+    if (!activeReportId) return;
+    document.getElementById('verify-question-text').textContent = activeReportData?.verification_question || 'Sebutkan ciri khusus barang ini yang tidak terlihat di foto.';
+    document.getElementById('verify-answer').value = '';
+    document.getElementById('verify-error').classList.add('hidden');
+    document.getElementById('verify-modal').classList.remove('hidden');
+  }
+
+  function closeVerifyModal() {
+    document.getElementById('verify-modal').classList.add('hidden');
+  }
+
+  async function submitVerifyAnswer() {
+    const answer = document.getElementById('verify-answer').value.trim();
+    const errEl = document.getElementById('verify-error');
+    if (!answer) { errEl.textContent = 'Jawaban wajib diisi'; errEl.classList.remove('hidden'); return; }
+
+    const btn = document.getElementById('verify-submit-btn');
+    btn.textContent = 'Mengirim...'; btn.disabled = true;
+
+    const res = await api.post('/claims', { report_id: activeReportId, answer });
+    if (res?.status === 'success') {
+      closeVerifyModal();
+      showToast('Jawaban terkirim! Menunggu verifikasi pemilik.');
+    } else {
+      errEl.textContent = res?.message || 'Gagal mengirim jawaban';
+      errEl.classList.remove('hidden');
+    }
+    btn.textContent = 'Kirim Jawaban'; btn.disabled = false;
+  }
+
+  function closeConv() {
+    if (socket && activeConvId) socket.emit('leave_conversation', { conversation_id: activeConvId });
+    activeConvId = null;
+    activeOtherUserId = null;
+    activeReportId = null;
+    activeReportData = null;
+    document.getElementById('list-view').classList.remove('hidden');
+    document.getElementById('conv-view').classList.add('hidden');
+    loadConversations();
+  }
+
+  let renderedMessageIds = new Set();
+
+  function appendMessage(msg, scroll = true) {
+    if (msg.id && renderedMessageIds.has(msg.id)) return;
+    if (msg.id) renderedMessageIds.add(msg.id);
+
+    const area = document.getElementById('messages-area');
+    const isOwn = msg.sender_id === currentUser?.id;
+    const div = document.createElement('div');
+    div.setAttribute('data-msg-id', msg.id || '');
+    div.className = `flex ${isOwn ? 'justify-end' : 'justify-start'} items-end gap-1`;
+
+    const timeStr = new Date(msg.created_at).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+    const msgId = msg.id || '';
+    const dotMenuId = `dot-menu-${msgId}`;
+
+    if (isOwn) {
+      div.innerHTML = `
+        <div class="relative flex items-end gap-1 max-w-[85%] justify-end">
+          <div class="relative">
+            <button onclick="toggleMsgMenu('${dotMenuId}', true, event)" class="w-5 h-5 rounded-full bg-surface-container-high/80 hover:bg-surface-container-highest flex items-center justify-center flex-shrink-0 mb-1" title="Opsi pesan">
+              <span class="material-symbols-outlined text-on-surface-variant" style="font-size:12px;">more_vert</span>
+            </button>
+            <div id="${dotMenuId}" class="hidden absolute bottom-full right-0 mb-1 w-44 bg-surface-container-lowest rounded-xl shadow-xl border border-outline-variant/20 overflow-hidden z-50">
+              <button onclick="pinMessage('${msgId}'); closeMsgMenu('${dotMenuId}')" class="w-full flex items-center gap-2.5 px-3 py-2.5 text-xs text-on-surface hover:bg-surface-container-low transition-colors">
+                <span class="material-symbols-outlined text-[15px] text-on-surface-variant">push_pin</span>Sematkan
+              </button>
+              <button onclick="copyMessage('${msgId}'); closeMsgMenu('${dotMenuId}')" class="w-full flex items-center gap-2.5 px-3 py-2.5 text-xs text-on-surface hover:bg-surface-container-low transition-colors">
+                <span class="material-symbols-outlined text-[15px] text-on-surface-variant">content_copy</span>Salin pesan
+              </button>
+              <button onclick="replyToMessage('${msgId}'); closeMsgMenu('${dotMenuId}')" class="w-full flex items-center gap-2.5 px-3 py-2.5 text-xs text-on-surface hover:bg-surface-container-low transition-colors">
+                <span class="material-symbols-outlined text-[15px] text-on-surface-variant">reply</span>Balas
+              </button>
+              <div class="h-px bg-outline-variant/20 mx-3"></div>
+              <button onclick="deleteMessageConfirm('${msgId}'); closeMsgMenu('${dotMenuId}')" class="w-full flex items-center gap-2.5 px-3 py-2.5 text-xs text-error hover:bg-error-container/20 transition-colors">
+                <span class="material-symbols-outlined text-[15px]">delete</span>Hapus pesan
+              </button>
+            </div>
+          </div>
+          <div class="text-white p-3 chat-bubble-right shadow-sm relative" style="background:#314E52;">
+            ${msg.reply_to_content ? `<div class="mb-2 border-l-2 border-white/50 pl-2 bg-white/10 rounded"><p class="text-[10px] font-semibold text-white/80 truncate">${msg.reply_to_sender||'Pengguna'}</p><p class="text-[10px] text-white/70 truncate">${msg.reply_to_content}</p></div>` : ''}
+            <p class="text-sm pr-10">${msg.content}</p>
+            <div class="flex items-center gap-1 absolute bottom-1 right-2">
+              <span class="text-[10px] text-white/70">${timeStr}</span>
+              <span class="material-symbols-outlined text-[14px] text-white/70">done_all</span>
+            </div>
+          </div>
+        </div>`;
+    } else {
+      div.innerHTML = `
+        <div class="relative flex items-end gap-1 max-w-[85%]">
+          <div class="bg-white text-on-surface border border-surface-variant p-3 chat-bubble-left shadow-sm relative">
+            ${msg.reply_to_content ? `<div class="mb-2 border-l-2 border-primary/50 pl-2 bg-surface-container rounded"><p class="text-[10px] font-semibold text-primary truncate">${msg.reply_to_sender||'Pengguna'}</p><p class="text-[10px] text-on-surface-variant truncate">${msg.reply_to_content}</p></div>` : ''}
+            <p class="text-sm pr-10">${msg.content}</p>
+            <span class="text-[10px] text-on-surface-variant absolute bottom-1 right-2">${timeStr}</span>
+          </div>
+          <div class="relative">
+            <button onclick="toggleMsgMenu('${dotMenuId}', false, event)" class="w-5 h-5 rounded-full bg-surface-container-high/80 hover:bg-surface-container-highest flex items-center justify-center flex-shrink-0 mb-1" title="Opsi pesan">
+              <span class="material-symbols-outlined text-on-surface-variant" style="font-size:12px;">more_vert</span>
+            </button>
+            <div id="${dotMenuId}" class="hidden absolute bottom-full left-0 mb-1 w-44 bg-surface-container-lowest rounded-xl shadow-xl border border-outline-variant/20 overflow-hidden z-50">
+              <button onclick="pinMessage('${msgId}'); closeMsgMenu('${dotMenuId}')" class="w-full flex items-center gap-2.5 px-3 py-2.5 text-xs text-on-surface hover:bg-surface-container-low transition-colors">
+                <span class="material-symbols-outlined text-[15px] text-on-surface-variant">push_pin</span>Sematkan
+              </button>
+              <button onclick="copyMessage('${msgId}'); closeMsgMenu('${dotMenuId}')" class="w-full flex items-center gap-2.5 px-3 py-2.5 text-xs text-on-surface hover:bg-surface-container-low transition-colors">
+                <span class="material-symbols-outlined text-[15px] text-on-surface-variant">content_copy</span>Salin pesan
+              </button>
+              <button onclick="replyToMessage('${msgId}'); closeMsgMenu('${dotMenuId}')" class="w-full flex items-center gap-2.5 px-3 py-2.5 text-xs text-on-surface hover:bg-surface-container-low transition-colors">
+                <span class="material-symbols-outlined text-[15px] text-on-surface-variant">reply</span>Balas
+              </button>
+              <button onclick="if(activeOtherUserId) window.location.href='/user-profile.html?id='+activeOtherUserId; closeMsgMenu('${dotMenuId}')" class="w-full flex items-center gap-2.5 px-3 py-2.5 text-xs text-on-surface hover:bg-surface-container-low transition-colors">
+                <span class="material-symbols-outlined text-[15px] text-on-surface-variant">person</span>Lihat profil
+              </button>
+              <div class="h-px bg-outline-variant/20 mx-3"></div>
+              <button onclick="deleteMessageConfirm('${msgId}'); closeMsgMenu('${dotMenuId}')" class="w-full flex items-center gap-2.5 px-3 py-2.5 text-xs text-error hover:bg-error-container/20 transition-colors">
+                <span class="material-symbols-outlined text-[15px]">delete</span>Hapus pesan
+              </button>
+            </div>
+          </div>
+        </div>`;
+    }
+    area.appendChild(div);
+    if (scroll) area.scrollTop = area.scrollHeight;
+  }
+
+  async function sendMessage() {
+    if (!activeConvId) return;
+    const input = document.getElementById('msg-input');
+    const content = input.value.trim();
+    if (!content) return;
+    input.value = '';
+
+    const payload = { content };
+    if (activeReplyMsgId) {
+      payload.reply_to_id = activeReplyMsgId;
+      payload.reply_to_content = document.getElementById('reply-preview-content')?.textContent || '';
+      payload.reply_to_sender = document.getElementById('reply-preview-sender')?.textContent?.replace('Membalas ','') || '';
+    }
+    cancelReply();
+    const res = await api.post(`/chat/conversations/${activeConvId}/messages`, payload);
+    if (res?.data?.message) {
+      appendMessage(res.data.message, true);
+    }
+  }
+
+  // ── Header Dropdown Menu ──────────────────────────────────────────────────
+  function toggleHeaderMenu() {
+    document.getElementById('header-dropdown')?.classList.toggle('hidden');
+  }
+  function closeHeaderMenu() {
+    document.getElementById('header-dropdown')?.classList.add('hidden');
+  }
+  document.addEventListener('click', e => {
+    const wrapper = document.getElementById('header-menu-wrapper');
+    if (wrapper && !wrapper.contains(e.target)) closeHeaderMenu();
+  });
+
+  function clearChatConfirm() {
+    if (!activeConvId) return;
+    showConfirmDialog('Hapus Semua Percakapan','Semua pesan dalam percakapan ini akan dihapus permanen. Lanjutkan?','delete_sweep','error',
+      async () => {
+        const res = await api.delete(`/chat/conversations/${activeConvId}/messages`);
+        if (res?.status === 'success') {
+          document.getElementById('messages-area').innerHTML = '';
+          showToast('Semua pesan dihapus');
+        } else { showToast('Gagal menghapus pesan'); }
+      }
+    );
+  }
+  function deleteConvConfirm() {
+    if (!activeConvId) { showToast('Tidak ada percakapan aktif'); return; }
+    showConfirmDialog(
+      'Hapus Chat dengan Pengguna',
+      'Seluruh percakapan dengan pengguna ini akan dihapus dan hilang dari daftar obrolan. Lanjutkan?',
+      'delete', 'error',
+      async () => {
+        const convIdToDelete = activeConvId;
+        try { await api.delete(`/chat/conversations/${convIdToDelete}`); } catch(e) {}
+        allConversations = (allConversations || []).filter(c => String(c.id) !== String(convIdToDelete));
+        closeConv();
+        showToast('Chat berhasil dihapus');
+      }
+    );
+  }
+
+  function blockUserConfirm() {
+    if (!activeOtherUserId) return;
+    showConfirmDialog('Blokir Pengguna','Pengguna ini tidak akan bisa mengirim pesan kepada Anda. Lanjutkan?','block','error',
+      async () => { showToast('Fitur belum tersedia'); }
+    );
+  }
+  function reportUserConfirm() {
+    if (!activeOtherUserId) return;
+    showConfirmDialog('Laporkan Pengguna','Laporkan pengguna ini karena perilaku tidak pantas. Lanjutkan?','flag','error',
+      async () => { showToast('Laporan terkirim'); }
+    );
+  }
+
+  // ── Message Context Menu ──────────────────────────────────────────────────
+  let openMsgMenuId = null;
+  function toggleMsgMenu(menuId, isOwn, event) {
+    if (event) event.stopPropagation();
+    if (openMsgMenuId && openMsgMenuId !== menuId) {
+      document.getElementById(openMsgMenuId)?.classList.add('hidden');
+    }
+    const menu = document.getElementById(menuId);
+    if (!menu) return;
+    menu.classList.toggle('hidden');
+    openMsgMenuId = menu.classList.contains('hidden') ? null : menuId;
+  }
+  function closeMsgMenu(menuId) {
+    document.getElementById(menuId)?.classList.add('hidden');
+    if (openMsgMenuId === menuId) openMsgMenuId = null;
+  }
+  document.addEventListener('click', e => {
+    if (openMsgMenuId) {
+      const menu = document.getElementById(openMsgMenuId);
+      if (menu && !menu.contains(e.target) && !e.target.closest('button[onclick*="toggleMsgMenu"]')) {
+        menu.classList.add('hidden');
+        openMsgMenuId = null;
+      }
+    }
+  });
+
+  // ── Active reply state ────────────────────────────────────────────────────
+  let activeReplyMsgId = null;
+
+  function replyToMessage(msgId) {
+    const msgEl = document.querySelector(`[data-msg-id="${msgId}"]`);
+    const isOwn = msgEl && msgEl.querySelector('.chat-bubble-right');
+    const senderName = isOwn ? (currentUser?.full_name || 'Saya') : (document.getElementById('conv-other-name')?.textContent || 'Pengguna');
+    // Get main message text - last <p> in the bubble (skips reply-context p if present)
+    const bubble = isOwn ? msgEl?.querySelector('.chat-bubble-right') : msgEl?.querySelector('.chat-bubble-left');
+    const allP = bubble ? bubble.querySelectorAll('p') : [];
+    const msgText = allP.length > 0 ? allP[allP.length - 1].textContent.trim() : '';
+    activeReplyMsgId = msgId;
+    document.getElementById('reply-preview-bar').style.display = '';
+    document.getElementById('reply-preview-sender').textContent = 'Membalas ' + senderName;
+    document.getElementById('reply-preview-content').textContent = msgText || '...';
+    document.getElementById('msg-input').focus();
+  }
+
+  function cancelReply() {
+    activeReplyMsgId = null;
+    document.getElementById('reply-preview-bar').style.display = 'none';
+  }
+
+  async function pinMessage(msgId) {
+    try {
+      const res = await api.post(`/chat/messages/${msgId}/pin`);
+      if (res?.data) {
+        showToast(res.data.is_pinned ? 'Pesan disematkan' : 'Sematkan dilepas');
+      } else { showToast('Gagal menyematkan'); }
+    } catch(e) { showToast('Gagal menyematkan'); }
+  }
+
+  function copyMessage(msgId) {
+    const msgEl = document.querySelector(`[data-msg-id="${msgId}"]`);
+    const msgText = msgEl ? msgEl.querySelector('p')?.textContent : '';
+    if (msgText) {
+      navigator.clipboard.writeText(msgText).then(() => showToast('Pesan disalin')).catch(() => {
+        const ta = document.createElement('textarea');
+        ta.value = msgText; document.body.appendChild(ta); ta.select();
+        document.execCommand('copy'); ta.remove(); showToast('Pesan disalin');
+      });
+    }
+  }
+
+  function deleteMessageConfirm(msgId) {
+    if (!msgId) return;
+    showConfirmDialog('Hapus Pesan','Pesan ini akan dihapus secara permanen. Lanjutkan?','delete','error',
+      async () => {
+        try { await api.delete(`/chat/messages/${msgId}`); } catch(e) {}
+        document.querySelector(`[data-msg-id="${msgId}"]`)?.remove();
+        showToast('Pesan dihapus');
+      }
+    );
+  }
+
+  // ── Select Mode ────────────────────────────────────────────────────────────
+  let selectModeActive = false;
+  let selectedMsgIds = new Set();
+
+  function enterSelectMode() {
+    selectModeActive = true;
+    selectedMsgIds.clear();
+    const toolbar = document.createElement('div');
+    toolbar.id = 'select-toolbar';
+    toolbar.style.cssText = 'position:sticky;bottom:0;background:#314E52;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:10px 16px;gap:10px;z-index:40;';
+    toolbar.innerHTML = `
+      <span id="select-count" style="font-size:14px;font-weight:600;">0 dipilih</span>
+      <div style="display:flex;gap:8px;">
+        <button onclick="deleteSelectedMessages()" style="display:flex;align-items:center;gap:4px;background:rgba(255,255,255,0.15);border:none;color:#fff;padding:6px 12px;border-radius:20px;cursor:pointer;font-size:13px;font-weight:600;">
+          <span class="material-symbols-outlined" style="font-size:16px;">delete</span>Hapus
+        </button>
+        <button onclick="exitSelectMode()" style="background:rgba(255,255,255,0.1);border:none;color:#fff;padding:6px 12px;border-radius:20px;cursor:pointer;font-size:13px;">Batal</button>
+      </div>`;
+    document.getElementById('conv-view').appendChild(toolbar);
+
+    document.querySelectorAll('[data-msg-id]').forEach(msgEl => {
+      const msgId = msgEl.getAttribute('data-msg-id');
+      if (!msgId) return;
+      const cb = document.createElement('div');
+      cb.className = 'select-checkbox';
+      cb.style.cssText = 'width:18px;height:18px;border-radius:50%;border:2px solid #c1c8c9;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-right:4px;';
+      cb.onclick = () => toggleSelectMsg(msgId, cb);
+      msgEl.style.cursor = 'pointer';
+      msgEl.prepend(cb);
+    });
+    showToast('Mode pilih aktif');
+  }
+
+  function toggleSelectMsg(msgId, cbEl) {
+    if (selectedMsgIds.has(msgId)) {
+      selectedMsgIds.delete(msgId);
+      cbEl.style.background = 'transparent';
+      cbEl.style.borderColor = '#c1c8c9';
+      cbEl.innerHTML = '';
+    } else {
+      selectedMsgIds.add(msgId);
+      cbEl.style.background = '#1a373b';
+      cbEl.style.borderColor = '#1a373b';
+      cbEl.innerHTML = '<span class="material-symbols-outlined" style="font-size:11px;color:#fff;">check</span>';
+    }
+    document.getElementById('select-count').textContent = `${selectedMsgIds.size} dipilih`;
+  }
+
+  function exitSelectMode() {
+    selectModeActive = false;
+    selectedMsgIds.clear();
+    document.getElementById('select-toolbar')?.remove();
+    document.querySelectorAll('.select-checkbox').forEach(cb => cb.remove());
+  }
+
+  async function deleteSelectedMessages() {
+    if (selectedMsgIds.size === 0) { showToast('Pilih pesan terlebih dahulu'); return; }
+    showConfirmDialog('Hapus Pesan Terpilih',`${selectedMsgIds.size} pesan akan dihapus secara permanen. Lanjutkan?`,'delete','error',
+      async () => {
+        const ids = [...selectedMsgIds];
+        for (const msgId of ids) {
+          try { await api.delete(`/chat/messages/${msgId}`); } catch(e) {}
+          document.querySelector(`[data-msg-id="${msgId}"]`)?.remove();
+        }
+        exitSelectMode();
+        showToast(`${ids.length} pesan dihapus`);
+      }
+    );
+  }
+
+  // ── Confirm Dialog ────────────────────────────────────────────────────────
+  function showConfirmDialog(title, message, icon, iconColor, onConfirm) {
+    document.getElementById('confirm-dialog')?.remove();
+    const overlay = document.createElement('div');
+    overlay.id = 'confirm-dialog';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem;';
+    const c = iconColor === 'error' ? '#ba1a1a' : '#1a373b';
+    overlay.innerHTML = `
+      <div style="background:#fff;border-radius:20px;padding:24px;max-width:320px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.2);">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+          <span class="material-symbols-outlined" style="font-size:22px;color:${c};">${icon}</span>
+          <h3 style="font-weight:700;font-size:15px;color:#1c1c19;">${title}</h3>
+        </div>
+        <p style="font-size:13px;color:#414849;line-height:1.6;margin-bottom:18px;">${message}</p>
+        <div style="display:flex;gap:8px;justify-content:flex-end;">
+          <button onclick="document.getElementById('confirm-dialog').remove()" style="padding:7px 16px;border:1px solid #c1c8c9;border-radius:20px;background:transparent;cursor:pointer;font-size:13px;color:#414849;">Batal</button>
+          <button id="confirm-ok-btn" style="padding:7px 16px;border:none;border-radius:20px;background:${c};color:#fff;cursor:pointer;font-size:13px;font-weight:600;">Lanjutkan</button>
+        </div>
+      </div>`;
+    overlay.querySelector('#confirm-ok-btn').onclick = (e) => { e.stopPropagation(); overlay.remove(); onConfirm(); };
+    overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+    document.body.appendChild(overlay);
+  }
+
+  // ── Toast ─────────────────────────────────────────────────────────────────
+  function showToast(msg) {
+    let t = document.getElementById('toast-msg');
+    if (!t) {
+      t = document.createElement('div');
+      t.id = 'toast-msg';
+      t.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1a373b;color:#fff;padding:8px 18px;border-radius:20px;font-size:13px;font-weight:600;z-index:99999;transition:opacity 0.3s;pointer-events:none;white-space:nowrap;';
+      document.body.appendChild(t);
+    }
+    t.textContent = msg;
+    t.style.opacity = '1';
+    clearTimeout(t._to);
+    t._to = setTimeout(() => { t.style.opacity = '0'; }, 2500);
+  }
+
+</script>
+</body>
+</html>

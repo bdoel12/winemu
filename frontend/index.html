@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html class="light" lang="id">
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<script src="/js/device-redirect.js"></script>
+<title>Winemu - Selamat Datang</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Philosopher:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;700&family=Noto+Sans+Javanese&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<script>
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "on-secondary": "#ffffff","surface-container-highest": "#e5e2dd","surface-bright": "#fcf9f4",
+          "error": "#ba1a1a","outline": "#727879","background": "#fcf9f4","on-primary-container": "#a0bec3",
+          "surface-dim": "#dcdad5","on-primary-fixed-variant": "#2e4b4f","inverse-primary": "#adccd1",
+          "on-primary-fixed": "#001f23","on-background": "#1c1c19","surface": "#fcf9f4",
+          "primary-fixed-dim": "#adccd1","outline-variant": "#c1c8c9","secondary-container": "#ffca98",
+          "primary-fixed": "#c9e8ed","surface-container-low": "#f6f3ee","primary-container": "#314e52",
+          "surface-variant": "#e5e2dd","inverse-surface": "#31302d","surface-container": "#f0ede9",
+          "secondary": "#7d562d","primary": "#1a373b","surface-container-lowest": "#ffffff",
+          "on-secondary-fixed": "#2c1600","on-primary": "#ffffff","on-surface": "#1c1c19",
+          "surface-container-high": "#ebe8e3","inverse-on-surface": "#f3f0eb","on-surface-variant": "#414849"
+        },
+        borderRadius: {"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","2xl":"1rem","full":"9999px"},
+        fontFamily: {
+          "body-lg": ["Plus Jakarta Sans"],"display-lg-mobile": ["Philosopher"],
+          "body-sm": ["Plus Jakarta Sans"],"label-caps": ["Plus Jakarta Sans"],
+          "body-md": ["Plus Jakarta Sans"],"headline-md": ["Philosopher"],
+          "javanese-script": ["Noto Sans Javanese"],"display-lg": ["Philosopher"]
+        },
+        fontSize: {
+          "body-lg": ["18px",{"lineHeight":"1.6","fontWeight":"400"}],
+          "display-lg-mobile": ["32px",{"lineHeight":"1.2","fontWeight":"700"}],
+          "body-sm": ["14px",{"lineHeight":"1.5","fontWeight":"400"}],
+          "label-caps": ["12px",{"lineHeight":"1.2","letterSpacing":"0.05em","fontWeight":"600"}],
+          "body-md": ["16px",{"lineHeight":"1.6","fontWeight":"400"}],
+          "headline-md": ["24px",{"lineHeight":"1.3","fontWeight":"700"}],
+          "display-lg": ["40px",{"lineHeight":"1.2","letterSpacing":"-0.02em","fontWeight":"700"}]
+        }
+      }
+    }
+  }
+</script>
+<style>
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; display: inline-block; line-height: 1; }
+  .fade-in { animation: fadeIn 0.8s ease-out forwards; }
+  .slide-up { animation: slideUp 0.6s ease-out forwards; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  .bg-pattern { background-color: #fcf9f4; background-image: radial-gradient(#e5e2dd 0.5px, transparent 0.5px); background-size: 24px 24px; }
+  .illustration-shadow { filter: drop-shadow(0 20px 40px rgba(49, 78, 82, 0.12)); }
+</style>
+</head>
+<body class="bg-background text-on-background font-body-md overflow-x-hidden min-h-screen flex flex-col">
+<main class="flex-1 flex flex-col items-center justify-center pt-24 pb-32 px-6 relative overflow-hidden bg-pattern">
+  <div class="absolute -top-24 -right-24 w-64 h-64 bg-primary-fixed opacity-20 blur-[100px] rounded-full"></div>
+  <div class="absolute -bottom-24 -left-24 w-64 h-64 bg-secondary-container opacity-20 blur-[100px] rounded-full"></div>
+  <div class="max-w-md w-full flex flex-col items-center text-center">
+    <div class="relative w-56 h-56 mb-8 fade-in">
+      <div class="w-full h-full rounded-full bg-primary-fixed/30 flex items-center justify-center illustration-shadow">
+        <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" class="w-32 h-32">
+          <circle cx="55" cy="52" r="28" fill="none" stroke="#314e52" stroke-width="6"/>
+          <line x1="76" y1="73" x2="95" y2="92" stroke="#314e52" stroke-width="6" stroke-linecap="round"/>
+          <path d="M 42 44 Q 55 32 68 44" fill="none" stroke="#7d562d" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="48" cy="52" r="3" fill="#314e52"/>
+          <circle cx="62" cy="52" r="3" fill="#314e52"/>
+        </svg>
+      </div>
+    </div>
+    <div class="space-y-3 mb-10 slide-up" style="animation-delay: 0.2s;">
+      <h2 class="font-display-lg-mobile text-display-lg-mobile md:text-display-lg text-primary">Selamat Datang di Winemu</h2>
+      <p class="font-body-lg text-body-lg text-on-surface-variant max-w-[85%] mx-auto leading-relaxed">Cari dan temukan barang anda yang hilang</p>
+      <div class="pt-2">
+        <span class="font-javanese-script text-outline opacity-60" style="font-family: 'Noto Sans Javanese';">ꦮꦶꦤꦼꦩꦸ</span>
+      </div>
+    </div>
+    <div class="w-full space-y-4 slide-up" style="animation-delay: 0.4s;">
+      <a href="/register.html" class="w-full h-14 bg-primary-container text-white font-bold rounded-2xl shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-95 transition-all duration-200 flex items-center justify-center gap-2">
+        <span>Daftar Sekarang</span>
+        <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+      </a>
+      <a href="/login.html" class="w-full h-14 bg-transparent border-2 border-outline-variant text-primary font-semibold rounded-2xl hover:bg-surface-container-low transition-colors active:scale-95 duration-200 flex items-center justify-center">
+        Masuk ke Akun
+      </a>
+    </div>
+    <p class="mt-10 font-label-caps text-label-caps text-outline uppercase tracking-widest opacity-80 slide-up">platform temu barang di indonesia</p>
+  </div>
+</main>
+<script src="/js/api.js"></script>
+<script>
+  // If already logged in, redirect to the right destination based on role
+  if (api.getToken()) {
+    const existingUser = api.getUser();
+    window.location.href = (existingUser && existingUser.role === 'admin') ? '/admin/dashboard.html' : '/feed.html';
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html class="light" lang="id">
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<script src="/js/device-redirect.js"></script>
+<title>Winemu - Cari</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Philosopher:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+tailwind.config={darkMode:"class",theme:{extend:{colors:{
+  "surface-container-lowest":"#ffffff","surface":"#fcf9f4","background":"#fcf9f4",
+  "primary-container":"#314e52","on-primary":"#ffffff","outline-variant":"#c1c8c9",
+  "on-surface":"#1c1c19","outline":"#727879","primary":"#1a373b","on-surface-variant":"#414849",
+  "secondary":"#7d562d","surface-container-low":"#f6f3ee","surface-container-high":"#ebe8e3",
+  "surface-container":"#f0ede9","surface-container-highest":"#e5e2dd","primary-fixed":"#c9e8ed"
+},fontFamily:{"headline-md":["Philosopher"],"display-lg-mobile":["Philosopher"],"body-sm":["Plus Jakarta Sans"],"body-md":["Plus Jakarta Sans"],"label-caps":["Plus Jakarta Sans"]},
+fontSize:{
+  "headline-md":["24px",{"lineHeight":"1.3","fontWeight":"700"}],
+  "display-lg-mobile":["32px",{"lineHeight":"1.2","fontWeight":"700"}],
+  "body-sm":["14px",{"lineHeight":"1.5","fontWeight":"400"}],
+  "body-md":["16px",{"lineHeight":"1.6","fontWeight":"400"}],
+  "label-caps":["12px",{"lineHeight":"1.2","letterSpacing":"0.05em","fontWeight":"600"}]
+}}}}
+</script>
+<style>
+.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;display:inline-block;line-height:1;}
+.custom-shadow{box-shadow:0 4px 40px rgba(49,78,82,0.08);}
+#map-view{height:400px;position:relative;z-index:0;}
+#map-view .leaflet-pane, #map-view .leaflet-top, #map-view .leaflet-bottom { z-index: 1 !important; }
+</style>
+<!-- batik-bg-applied -->
+<style>
+  body { background-color:#fcf9f4; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cg fill='none'%3E%3Ccircle cx='30' cy='30' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='30' cy='30' r='6' stroke='%231a373b' stroke-width='0.4' stroke-opacity='0.05'/%3E%3Ccircle cx='0' cy='0' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='60' cy='0' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='0' cy='60' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='60' cy='60' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Cpath d='M30 20 L40 30 L30 40 L20 30 Z' stroke='%237d562d' stroke-width='0.5' stroke-opacity='0.06' fill='none'/%3E%3Cpath d='M0 0 L10 0 L5 8 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3Cpath d='M60 0 L50 0 L55 8 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3Cpath d='M0 60 L10 60 L5 52 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3Cpath d='M60 60 L50 60 L55 52 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3C/g%3E%3C/svg%3E"); }
+</style>
+</head>
+<body class="bg-surface text-on-surface font-body-md min-h-screen pb-[100px]">
+  <div id="top-bar"></div>
+
+  <main class="px-4 max-w-7xl mx-auto flex flex-col gap-8 pt-6">
+    <section class="flex flex-col gap-3">
+      <h2 class="font-display-lg-mobile text-3xl text-primary">Cari</h2>
+      <div class="relative w-full group">
+        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-primary">
+          <span class="material-symbols-outlined">search</span>
+        </div>
+        <input id="search-input" type="text" placeholder="Cari barang, kategori, atau lokasi..."
+          class="w-full pl-12 pr-4 py-4 bg-surface-container-lowest border border-outline-variant rounded-full text-body-md text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all custom-shadow"
+          oninput="debounceSearch()">
+      </div>
+      <div class="flex gap-2 mt-1">
+        <button onclick="setView('list')" id="btn-list" class="flex-1 py-2 rounded-full bg-primary text-on-primary font-semibold text-sm flex items-center justify-center gap-2">
+          <span class="material-symbols-outlined text-[18px]">list</span>Daftar
+        </button>
+        <button onclick="setView('map')" id="btn-map" class="flex-1 py-2 rounded-full bg-surface-container-high text-on-surface-variant font-semibold text-sm flex items-center justify-center gap-2 hover:bg-surface-container-highest transition-colors">
+          <span class="material-symbols-outlined text-[18px]">map</span>Peta
+        </button>
+      </div>
+    </section>
+
+    <!-- Map View -->
+    <div id="map-container" class="hidden">
+      <div id="map-view" class="rounded-xl overflow-hidden border border-outline-variant custom-shadow"></div>
+    </div>
+
+    <!-- Categories -->
+    <section class="flex flex-col gap-3" id="categories-section">
+      <h3 class="text-lg font-bold text-primary">Kategori Populer</h3>
+      <div id="categories-list" class="flex flex-wrap gap-3"></div>
+    </section>
+
+    <!-- Recent Searches (if no query) -->
+    <section id="recent-section" class="flex flex-col gap-3">
+      <div class="flex justify-between items-center">
+        <h3 class="text-lg font-bold text-primary">Pencarian Terkini</h3>
+        <button onclick="clearRecent()" class="text-secondary font-label-caps text-label-caps hover:underline">Hapus Semua</button>
+      </div>
+      <ul id="recent-list" class="flex flex-col gap-2"></ul>
+    </section>
+
+    <!-- Search Results -->
+    <section id="results-section" class="hidden flex flex-col gap-4">
+      <div class="flex justify-between items-center">
+        <h3 class="text-lg font-bold text-primary">Hasil Pencarian</h3>
+        <span id="result-count" class="text-sm text-on-surface-variant"></span>
+      </div>
+      <div id="results-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+      <div id="result-loading" class="hidden flex justify-center py-4">
+        <div class="w-6 h-6 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    </section>
+  </main>
+
+  <div id="bottom-nav"></div>
+
+<script src="/js/api.js"></script>
+<script src="/js/nav.js"></script>
+<script>
+  let mapInstance = null, currentView = 'list', searchTimeout = null;
+  const RECENT_KEY = 'winemu_recent_searches';
+
+  window.addEventListener('DOMContentLoaded', () => {
+    injectNav('search');
+    loadCategories();
+    loadRecent();
+  });
+
+  function setView(v) {
+    currentView = v;
+    const mapContainer = document.getElementById('map-container');
+    const btnList = document.getElementById('btn-list');
+    const btnMap = document.getElementById('btn-map');
+
+    if (v === 'map') {
+      mapContainer.classList.remove('hidden');
+      btnMap.className = 'flex-1 py-2 rounded-full bg-primary text-on-primary font-semibold text-sm flex items-center justify-center gap-2';
+      btnList.className = 'flex-1 py-2 rounded-full bg-surface-container-high text-on-surface-variant font-semibold text-sm flex items-center justify-center gap-2 hover:bg-surface-container-highest transition-colors';
+      if (!mapInstance) initMap();
+    } else {
+      mapContainer.classList.add('hidden');
+      btnList.className = 'flex-1 py-2 rounded-full bg-primary text-on-primary font-semibold text-sm flex items-center justify-center gap-2';
+      btnMap.className = 'flex-1 py-2 rounded-full bg-surface-container-high text-on-surface-variant font-semibold text-sm flex items-center justify-center gap-2 hover:bg-surface-container-highest transition-colors';
+    }
+  }
+
+  function initMap() {
+    mapInstance = L.map('map-view').setView([-7.797068, 110.370529], 12);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution:'© OpenStreetMap'}).addTo(mapInstance);
+    loadMapMarkers();
+  }
+
+  async function loadMapMarkers() {
+    if (!mapInstance) return;
+    const res = await api.get('/reports?per_page=50');
+    if (!res?.data?.items) return;
+    res.data.items.forEach(r => {
+      if (r.latitude && r.longitude) {
+        const color = r.type === 'hilang' ? '#C06C50' : '#D4A373';
+        const icon = L.divIcon({ html: `<div style="width:32px;height:32px;background:${color};border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,.3);"></div>`, className: '', iconSize: [32, 32], iconAnchor: [16, 32] });
+        L.marker([r.latitude, r.longitude], {icon}).addTo(mapInstance)
+          .bindPopup(`<b>${r.title}</b><br><small>${r.type==='hilang'?'HILANG':'DITEMUKAN'}</small><br><a href="/report-detail.html?id=${r.id}" style="color:#314e52;font-weight:bold;">Lihat Detail →</a>`);
+      }
+    });
+  }
+
+  async function loadCategories() {
+    const res = await api.get('/categories');
+    if (!res?.data?.categories) return;
+    const iconMap = { 'devices':'devices', 'description':'description', 'wallet':'wallet', 'key':'key', 'backpack':'backpack', 'diamond':'diamond', 'directions_car':'directions_car', 'pets':'pets', 'checkroom':'checkroom', 'category':'category' };
+    document.getElementById('categories-list').innerHTML = res.data.categories.map(c =>
+      `<button onclick="searchByCategory('${c.id}','${c.name}')" class="flex items-center gap-2 px-4 py-2 bg-primary-fixed/20 text-primary-container rounded-full hover:bg-primary-fixed/40 transition-colors custom-shadow">
+        <span class="material-symbols-outlined text-[18px]">${c.icon||'category'}</span>
+        <span class="font-body-sm text-sm font-semibold">${c.name}</span>
+      </button>`
+    ).join('');
+  }
+
+  function loadRecent() {
+    const recent = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]');
+    const list = document.getElementById('recent-list');
+    if (recent.length === 0) {
+      document.getElementById('recent-section').classList.add('hidden');
+      return;
+    }
+    document.getElementById('recent-section').classList.remove('hidden');
+    list.innerHTML = recent.map(q =>
+      `<li class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-xl custom-shadow hover:bg-surface-container-low transition-colors group cursor-pointer" onclick="doSearch('${q}')">
+        <div class="flex items-center gap-3 text-on-surface">
+          <span class="material-symbols-outlined text-outline">history</span>
+          <span class="font-body-md">${q}</span>
+        </div>
+        <button onclick="event.stopPropagation();removeRecent('${q}')" class="text-outline-variant hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 p-1">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </li>`
+    ).join('');
+  }
+
+  function addRecent(q) {
+    let recent = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]');
+    recent = [q, ...recent.filter(r => r !== q)].slice(0, 5);
+    localStorage.setItem(RECENT_KEY, JSON.stringify(recent));
+  }
+  function removeRecent(q) {
+    let recent = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]').filter(r => r !== q);
+    localStorage.setItem(RECENT_KEY, JSON.stringify(recent));
+    loadRecent();
+  }
+  function clearRecent() {
+    localStorage.removeItem(RECENT_KEY);
+    loadRecent();
+  }
+
+  function debounceSearch() {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+      const q = document.getElementById('search-input').value.trim();
+      if (q.length > 1) doSearch(q);
+      else showEmptyState();
+    }, 400);
+  }
+
+  function showEmptyState() {
+    document.getElementById('results-section').classList.add('hidden');
+    document.getElementById('categories-section').classList.remove('hidden');
+    document.getElementById('recent-section').classList.remove('hidden');
+    loadRecent();
+  }
+
+  async function doSearch(q) {
+    document.getElementById('search-input').value = q;
+    addRecent(q);
+    document.getElementById('categories-section').classList.add('hidden');
+    document.getElementById('recent-section').classList.add('hidden');
+    document.getElementById('results-section').classList.remove('hidden');
+    document.getElementById('result-loading').classList.remove('hidden');
+
+    const res = await api.get(`/reports?q=${encodeURIComponent(q)}&per_page=20`);
+    document.getElementById('result-loading').classList.add('hidden');
+
+    if (!res?.data) return;
+    const { items, pagination } = res.data;
+    document.getElementById('result-count').textContent = `${pagination.total} hasil`;
+    renderResults(items);
+    if (currentView === 'map') loadMapMarkers();
+  }
+
+  async function searchByCategory(catId, catName) {
+    document.getElementById('search-input').value = catName;
+    document.getElementById('categories-section').classList.add('hidden');
+    document.getElementById('recent-section').classList.add('hidden');
+    document.getElementById('results-section').classList.remove('hidden');
+    document.getElementById('result-loading').classList.remove('hidden');
+
+    const res = await api.get(`/reports?category_id=${catId}&per_page=20`);
+    document.getElementById('result-loading').classList.add('hidden');
+
+    if (!res?.data) return;
+    const { items, pagination } = res.data;
+    document.getElementById('result-count').textContent = `${pagination.total} hasil`;
+    renderResults(items);
+  }
+
+  function renderResults(items) {
+    const list = document.getElementById('results-list');
+    if (items.length === 0) {
+      list.innerHTML = '<div class="col-span-2 text-center py-12 text-on-surface-variant"><span class="material-symbols-outlined text-5xl block mb-3">search_off</span><p>Tidak ada hasil ditemukan</p></div>';
+      return;
+    }
+    list.innerHTML = items.map(r => {
+      const img = r.primary_image
+        ? `<img src="${r.primary_image}" class="w-full h-full object-cover">`
+        : r.primary_video
+          ? `<video src="${r.primary_video}" class="w-full h-full object-cover" muted playsinline preload="metadata"></video>
+             <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+               <span class="material-symbols-outlined text-white drop-shadow-lg" style="font-size:36px;">play_circle</span>
+             </div>`
+          : `<div class="w-full h-full bg-surface-container flex items-center justify-center"><span class="material-symbols-outlined text-4xl text-outline">image_not_supported</span></div>`;
+      const badgeColor = r.type === 'hilang' ? '#C06C50' : '#D4A373';
+      const badgeText = r.type === 'hilang' ? 'HILANG' : 'DITEMUKAN';
+      return `<div onclick="window.location.href='/report-detail.html?id=${r.id}'" class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden cursor-pointer hover:shadow-md transition-shadow">
+        <div class="relative aspect-square">${img}
+          <div class="absolute top-2 left-2 text-white px-2 py-0.5 rounded text-[10px] font-bold tracking-wider" style="background:${badgeColor};">${badgeText}</div>
+        </div>
+        <div class="p-3">
+          <p class="font-bold text-on-surface text-sm truncate">${r.title}</p>
+          <p class="text-xs text-on-surface-variant mt-1 truncate">${r.location_name||''}</p>
+          <p class="text-xs text-on-surface-variant">${timeAgo(r.created_at)}</p>
+        </div>
+      </div>`;
+    }).join('');
+  }
+</script>
+</body>
+</html>

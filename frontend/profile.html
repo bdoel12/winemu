@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html class="light" lang="id">
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<script src="/js/device-redirect.js"></script>
+<title>Winemu - Profil</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Philosopher:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<script>
+tailwind.config={darkMode:"class",theme:{extend:{colors:{
+  "surface-container-lowest":"#ffffff","surface":"#fcf9f4","background":"#fcf9f4",
+  "primary-container":"#314e52","on-primary":"#ffffff","outline-variant":"#c1c8c9",
+  "on-surface":"#1c1c19","outline":"#727879","primary":"#1a373b","on-surface-variant":"#414849",
+  "secondary":"#7d562d","surface-container-low":"#f6f3ee","surface-container-high":"#ebe8e3",
+  "surface-container":"#f0ede9","surface-container-highest":"#e5e2dd","secondary-container":"#ffca98",
+  "primary-fixed":"#c9e8ed","primary-fixed-dim":"#adccd1","on-primary-fixed":"#001f23",
+  "on-primary-container":"#a0bec3"
+},fontFamily:{"headline-md":["Philosopher"],"body-sm":["Plus Jakarta Sans"],"body-md":["Plus Jakarta Sans"],"label-caps":["Plus Jakarta Sans"]},
+fontSize:{
+  "headline-md":["24px",{"lineHeight":"1.3","fontWeight":"700"}],
+  "body-sm":["14px",{"lineHeight":"1.5","fontWeight":"400"}],
+  "body-md":["16px",{"lineHeight":"1.6","fontWeight":"400"}],
+  "label-caps":["12px",{"lineHeight":"1.2","letterSpacing":"0.05em","fontWeight":"600"}]
+}}}}
+</script>
+<style>
+.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;display:inline-block;line-height:1;}
+.overlay-hilang{background-color:rgba(192,108,80,0.2);}
+.overlay-ditemukan{background-color:rgba(212,163,115,0.2);}
+</style>
+<!-- batik-bg-applied -->
+<style>
+  body { background-color:#fcf9f4; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cg fill='none'%3E%3Ccircle cx='30' cy='30' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='30' cy='30' r='6' stroke='%231a373b' stroke-width='0.4' stroke-opacity='0.05'/%3E%3Ccircle cx='0' cy='0' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='60' cy='0' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='0' cy='60' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='60' cy='60' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Cpath d='M30 20 L40 30 L30 40 L20 30 Z' stroke='%237d562d' stroke-width='0.5' stroke-opacity='0.06' fill='none'/%3E%3Cpath d='M0 0 L10 0 L5 8 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3Cpath d='M60 0 L50 0 L55 8 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3Cpath d='M0 60 L10 60 L5 52 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3Cpath d='M60 60 L50 60 L55 52 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3C/g%3E%3C/svg%3E"); }
+</style>
+</head>
+<body class="bg-surface text-on-surface font-body-md min-h-screen pb-24">
+  <div id="top-bar"></div>
+
+  <!-- Edit Profile Modal -->
+  <div id="edit-modal" class="hidden fixed inset-0 z-50 flex items-end bg-black/40">
+    <div class="w-full max-w-[600px] mx-auto bg-surface-container-lowest rounded-t-2xl p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="font-headline-md text-xl text-primary">Edit Profil</h3>
+        <button onclick="closeEdit()" class="text-on-surface-variant"><span class="material-symbols-outlined">close</span></button>
+      </div>
+      <div class="flex flex-col gap-4">
+        <input id="edit-fullname" type="text" placeholder="Nama Lengkap" class="w-full px-4 py-3 border border-outline-variant rounded-xl focus:outline-none focus:border-primary text-on-surface">
+        <textarea id="edit-bio" placeholder="Bio" rows="3" class="w-full px-4 py-3 border border-outline-variant rounded-xl focus:outline-none focus:border-primary text-on-surface resize-none"></textarea>
+        <input id="edit-location" type="text" placeholder="Lokasi" class="w-full px-4 py-3 border border-outline-variant rounded-xl focus:outline-none focus:border-primary text-on-surface">
+        <input id="edit-phone" type="tel" placeholder="Nomor Telepon" class="w-full px-4 py-3 border border-outline-variant rounded-xl focus:outline-none focus:border-primary text-on-surface">
+        <button onclick="saveProfile()" class="w-full py-3 bg-primary text-on-primary rounded-xl font-bold hover:bg-primary-container transition-colors">Simpan Perubahan</button>
+      </div>
+    </div>
+  </div>
+
+  <main class="max-w-[1200px] mx-auto md:px-8 py-6 flex flex-col gap-6">
+    <div class="px-4 md:px-0">
+      <!-- Profile Header -->
+      <div class="flex items-center gap-6 mb-6">
+        <div class="relative w-24 h-24 md:w-32 md:h-32 flex-shrink-0">
+          <div id="avatar-container" class="w-full h-full rounded-full overflow-hidden bg-primary-container flex items-center justify-center text-white text-4xl font-bold cursor-pointer" onclick="document.getElementById('avatar-upload').click()">
+            <span id="avatar-initials">?</span>
+          </div>
+          <input type="file" id="avatar-upload" accept="image/*" class="hidden" onchange="uploadAvatar(event)">
+          <div class="absolute bottom-0 right-0 w-8 h-8 bg-primary rounded-full flex items-center justify-center border-2 border-white cursor-pointer" onclick="document.getElementById('avatar-upload').click()">
+            <span class="material-symbols-outlined text-white text-[16px]">photo_camera</span>
+          </div>
+        </div>
+        <div class="flex-1 flex justify-around items-center">
+          <div class="flex flex-col items-center">
+            <span class="font-headline-md text-xl text-primary font-bold" id="stat-reports">0</span>
+            <span class="font-label-caps text-label-caps text-on-surface-variant">Laporan</span>
+          </div>
+          <div class="flex flex-col items-center">
+            <span class="font-headline-md text-xl text-primary font-bold" id="stat-found">0</span>
+            <span class="font-label-caps text-label-caps text-on-surface-variant">Ditemukan</span>
+          </div>
+          <div class="flex flex-col items-center">
+            <span class="font-headline-md text-xl text-primary font-bold flex items-center" id="stat-rating">
+              - <span class="material-symbols-outlined text-secondary text-[18px] ml-1" style="font-variation-settings:'FILL' 1;">star</span>
+            </span>
+            <span class="font-label-caps text-label-caps text-on-surface-variant">Rating</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bio -->
+      <div class="mb-4">
+        <h1 class="font-headline-md text-headline-md text-primary mb-1" id="user-fullname">Loading...</h1>
+        <p class="font-body-sm text-on-surface-variant mb-2" id="user-bio"></p>
+        <div id="verified-badge" class="hidden inline-flex items-center gap-1.5 bg-primary-fixed-dim text-on-primary-fixed rounded-full px-3 py-1">
+          <span class="material-symbols-outlined text-[14px]" style="font-variation-settings:'FILL' 1;">verified</span>
+          <span class="font-label-caps text-label-caps text-[10px]">Akun Terverifikasi</span>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex gap-2 mb-6">
+        <button onclick="openEdit()" class="flex-1 py-1.5 border border-[#314E52] text-[#314E52] rounded-md font-label-caps text-label-caps hover:bg-[#314E52] hover:text-white transition-colors">Edit Profil</button>
+        <button onclick="shareProfile()" class="flex-1 py-1.5 bg-surface-container-high text-on-surface rounded-md font-label-caps text-label-caps hover:bg-surface-container-highest transition-colors">Bagikan Profil</button>
+        <a href="/settings.html" class="flex items-center justify-center w-10 border border-outline-variant rounded-md text-on-surface-variant hover:bg-surface-container-high transition-colors">
+          <span class="material-symbols-outlined text-[20px]">settings</span>
+        </a>
+      </div>
+
+      <!-- Tabs -->
+      <div class="flex border-t border-outline-variant">
+        <button onclick="setTab('grid')" id="tab-grid" class="flex-1 py-3 border-t-2 border-primary text-primary flex justify-center items-center">
+          <span class="material-symbols-outlined">grid_on</span>
+        </button>
+        <button onclick="setTab('bookmarks')" id="tab-bookmarks" class="flex-1 py-3 border-t-2 border-transparent text-on-surface-variant hover:text-primary flex justify-center items-center">
+          <span class="material-symbols-outlined">bookmark_border</span>
+        </button>
+      </div>
+
+      <!-- Grid -->
+      <div id="reports-grid" class="grid grid-cols-3 gap-1 md:gap-4 mt-1"></div>
+      <div id="bookmarks-grid" class="hidden grid grid-cols-3 gap-1 md:gap-4 mt-1"></div>
+    </div>
+  </main>
+
+  <div id="bottom-nav"></div>
+
+<script src="/js/api.js"></script>
+<script src="/js/nav.js"></script>
+<script>
+  let userData = null;
+
+  window.addEventListener('DOMContentLoaded', () => {
+    injectNav('profile');
+    if (!isLoggedIn()) { window.location.href = '/login.html'; return; }
+    loadProfile();
+    loadReports();
+  });
+
+  async function loadProfile() {
+    const res = await api.get('/users/profile');
+    if (!res?.data?.user) return;
+    userData = res.data.user;
+    api.setUser(userData);
+
+    document.getElementById('user-fullname').textContent = userData.full_name || userData.username;
+    document.getElementById('user-bio').textContent = userData.bio || '';
+    document.getElementById('stat-reports').textContent = userData.total_reports || 0;
+    document.getElementById('stat-found').textContent = userData.total_found || 0;
+    document.getElementById('stat-rating').innerHTML = `${userData.rating || '4.9'} <span class="material-symbols-outlined text-secondary text-[18px] ml-1" style="font-variation-settings:'FILL' 1;">star</span>`;
+
+    if (userData.is_verified) document.getElementById('verified-badge').classList.remove('hidden');
+
+    const container = document.getElementById('avatar-container');
+    if (userData.avatar_url) {
+      container.innerHTML = `<img src="${userData.avatar_url}" class="w-full h-full object-cover">`;
+    } else {
+      document.getElementById('avatar-initials').textContent = (userData.full_name || userData.username || '?')[0].toUpperCase();
+    }
+  }
+
+  async function loadReports() {
+    const user = api.getUser();
+    if (!user) return;
+    const res = await api.get(`/users/${user.id}/reports?per_page=18`);
+    if (!res?.data?.items) return;
+    renderGrid('reports-grid', res.data.items);
+  }
+
+  async function loadBookmarks() {
+    const res = await api.get('/users/bookmarks?per_page=18');
+    if (!res?.data?.items) return;
+    renderGrid('bookmarks-grid', res.data.items.map(b => b.report).filter(Boolean));
+  }
+
+  function renderGrid(containerId, items) {
+    const grid = document.getElementById(containerId);
+    if (items.length === 0) {
+      grid.innerHTML = '<div class="col-span-3 text-center py-12 text-on-surface-variant"><span class="material-symbols-outlined text-5xl block mb-3">inventory_2</span><p>Belum ada laporan</p></div>';
+      return;
+    }
+    grid.innerHTML = items.map(r => {
+      if (!r) return '';
+      const badgeColor = r.type === 'hilang' ? '#C06C50' : '#D4A373';
+      const badgeText = r.type === 'hilang' ? 'HILANG' : 'DITEMUKAN';
+      const overlayClass = r.type === 'hilang' ? 'overlay-hilang' : 'overlay-ditemukan';
+      const img = r.primary_image
+        ? `<img src="${r.primary_image}" class="w-full h-full object-cover">`
+        : r.primary_video
+          ? `<video src="${r.primary_video}" class="w-full h-full object-cover" muted playsinline preload="metadata"></video>
+             <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+               <span class="material-symbols-outlined text-white drop-shadow-lg" style="font-size:32px;">play_circle</span>
+             </div>`
+          : `<div class="w-full h-full bg-surface-container flex items-center justify-center"><span class="material-symbols-outlined text-3xl text-outline">image_not_supported</span></div>`;
+      return `<div onclick="window.location.href='/report-detail.html?id=${r.id}'" class="aspect-square relative group cursor-pointer overflow-hidden bg-surface-container rounded-sm">
+        ${img}
+        <div class="absolute inset-0 ${overlayClass} pointer-events-none"></div>
+        <div class="absolute bottom-2 left-2 text-white px-1.5 py-0.5 text-[8px] md:text-[10px] font-bold rounded tracking-wider" style="background:${badgeColor};font-family:'Plus Jakarta Sans',sans-serif;">${badgeText}</div>
+        ${r.status === 'selesai' ? `<div class="absolute inset-0 bg-black/50 flex items-center justify-center"><span class="text-white text-[10px] md:text-xs font-bold border border-white px-2 py-1 rounded-full tracking-wider">✓ SELESAI</span></div>` : ''}
+      </div>`;
+    }).join('');
+  }
+
+  function setTab(tab) {
+    const isGrid = tab === 'grid';
+    document.getElementById('reports-grid').classList.toggle('hidden', !isGrid);
+    document.getElementById('bookmarks-grid').classList.toggle('hidden', isGrid);
+    document.getElementById('tab-grid').className = `flex-1 py-3 border-t-2 ${isGrid ? 'border-primary text-primary' : 'border-transparent text-on-surface-variant hover:text-primary'} flex justify-center items-center`;
+    document.getElementById('tab-bookmarks').className = `flex-1 py-3 border-t-2 ${!isGrid ? 'border-primary text-primary' : 'border-transparent text-on-surface-variant hover:text-primary'} flex justify-center items-center`;
+    if (!isGrid) loadBookmarks();
+  }
+
+  function openEdit() {
+    if (!userData) return;
+    document.getElementById('edit-fullname').value = userData.full_name || '';
+    document.getElementById('edit-bio').value = userData.bio || '';
+    document.getElementById('edit-location').value = userData.location || '';
+    document.getElementById('edit-phone').value = userData.phone || '';
+    document.getElementById('edit-modal').classList.remove('hidden');
+  }
+  function closeEdit() { document.getElementById('edit-modal').classList.add('hidden'); }
+
+  async function saveProfile() {
+    const res = await api.put('/users/profile', {
+      full_name: document.getElementById('edit-fullname').value,
+      bio: document.getElementById('edit-bio').value,
+      location: document.getElementById('edit-location').value,
+      phone: document.getElementById('edit-phone').value,
+    });
+    if (res?.status === 'success') {
+      closeEdit();
+      loadProfile();
+      showToast('Profil berhasil diperbarui');
+    }
+  }
+
+  async function uploadAvatar(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const fd = new FormData();
+    fd.append('avatar', file);
+    const res = await api.postForm('/users/profile/avatar', fd);
+    if (res?.status === 'success') {
+      showToast('Avatar diperbarui');
+      loadProfile();
+    } else {
+      showToast('Gagal mengupload avatar', 'error');
+    }
+  }
+
+  function shareProfile() {
+    const user = api.getUser();
+    navigator.clipboard?.writeText(window.location.origin + '/profile.html?id=' + user?.id)
+      .then(() => showToast('Link profil disalin'));
+  }
+</script>
+</body>
+</html>

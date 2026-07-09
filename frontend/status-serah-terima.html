@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<script src="/js/device-redirect.js"></script>
+<title>Winemu - Status Serah Terima</title>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Javanese&family=Philosopher:ital,wght@0,400;0,700;1,400;1,700&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-fixed": "#390b00", "on-secondary-fixed": "#2c1600",
+                    "outline-variant": "#c1c8c9", "surface-dim": "#dcdad5",
+                    "secondary-container": "#ffca98", "on-secondary-container": "#7a532a",
+                    "tertiary-container": "#79351d", "surface-container-high": "#ebe8e3",
+                    "inverse-on-surface": "#f3f0eb", "on-tertiary-container": "#ffa182",
+                    "on-tertiary-fixed-variant": "#76321b", "surface-container-lowest": "#ffffff",
+                    "surface-container": "#f0ede9", "background": "#fcf9f4",
+                    "tertiary-fixed": "#ffdbd0", "error": "#ba1a1a", "on-secondary": "#ffffff",
+                    "primary-fixed-dim": "#adccd1", "on-primary": "#ffffff",
+                    "inverse-surface": "#31302d", "primary-container": "#314e52",
+                    "on-error-container": "#93000a", "on-primary-container": "#a0bec3",
+                    "on-primary-fixed-variant": "#2e4b4f", "surface-container-highest": "#e5e2dd",
+                    "on-surface": "#1c1c19", "primary-fixed": "#c9e8ed", "surface-variant": "#e5e2dd",
+                    "surface-container-low": "#f6f3ee", "secondary-fixed-dim": "#f0bd8b",
+                    "inverse-primary": "#adccd1", "on-error": "#ffffff", "on-primary-fixed": "#001f23",
+                    "on-tertiary": "#ffffff", "on-background": "#1c1c19", "outline": "#727879",
+                    "primary": "#1a373b", "error-container": "#ffdad6", "surface-tint": "#466367",
+                    "secondary": "#7d562d", "on-surface-variant": "#414849",
+                    "tertiary-fixed-dim": "#ffb59d", "tertiary": "#5c1f09", "surface": "#fcf9f4",
+                    "surface-bright": "#fcf9f4", "secondary-fixed": "#ffdcbd",
+                    "on-secondary-fixed-variant": "#623f18"
+            },
+            "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+            "spacing": { "stack-md": "24px", "container-margin": "24px", "stack-lg": "48px", "stack-sm": "12px", "gutter": "16px", "base": "8px" },
+            "fontFamily": {
+                    "body-md": ["Plus Jakarta Sans"], "label-caps": ["Plus Jakarta Sans"],
+                    "headline-md": ["Philosopher"], "javanese-script": ["Noto Sans Javanese"],
+                    "display-lg": ["Philosopher"], "body-sm": ["Plus Jakarta Sans"],
+                    "display-lg-mobile": ["Philosopher"], "body-lg": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "label-caps": ["12px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                    "display-lg": ["40px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "display-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #dcdad5; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a0bec3; }
+        .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;display:inline-block;line-height:1;}
+        #handover-map { height: 100%; width: 100%; }
+        #handover-map .leaflet-pane, #handover-map .leaflet-top, #handover-map .leaflet-bottom { z-index: 1 !important; }
+<style>
+  /* Handover option cards */
+  .hw-card input[type="radio"] { position:absolute; opacity:0; width:0; height:0; }
+  .hw-card { cursor:pointer; display:block; }
+  .hw-card .hw-icon {
+    background:#f0ede9; color:#1a373b;
+    transition: background 0.2s, color 0.2s, transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .hw-card.selected .hw-icon {
+    background:#7d562d !important;
+    color:#fff !important;
+    animation: iconBounce 0.35s cubic-bezier(0.34,1.56,0.64,1) forwards;
+  }
+  @keyframes iconBounce {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.25) rotate(-8deg); }
+    75%  { transform: scale(1.18) rotate(4deg); }
+    100% { transform: scale(1.12) rotate(0deg); }
+  }
+  .hw-card .hw-icon {
+    animation: none;
+  }
+  .hw-card.selected { border-color:#7d562d !important; background:rgba(125,86,45,0.06) !important; }
+  .hw-card.selected .hw-title { color:#7d562d !important; font-weight:700; }
+</style>
+</style>
+<!-- batik-bg-applied -->
+<style>
+  body { background-color:#fcf9f4; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cg fill='none'%3E%3Ccircle cx='30' cy='30' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='30' cy='30' r='6' stroke='%231a373b' stroke-width='0.4' stroke-opacity='0.05'/%3E%3Ccircle cx='0' cy='0' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='60' cy='0' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='0' cy='60' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='60' cy='60' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Cpath d='M30 20 L40 30 L30 40 L20 30 Z' stroke='%237d562d' stroke-width='0.5' stroke-opacity='0.06' fill='none'/%3E%3Cpath d='M0 0 L10 0 L5 8 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3Cpath d='M60 0 L50 0 L55 8 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3Cpath d='M0 60 L10 60 L5 52 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3Cpath d='M60 60 L50 60 L55 52 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3C/g%3E%3C/svg%3E"); }
+</style>
+</head>
+<body class="bg-surface text-on-surface font-body-md antialiased min-h-screen pb-stack-lg">
+<header class="sticky top-0 z-50 bg-surface/90 backdrop-blur-md shadow-sm transition-all duration-300">
+  <div class="max-w-[1200px] mx-auto px-container-margin py-base flex justify-between items-center h-16">
+    <button onclick="history.back()" aria-label="Kembali" class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-surface-container-high transition-colors text-primary">
+      <span class="material-symbols-outlined">arrow_back</span>
+    </button>
+    <h1 class="font-headline-md text-headline-md text-primary">Status Serah Terima</h1>
+    <div class="w-10"></div>
+  </div>
+</header>
+
+<main class="max-w-3xl mx-auto px-container-margin mt-stack-md flex flex-col gap-stack-lg" id="page-content">
+  <div class="flex justify-center py-20">
+    <div class="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+  </div>
+</main>
+
+<script src="/js/api.js"></script>
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const claimId = parseInt(params.get('claim_id'));
+  let claimData = null, currentUser = null, isOwnerView = false;
+
+  if (!claimId) window.location.href = '/feed.html';
+
+  window.addEventListener('DOMContentLoaded', () => {
+    if (!isLoggedIn()) { window.location.href = '/login.html'; return; }
+    currentUser = api.getUser();
+    loadClaim();
+  });
+
+  async function loadClaim() {
+    const res = await api.get(`/claims/${claimId}`);
+    if (!res?.data?.claim) {
+      document.getElementById('page-content').innerHTML = '<p class="text-center py-20 text-on-surface-variant">Data klaim tidak ditemukan</p>';
+      return;
+    }
+    claimData = res.data.claim;
+    isOwnerView = currentUser?.id !== claimData.claimant?.id;
+    render();
+  }
+
+  function render() {
+    const c = claimData;
+    const lat = c.report?.latitude, lng = c.report?.longitude;
+    const hasLocation = lat && lng;
+
+    const stepStatus = c.handover_status; // menunggu_metode | dalam_proses | selesai
+    const isApproved = c.status === 'approved';
+
+    document.getElementById('page-content').innerHTML = `
+      <section class="rounded-2xl overflow-hidden shadow-[0_4px_20px_-4px_rgba(49,78,82,0.08)] bg-surface-container-lowest relative h-[280px] w-full border border-outline-variant/20">
+        ${hasLocation ? `<div id="handover-map"></div>` : `
+          <div class="w-full h-full flex items-center justify-center bg-surface-container-low text-on-surface-variant flex-col gap-2">
+            <span class="material-symbols-outlined text-4xl">location_off</span>
+            <p class="text-sm">Lokasi belum tersedia</p>
+          </div>`}
+        <div class="absolute bottom-4 left-4 bg-surface-container-lowest/95 backdrop-blur px-4 py-2 rounded-xl shadow-sm flex items-center gap-2 pointer-events-none">
+          <span class="material-symbols-outlined text-primary text-[18px]">inventory_2</span>
+          <span class="font-label-caps text-label-caps text-primary truncate max-w-[200px]">${c.report?.title || 'Barang'}</span>
+        </div>
+      </section>
+
+      <section class="bg-surface-container-lowest rounded-2xl p-stack-md shadow-[0_4px_20px_-4px_rgba(49,78,82,0.08)] border border-outline-variant/10">
+        <h2 class="font-label-caps text-label-caps text-secondary mb-stack-sm uppercase tracking-[0.1em]">Proses Saat Ini</h2>
+        <div class="relative pl-8 space-y-8 mt-6">
+          <div class="absolute left-[11px] top-2 bottom-2 w-[2px] bg-surface-variant rounded-full"></div>
+          ${renderTimelineStep1()}
+          ${renderTimelineStep2(stepStatus)}
+          ${renderTimelineStep3(stepStatus)}
+        </div>
+      </section>
+
+      ${isApproved && stepStatus !== 'selesai' ? renderHandoverOptions(c) : ''}
+      ${stepStatus === 'selesai' ? renderCompletedSection(c) : ''}
+      ${isApproved && stepStatus === 'dalam_proses' && isOwnerView ? renderCompleteButton() : ''}
+    `;
+
+    if (hasLocation) initMap(lat, lng, c.report?.location_name);
+    if (isApproved && stepStatus !== 'selesai') {
+      // Delay to ensure DOM is rendered from template literal before init
+      setTimeout(function() { attachHandoverFormHandlers(); }, 50);
+    }
+  }
+
+  function renderTimelineStep1() {
+    return `<div class="relative z-10">
+      <div class="absolute -left-[32px] top-1 w-6 h-6 rounded-full bg-primary flex items-center justify-center ring-4 ring-surface-container-lowest shadow-sm">
+        <span class="material-symbols-outlined text-[14px] text-on-primary" style="font-variation-settings:'FILL' 1;">check</span>
+      </div>
+      <div>
+        <h3 class="font-body-md text-on-surface font-semibold mb-1">Verifikasi Selesai</h3>
+        <p class="font-body-sm text-on-surface-variant">Item dan bukti kepemilikan telah diverifikasi oleh pemilik.</p>
+      </div>
+    </div>`;
+  }
+
+  function renderTimelineStep2(stepStatus) {
+    const isActive = stepStatus === 'menunggu_metode' || stepStatus === 'dalam_proses';
+    const isDone = stepStatus === 'selesai';
+    const dotClass = isDone ? 'bg-primary' : isActive ? 'bg-secondary' : 'bg-surface-variant border-2 border-outline-variant';
+    const icon = isDone
+      ? `<span class="material-symbols-outlined text-[14px] text-on-primary" style="font-variation-settings:'FILL' 1;">check</span>`
+      : isActive
+        ? `<div class="w-2.5 h-2.5 bg-on-primary rounded-full animate-pulse"></div>`
+        : '';
+    return `<div class="relative z-10 ${!isActive && !isDone ? 'opacity-50' : ''}">
+      <div class="absolute -left-[32px] top-1 w-6 h-6 rounded-full ${dotClass} flex items-center justify-center ring-4 ring-surface-container-lowest shadow-sm">${icon}</div>
+      <div>
+        <h3 class="font-body-md ${isActive ? 'text-primary font-bold' : 'text-on-surface font-semibold'} mb-1">Dalam Proses Serah Terima</h3>
+        <p class="font-body-sm text-on-surface-variant">${stepStatus === 'menunggu_metode' ? 'Silakan pilih metode pengembalian barang di bawah ini.' : stepStatus === 'dalam_proses' ? 'Metode serah terima telah dipilih, menunggu konfirmasi selesai.' : 'Barang telah kembali ke tangan pemilik.'}</p>
+      </div>
+    </div>`;
+  }
+
+  function renderTimelineStep3(stepStatus) {
+    const isDone = stepStatus === 'selesai';
+    return `<div class="relative z-10 ${!isDone ? 'opacity-50' : ''}">
+      <div class="absolute -left-[32px] top-1 w-6 h-6 rounded-full ${isDone ? 'bg-primary' : 'bg-surface-variant border-2 border-outline-variant'} flex items-center justify-center ring-4 ring-surface-container-lowest">
+        ${isDone ? `<span class="material-symbols-outlined text-[14px] text-on-primary" style="font-variation-settings:'FILL' 1;">check</span>` : ''}
+      </div>
+      <div>
+        <h3 class="font-body-md text-on-surface font-semibold mb-1">Selesai</h3>
+        <p class="font-body-sm text-on-surface-variant">Barang telah kembali ke tangan pemilik.</p>
+      </div>
+    </div>`;
+  }
+
+  function renderHandoverOptions(c) {
+    const current = c.handover_method;
+    return `<section class="space-y-gutter">
+      <h2 class="font-headline-md text-headline-md text-primary pl-2">Opsi Serah Terima</h2>
+      <div class="flex flex-col gap-gutter" id="handover-options">
+        <div class="hw-card ${current==='cod'?'selected':''}" data-value="cod" onclick="selectHandover(this)">
+          <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-stack-md transition-all duration-300 group-hover:border-primary/50 peer-checked:border-primary peer-checked:bg-primary-fixed/20 peer-checked:shadow-sm">
+            <div class="flex items-start gap-gutter">
+              <div class="hw-icon flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center transition-all">
+                <span class="material-symbols-outlined">handshake</span>
+              </div>
+              <div class="flex-1 pt-1">
+                <div class="flex justify-between items-start">
+                  <h3 class="hw-title font-body-lg font-semibold text-on-surface transition-colors">Bertemu Langsung (COD)</h3>
+                  <span class="font-label-caps text-label-caps text-secondary bg-secondary-container px-2 py-1 rounded-md">Direkomendasikan</span>
+                </div>
+                <p class="font-body-sm text-on-surface-variant mt-1">Atur pertemuan langsung dengan ${isOwnerView ? 'pengklaim' : 'pemilik barang'} melalui chat.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hw-card ${current==='titik_aman'?'selected':''}" data-value="titik_aman" onclick="selectHandover(this)">
+          <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-stack-md transition-all duration-300 group-hover:border-primary/50 peer-checked:border-primary peer-checked:bg-primary-fixed/20 peer-checked:shadow-sm">
+            <div class="flex items-start gap-gutter">
+              <div class="hw-icon flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center transition-all">
+                <span class="material-symbols-outlined">local_police</span>
+              </div>
+              <div class="flex-1 pt-1">
+                <h3 class="hw-title font-body-lg font-semibold text-on-surface transition-colors">Titip di Titik Aman</h3>
+                <p class="font-body-sm text-on-surface-variant mt-1">Titipkan di Polsek, Pos Satpam, atau Fasilitas Umum terdekat.</p>
+                <div class="overflow-hidden transition-all duration-300 max-h-0 opacity-0 peer-checked:max-h-40 peer-checked:opacity-100 peer-checked:mt-4">
+                  <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <span class="material-symbols-outlined text-outline">storefront</span>
+                    </div>
+                    <input id="titik-aman-input" value="${c.handover_location || ''}" class="w-full bg-surface-container-lowest border border-outline-variant/50 rounded-lg pl-10 pr-4 py-3 font-body-md text-on-surface placeholder:text-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" placeholder="Nama Lokasi (misal: Pos Satpam Sektor 2)" type="text">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hw-card ${current==='kurir'?'selected':''}" data-value="kurir" onclick="selectHandover(this)">
+          <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-stack-md transition-all duration-300 group-hover:border-primary/50 peer-checked:border-primary peer-checked:bg-primary-fixed/20 peer-checked:shadow-sm">
+            <div class="flex items-start gap-gutter">
+              <div class="hw-icon flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center transition-all">
+                <span class="material-symbols-outlined">two_wheeler</span>
+              </div>
+              <div class="flex-1 pt-1">
+                <h3 class="hw-title font-body-lg font-semibold text-on-surface transition-colors">Gunakan Kurir Instan</h3>
+                <p class="font-body-sm text-on-surface-variant mt-1">Kirim via GoSend, GrabExpress, atau layanan serupa.</p>
+                <div class="overflow-hidden transition-all duration-300 max-h-0 opacity-0 peer-checked:max-h-40 peer-checked:opacity-100 peer-checked:mt-4">
+                  <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <span class="material-symbols-outlined text-outline">local_shipping</span>
+                    </div>
+                    <input id="kurir-input" value="${c.handover_tracking || ''}" class="w-full bg-surface-container-lowest border border-outline-variant/50 rounded-lg pl-10 pr-4 py-3 font-body-md text-on-surface placeholder:text-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" placeholder="Masukkan Nomor Resi / Link Tracking" type="text">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p id="handover-error" class="text-red-600 text-sm hidden px-2"></p>
+      <div class="pt-2">
+        <button id="save-handover-btn" onclick="saveHandoverMethod()" class="w-full bg-primary text-on-primary py-4 rounded-xl font-label-caps tracking-wider hover:bg-primary-container transition-colors flex items-center justify-center gap-2">
+          Simpan Pilihan
+        </button>
+      </div>
+    </section>`;
+  }
+
+  function renderCompletedSection() {
+    return `<section class="bg-primary-fixed/20 border border-primary/20 rounded-2xl p-stack-md flex flex-col items-center text-center gap-3">
+      <span class="material-symbols-outlined text-primary text-4xl" style="font-variation-settings:'FILL' 1;">task_alt</span>
+      <h3 class="font-headline-md text-headline-md text-primary">Serah Terima Selesai</h3>
+      <p class="font-body-sm text-on-surface-variant">Barang telah berhasil dikembalikan kepada pemiliknya. Terima kasih telah menjadi bagian dari komunitas Winemu!</p>
+    </section>`;
+  }
+
+  function renderCompleteButton() {
+    return `<div class="pt-2">
+      <button onclick="completeHandover()" id="complete-btn" class="w-full bg-secondary text-white py-4 rounded-xl font-label-caps tracking-wider hover:opacity-90 transition-colors flex items-center justify-center gap-2">
+        <span class="material-symbols-outlined text-[18px]">check_circle</span>
+        Tandai Barang Sudah Saya Terima
+      </button>
+    </div>`;
+  }
+
+  function initMap(lat, lng, locationName) {
+    setTimeout(() => {
+      const map = L.map('handover-map', { zoomControl: true }).setView([lat, lng], 15);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
+      L.marker([lat, lng]).addTo(map).bindPopup(locationName || 'Lokasi barang').openPopup();
+    }, 100);
+  }
+
+  
+  function animateHandoverDots() {
+    // No-op: radio inputs removed, animation handled by CSS .hw-card.selected
+  }
+  
+
+  function selectHandover(el) {
+    document.querySelectorAll('.hw-card').forEach(function(card) {
+      card.classList.remove('selected');
+    });
+    el.classList.add('selected');
+  }
+
+  function initHandoverCards() {
+    // Cards handled by selectHandover() onclick — no radio needed
+  }
+  function attachHandoverFormHandlers() {
+    initHandoverCards();
+    animateHandoverDots();
+    // No-op placeholder: input values are read directly on save via getElementById.
+  }
+
+  async function saveHandoverMethod() {
+    const selected = document.querySelector('.hw-card.selected');
+    const errEl = document.getElementById('handover-error');
+    errEl.classList.add('hidden');
+
+    if (!selected) { errEl.textContent = 'Pilih salah satu metode serah terima'; errEl.classList.remove('hidden'); return; }
+
+    const method = selected.value;
+    const payload = { method };
+    if (method === 'titik_aman') payload.location = document.getElementById('titik-aman-input')?.value || '';
+    if (method === 'kurir') payload.tracking = document.getElementById('kurir-input')?.value || '';
+
+    const btn = document.getElementById('save-handover-btn');
+    btn.textContent = 'Menyimpan...'; btn.disabled = true;
+
+    const res = await api.put(`/claims/${claimId}/handover-method`, payload);
+    if (res?.status === 'success') {
+      showToast('Metode serah terima disimpan ✓');
+      loadClaim();
+    } else {
+      errEl.textContent = res?.message || 'Gagal menyimpan pilihan';
+      errEl.classList.remove('hidden');
+      btn.textContent = 'Simpan Pilihan'; btn.disabled = false;
+    }
+  }
+
+  async function completeHandover() {
+    if (!confirm('Konfirmasi bahwa barang sudah Anda terima kembali?')) return;
+    const btn = document.getElementById('complete-btn');
+    btn.textContent = 'Memproses...'; btn.disabled = true;
+
+    const res = await api.post(`/claims/${claimId}/handover-complete`);
+    if (res?.status === 'success') {
+      showToast('Serah terima berhasil diselesaikan! 🎉');
+      loadClaim();
+    } else {
+      showToast(res?.message || 'Gagal menyelesaikan serah terima', true);
+      btn.textContent = 'Tandai Barang Sudah Saya Terima'; btn.disabled = false;
+    }
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html class="light" lang="id">
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<script src="/js/device-redirect.js"></script>
+<title>Winemu - Detail Laporan</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Philosopher:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+tailwind.config={darkMode:"class",theme:{extend:{colors:{
+  "surface-container-lowest":"#ffffff","surface":"#fcf9f4","background":"#fcf9f4",
+  "primary-container":"#314e52","on-primary":"#ffffff","outline-variant":"#c1c8c9",
+  "on-surface":"#1c1c19","outline":"#727879","primary":"#1a373b","on-surface-variant":"#414849",
+  "secondary":"#7d562d","surface-container-low":"#f6f3ee","surface-container-high":"#ebe8e3",
+  "surface-container":"#f0ede9","surface-container-highest":"#e5e2dd","secondary-container":"#ffca98",
+  "primary-fixed":"#c9e8ed","primary-fixed-dim":"#adccd1","error":"#ba1a1a"
+},fontFamily:{"headline-md":["Philosopher"],"body-sm":["Plus Jakarta Sans"],"body-md":["Plus Jakarta Sans"],"label-caps":["Plus Jakarta Sans"]},
+fontSize:{
+  "headline-md":["24px",{"lineHeight":"1.3","fontWeight":"700"}],
+  "body-sm":["14px",{"lineHeight":"1.5","fontWeight":"400"}],
+  "body-md":["16px",{"lineHeight":"1.6","fontWeight":"400"}],
+  "label-caps":["12px",{"lineHeight":"1.2","letterSpacing":"0.05em","fontWeight":"600"}]
+}}}}
+</script>
+<style>
+.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;display:inline-block;line-height:1;}
+#map{height:220px;border-radius:12px;position:relative;z-index:0;}
+/* Leaflet panes/controls default to z-index 400-1000+, which leaks above
+   our modals (z-50). Cap the map's own stacking context so it never
+   escapes above modals/overlays rendered later in the DOM. */
+#map .leaflet-pane, #map .leaflet-top, #map .leaflet-bottom { z-index: 1 !important; }
+
+  .carousel-arrow {
+    position:absolute; top:50%; transform:translateY(-50%);
+    width:36px; height:36px; border-radius:50%;
+    background:rgba(255,255,255,0.85); border:none; cursor:pointer;
+    display:none; align-items:center; justify-content:center;
+    box-shadow:0 2px 8px rgba(0,0,0,0.18);
+    z-index:10; font-size:20px; color:#1a373b; font-weight:bold;
+  }
+  .carousel-wrap:hover .carousel-arrow { display:flex; }
+  .carousel-arrow.prev { left:10px; }
+  .carousel-arrow.next { right:10px; }
+
+  </style>
+<!-- batik-bg-applied -->
+<style>
+  body { background-color:#fcf9f4; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cg fill='none'%3E%3Ccircle cx='30' cy='30' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='30' cy='30' r='6' stroke='%231a373b' stroke-width='0.4' stroke-opacity='0.05'/%3E%3Ccircle cx='0' cy='0' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='60' cy='0' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='0' cy='60' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Ccircle cx='60' cy='60' r='10' stroke='%231a373b' stroke-width='0.6' stroke-opacity='0.07'/%3E%3Cpath d='M30 20 L40 30 L30 40 L20 30 Z' stroke='%237d562d' stroke-width='0.5' stroke-opacity='0.06' fill='none'/%3E%3Cpath d='M0 0 L10 0 L5 8 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3Cpath d='M60 0 L50 0 L55 8 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3Cpath d='M0 60 L10 60 L5 52 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3Cpath d='M60 60 L50 60 L55 52 Z' fill='%231a373b' fill-opacity='0.03'/%3E%3C/g%3E%3C/svg%3E"); }
+</style>
+</head>
+<body class="bg-surface text-on-surface font-body-md min-h-screen pb-28">
+  <!-- Header -->
+  <header class="sticky top-0 z-50 bg-surface/90 backdrop-blur-md border-b border-surface-container-highest shadow-sm">
+    <div class="flex items-center gap-3 px-4 py-3 max-w-[600px] mx-auto">
+      <button onclick="history.back()" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-colors">
+        <span class="material-symbols-outlined text-primary">arrow_back</span>
+      </button>
+      <h1 class="font-headline-md text-headline-md text-primary flex-1 truncate" id="page-title">Detail Laporan</h1>
+      <button id="bookmark-btn" onclick="handleBookmark()" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-colors text-primary">
+        <span class="material-symbols-outlined">bookmark_border</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="max-w-[600px] mx-auto" id="detail-content">
+    <div class="flex items-center justify-center py-20">
+      <div class="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+    </div>
+  </main>
+
+  <!-- Comment Modal -->
+  <div id="comment-modal" class="hidden fixed inset-0 flex items-end bg-black/40" style="z-index:2000;">
+    <div class="w-full max-w-[600px] mx-auto bg-surface-container-lowest rounded-t-2xl p-4 max-h-[80vh] flex flex-col">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="font-headline-md text-lg text-primary">Komentar</h3>
+        <button onclick="closeComments()" class="text-on-surface-variant"><span class="material-symbols-outlined">close</span></button>
+      </div>
+      <div id="comments-list" class="flex-1 overflow-y-auto space-y-3 mb-4 min-h-[100px]"></div>
+      <div class="flex gap-2 border-t border-surface-container-highest pt-3">
+        <input id="comment-input" type="text" placeholder="Tulis komentar..." class="flex-1 bg-surface-container border border-outline-variant rounded-full px-4 py-2 text-sm focus:outline-none focus:border-primary">
+        <button onclick="submitComment()" class="w-10 h-10 bg-primary-container text-white rounded-full flex items-center justify-center">
+          <span class="material-symbols-outlined text-[18px]">send</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Claim Modal -->
+  <div id="claim-modal" class="hidden fixed inset-0 flex items-center justify-center bg-black/40 p-4" style="z-index:2000;">
+    <div class="w-full max-w-sm bg-surface-container-lowest rounded-2xl p-6 shadow-2xl">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="font-headline-md text-lg text-primary flex items-center gap-2"><span class="material-symbols-outlined text-secondary">key</span>Verifikasi Klaim</h3>
+        <button onclick="closeClaim()" class="text-on-surface-variant"><span class="material-symbols-outlined">close</span></button>
+      </div>
+      <div class="bg-secondary-container/30 border border-secondary/20 rounded-xl p-4 mb-4">
+        <p class="text-xs text-on-surface-variant font-semibold mb-1 flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">help</span>Pertanyaan dari pemilik barang</p>
+        <p id="claim-question-text" class="text-on-surface font-semibold">Memuat pertanyaan...</p>
+      </div>
+      <textarea id="claim-answer" rows="3" placeholder="Tuliskan jawaban Anda..." class="w-full border border-outline-variant rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-primary resize-none mb-4"></textarea>
+      <p id="claim-error" class="text-red-600 text-sm hidden mb-2"></p>
+      <button onclick="submitClaim()" id="claim-submit-btn" class="w-full py-3 bg-primary text-on-primary rounded-xl font-bold hover:bg-primary-container transition-colors">Ajukan Klaim</button>
+    </div>
+  </div>
+
+  <!-- Claims List Modal (Owner) -->
+  <div id="claims-list-modal" class="hidden fixed inset-0 flex items-end bg-black/40" style="z-index:2000;">
+    <div class="w-full max-w-[600px] mx-auto bg-surface-container-lowest rounded-t-2xl p-6 max-h-[80vh] flex flex-col">
+      <div class="flex justify-between items-center mb-4 flex-shrink-0">
+        <h3 class="font-headline-md text-lg text-primary">Klaim Masuk</h3>
+        <button onclick="closeClaimsList()" class="text-on-surface-variant"><span class="material-symbols-outlined">close</span></button>
+      </div>
+      <div id="claims-list-content" class="flex-1 overflow-y-auto"></div>
+    </div>
+  </div>
+
+  <!-- Action FAB -->
+  <div class="fixed bottom-0 left-0 right-0 max-w-[600px] mx-auto px-4 py-4 bg-surface/90 backdrop-blur-sm border-t border-surface-container-highest z-40">
+    <div id="action-btn-container"></div>
+  </div>
+
+<script src="/js/api.js"></script>
+<script>
+let reportId = null, reportData = null;
+
+const params = new URLSearchParams(window.location.search);
+reportId = parseInt(params.get('id'));
+if (!reportId) { window.location.href = '/feed.html'; }
+
+window.addEventListener('DOMContentLoaded', loadReport);
+
+async function loadReport() {
+  const res = await api.get(`/reports/${reportId}`);
+  if (!res || res.status !== 'success') {
+    document.getElementById('detail-content').innerHTML = '<p class="text-center py-20 text-on-surface-variant">Laporan tidak ditemukan</p>';
+    return;
+  }
+  reportData = res.data.report;
+  renderDetail(reportData);
+  loadComments();
+}
+
+function renderDetail(r) {
+  document.getElementById('page-title').textContent = r.title;
+
+  const badgeColor = r.type === 'hilang' ? '#C06C50' : '#D4A373';
+  const badgeText = r.type === 'hilang' ? 'HILANG' : 'DITEMUKAN';
+  const avatar = r.author?.avatar_url
+    ? `<img src="${r.author.avatar_url}" class="w-12 h-12 rounded-full object-cover border-2 border-surface-container-high">`
+    : `<div class="w-12 h-12 rounded-full bg-primary-container flex items-center justify-center text-white font-bold text-lg">${(r.author?.full_name||'?')[0]}</div>`;
+
+  const mediaHtml = r.media && r.media.length > 0
+    ? r.media.map(m => m.type === 'image'
+        ? `<img src="${m.url}" class="w-full h-full object-cover flex-shrink-0" style="min-width:100%;cursor:pointer;" onclick="openLightbox('${m.url}')">`
+        : `<video src="${m.url}" class="w-full h-full object-cover flex-shrink-0" controls style="min-width:100%;"></video>`
+      ).join('')
+    : `<div class="w-full h-full flex items-center justify-center bg-surface-container-low text-outline"><span class="material-symbols-outlined" style="font-size:72px;">image_not_supported</span></div>`;
+
+  const mapHtml = (r.latitude && r.longitude)
+    ? `<div class="px-4 mb-4"><div id="map" class="border border-outline-variant"></div></div>` : '';
+
+  document.getElementById('detail-content').innerHTML = `
+    <div class="relative w-full bg-surface-container-low" style="aspect-ratio:4/5;overflow:hidden;">
+      <div class="flex h-full overflow-x-auto snap-x snap-mandatory">${mediaHtml}</div>
+      <div class="absolute top-4 left-4 text-white px-3 py-1 rounded-sm font-bold text-xs shadow-md tracking-wider" style="background:${badgeColor};font-family:'Plus Jakarta Sans',sans-serif;">${badgeText}</div>
+      ${r.is_verified ? `<div class="absolute top-4 right-4 bg-green-600 text-white px-2 py-1 rounded-full text-xs font-bold flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">verified</span> Terverifikasi</div>` : ''}
+      ${r.status === 'selesai' ? `<div class="absolute inset-0 bg-black/55 flex items-center justify-center"><div class="flex items-center gap-2 text-white border-2 border-white px-5 py-2.5 rounded-full"><span class="material-symbols-outlined">task_alt</span><span class="font-bold tracking-wider">${r.type === 'hilang' ? 'BARANG TELAH DITEMUKAN' : 'BARANG TELAH DIKEMBALIKAN'}</span></div></div>` : ''}
+    </div>
+
+    <div class="px-4 pt-4 pb-2">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="flex items-center gap-3 flex-1 cursor-pointer" onclick="window.location.href='/user-profile.html?id=${r.user_id}'">
+          ${avatar}
+          <div>
+            <p class="font-bold text-on-surface">${r.author?.full_name || r.author?.username || 'Pengguna'}</p>
+            <p class="text-sm text-on-surface-variant">${r.location_name || ''} ${r.location_name && r.created_at ? '•' : ''} ${timeAgo(r.created_at)}</p>
+          </div>
+        </div>
+        <a href="/chat.html?user=${r.user_id}&report=${r.id}" class="w-10 h-10 rounded-full bg-primary-container text-white flex items-center justify-center hover:bg-primary transition-colors">
+          <span class="material-symbols-outlined text-[20px]">chat</span>
+        </a>
+      </div>
+
+      <h2 class="font-headline-md text-xl text-primary mb-2">${r.title}</h2>
+      ${r.description ? `<p class="text-on-surface-variant text-sm leading-relaxed mb-4">${r.description}</p>` : ''}
+
+      <div class="grid grid-cols-2 gap-3 mb-4">
+        ${r.category ? `<div class="bg-surface-container rounded-xl p-3"><p class="text-xs text-on-surface-variant font-semibold mb-1">Kategori</p><p class="text-sm font-bold text-on-surface flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">${r.category.icon||'category'}</span>${r.category.name}</p></div>` : ''}
+        ${r.date_occurred ? `<div class="bg-surface-container rounded-xl p-3"><p class="text-xs text-on-surface-variant font-semibold mb-1">Tanggal</p><p class="text-sm font-bold text-on-surface">${new Date(r.date_occurred).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'})}</p></div>` : ''}
+        ${r.reward ? `<div class="bg-surface-container rounded-xl p-3 col-span-2"><p class="text-xs text-on-surface-variant font-semibold mb-1">Hadiah</p><p class="text-sm font-bold text-secondary">${r.reward}</p></div>` : ''}
+      </div>
+
+      <div class="flex items-center gap-6 py-3 border-t border-b border-surface-container-highest mb-4">
+        <button onclick="handleLike()" id="like-btn" class="flex items-center gap-2 text-[#314E52] hover:text-red-500 transition-colors">
+          <span class="material-symbols-outlined" style="font-variation-settings:'FILL' ${r.is_liked?'1':'0'};">${r.is_liked?'favorite':'favorite_border'}</span>
+          <span class="text-sm font-semibold">${r.like_count||0}</span>
+        </button>
+        <button onclick="openComments()" class="flex items-center gap-2 text-[#314E52] hover:text-primary transition-colors">
+          <span class="material-symbols-outlined">chat_bubble</span>
+          <span class="text-sm font-semibold">${r.comment_count||0}</span>
+        </button>
+        <div class="ml-auto text-sm text-on-surface-variant">${r.view_count||0} dilihat</div>
+      </div>
+    </div>
+
+    ${mapHtml}
+  `;
+
+  // Render map
+  if (r.latitude && r.longitude) {
+    setTimeout(() => {
+      const map = L.map('map').setView([r.latitude, r.longitude], 15);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution:'© OpenStreetMap'}).addTo(map);
+      L.marker([r.latitude, r.longitude]).addTo(map).bindPopup(r.location_name || r.title).openPopup();
+    }, 100);
+  }
+
+  // Action button
+  const user = api.getUser();
+  const isOwner = user && user.id === r.user_id;
+  const actionHtml = isOwner
+    ? `<div class="flex gap-2">
+        <a href="/report-edit.html?id=${r.id}" class="flex-1 py-3 border-2 border-primary text-primary rounded-xl font-bold text-center text-sm">Edit Laporan</a>
+        <button onclick="openClaimsList()" class="flex-1 py-3 bg-secondary text-white rounded-xl font-bold text-sm relative">
+          <span id="claims-btn-text">Lihat Klaim Masuk</span>
+          <span id="claims-badge" class="hidden absolute -top-2 -right-2 bg-error text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold"></span>
+        </button>
+        <button onclick="deleteReport()" class="py-3 px-4 bg-red-50 text-red-600 rounded-xl font-bold text-sm border-2 border-red-200">Hapus</button>
+       </div>`
+    : `<div class="flex gap-2">
+        <button onclick="contactOwner()" class="flex-1 py-3.5 rounded-xl font-bold text-sm border-2 border-primary text-primary bg-white hover:bg-primary hover:text-white active:scale-95 transition-all duration-200 relative overflow-hidden">
+          <span class="absolute inset-0 rounded-xl border-2 border-primary animate-ping opacity-25"></span>
+          <span class="material-symbols-outlined text-[15px] align-middle mr-1">chat</span>Hubungi
+        </button>
+        <button onclick="openClaim()" class="flex-1 py-3.5 rounded-xl font-bold text-sm transition-all duration-200 active:scale-95 relative overflow-hidden ${r.type==='hilang'?'bg-primary text-on-primary hover:brightness-110':'border-2 border-secondary text-secondary bg-white hover:bg-secondary hover:text-white'}">
+          <span class="absolute inset-0 rounded-xl animate-ping opacity-20 ${r.type==='hilang'?'border-2 border-white':'border-2 border-secondary'}"></span>
+          ${r.type==='hilang' ? '<span class=\'material-symbols-outlined text-[15px] align-middle mr-1\'>location_on</span>Saya Tahu Lokasinya' : '<span class=\'material-symbols-outlined text-[15px] align-middle mr-1\'>key</span>Ajukan Klaim'}
+        </button>
+       </div>`;
+  document.getElementById('action-btn-container').innerHTML = actionHtml;
+  if (isOwner) {
+    loadClaimsBadge();
+    const claimsText = document.getElementById('claims-btn-text');
+    if (claimsText && r.type === 'hilang') claimsText.textContent = 'Seseorang Mengetahuinya';
+  }
+}
+
+async function loadClaimsBadge() {
+  const res = await api.get(`/claims/report/${reportId}`);
+  const pending = (res?.data?.claims || []).filter(c => c.status === 'pending' || c.status === 'disputed');
+  const badge = document.getElementById('claims-badge');
+  if (badge && pending.length > 0) {
+    badge.textContent = pending.length;
+    badge.classList.remove('hidden');
+  }
+}
+
+async function openClaimsList() {
+  const res = await api.get(`/claims/report/${reportId}`);
+  const claims = res?.data?.claims || [];
+  const modal = document.getElementById('claims-list-modal');
+  const content = document.getElementById('claims-list-content');
+
+  if (!claims.length) {
+    content.innerHTML = '<p class="text-center text-on-surface-variant py-8">Belum ada klaim masuk untuk laporan ini.</p>';
+  } else {
+    content.innerHTML = claims.map(c => {
+      const av = c.claimant?.avatar_url
+        ? `<img src="${c.claimant.avatar_url}" class="w-10 h-10 rounded-full object-cover">`
+        : `<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center font-bold">${(c.claimant?.full_name||'?')[0]}</div>`;
+      const statusBadge = {
+        pending: '<span class="text-xs bg-secondary-container text-on-secondary-container px-2 py-1 rounded-full font-bold">Menunggu</span>',
+        approved: '<span class="text-xs bg-green-50 text-green-700 px-2 py-1 rounded-full font-bold">Disetujui</span>',
+        rejected: '<span class="text-xs bg-surface-variant text-on-surface-variant px-2 py-1 rounded-full font-bold">Ditolak</span>',
+        disputed: '<span class="text-xs bg-error-container text-error px-2 py-1 rounded-full font-bold">Disengketakan</span>',
+      }[c.status] || '';
+
+      return `<div class="border border-outline-variant/30 rounded-xl p-4 mb-3">
+        <div class="flex items-center gap-3 mb-3">
+          ${av}
+          <div class="flex-1">
+            <p class="font-semibold text-on-surface">${c.claimant?.full_name || c.claimant?.username || 'Pengguna'}</p>
+          </div>
+          ${statusBadge}
+        </div>
+        <div class="bg-secondary-container/20 rounded-lg p-3 mb-3">
+          <p class="text-xs text-on-surface-variant font-semibold mb-1">Jawaban:</p>
+          <p class="text-sm italic">"${c.answer}"</p>
+        </div>
+        ${c.status === 'pending' ? `
+          <div class="flex gap-2">
+            <button onclick="rejectClaimFromList(${c.id})" class="flex-1 py-2 border-2 border-red-200 text-red-600 rounded-lg text-sm font-bold">Tolak</button>
+            <button onclick="approveClaimFromList(${c.id})" class="flex-1 py-2 bg-primary text-white rounded-lg text-sm font-bold">Setujui</button>
+          </div>
+        ` : c.status === 'approved' ? `
+          <a href="/status-serah-terima.html?claim_id=${c.id}" class="block w-full py-2 bg-primary text-white rounded-lg text-sm font-bold text-center">Lihat Status Serah Terima</a>
+        ` : ''}
+      </div>`;
+    }).join('');
+  }
+
+  modal.classList.remove('hidden');
+}
+
+function closeClaimsList() { document.getElementById('claims-list-modal').classList.add('hidden'); }
+
+async function approveClaimFromList(claimId) {
+  const res = await api.post(`/claims/${claimId}/approve`);
+  if (res?.status === 'success') {
+    showToast('Klaim disetujui ✓');
+    openClaimsList();
+    loadClaimsBadge();
+  } else {
+    showToast(res?.message || 'Gagal menyetujui klaim', true);
+  }
+}
+
+async function rejectClaimFromList(claimId) {
+  if (!confirm('Tolak klaim ini?')) return;
+  const res = await api.post(`/claims/${claimId}/reject`);
+  if (res?.status === 'success') {
+    showToast('Klaim ditolak');
+    openClaimsList();
+    loadClaimsBadge();
+  } else {
+    showToast(res?.message || 'Gagal menolak klaim', true);
+  }
+}
+
+function openClaim() {
+  if (!isLoggedIn()) { window.location.href = '/login.html'; return; }
+  if (reportData && reportData.type === 'hilang') {
+    document.getElementById('claim-question-text').textContent = 'Di mana Anda melihat atau mengetahui lokasi barang ini?';
+    document.getElementById('claim-answer').placeholder = 'Jelaskan lokasi atau situasi saat Anda melihat barang tersebut...';
+  } else {
+    document.getElementById('claim-question-text').textContent = reportData?.verification_question || 'Sebutkan ciri khusus barang ini yang tidak terlihat di foto.';
+    document.getElementById('claim-answer').placeholder = 'Tuliskan jawaban Anda...';
+  }
+  document.getElementById('claim-answer').value = '';
+  document.getElementById('claim-error').classList.add('hidden');
+  document.getElementById('claim-modal').classList.remove('hidden');
+}
+function closeClaim() { document.getElementById('claim-modal').classList.add('hidden'); }
+
+async function submitClaim() {
+  const answer = document.getElementById('claim-answer').value.trim();
+  const errEl = document.getElementById('claim-error');
+  if (!answer) { errEl.textContent = 'Jawaban wajib diisi'; errEl.classList.remove('hidden'); return; }
+
+  const btn = document.getElementById('claim-submit-btn');
+  btn.textContent = 'Mengirim...'; btn.disabled = true;
+
+  const res = await api.post('/claims', { report_id: reportId, answer });
+  if (res?.status === 'success') {
+    closeClaim();
+    showToast('Klaim berhasil diajukan! Menunggu verifikasi pemilik.');
+  } else {
+    const rawMsg = res?.message || 'Gagal mengajukan klaim';
+    errEl.textContent = rawMsg.toLowerCase().includes('already') ? 'Anda sudah pernah mengajukan klaim untuk laporan ini.' : rawMsg;
+    errEl.classList.remove('hidden');
+  }
+  btn.textContent = 'Ajukan Klaim'; btn.disabled = false;
+}
+
+let liked = false;
+async function handleLike() {
+  if (!isLoggedIn()) { window.location.href = '/login.html'; return; }
+  const res = await api.post(`/reports/${reportId}/like`);
+  if (res?.status === 'success') {
+    const btn = document.getElementById('like-btn');
+    const icon = btn.querySelector('.material-symbols-outlined');
+    const count = btn.querySelector('span:last-child');
+    icon.textContent = res.data.liked ? 'favorite' : 'favorite_border';
+    icon.style.fontVariationSettings = res.data.liked ? "'FILL' 1" : "'FILL' 0";
+    count.textContent = res.data.like_count;
+  }
+}
+
+async function handleBookmark() {
+  if (!isLoggedIn()) { window.location.href = '/login.html'; return; }
+  const btn = document.getElementById('bookmark-btn').querySelector('.material-symbols-outlined');
+  if (btn.textContent === 'bookmark') {
+    await api.delete(`/users/bookmarks/${reportId}`);
+    btn.textContent = 'bookmark_border';
+    showToast('Bookmark dihapus');
+  } else {
+    await api.post(`/users/bookmarks/${reportId}`);
+    btn.textContent = 'bookmark';
+    showToast('Ditambahkan ke bookmark');
+  }
+}
+
+function openComments() {
+  document.getElementById('comment-modal').classList.remove('hidden');
+}
+function closeComments() {
+  document.getElementById('comment-modal').classList.add('hidden');
+}
+
+async function loadComments() {
+  const res = await api.get(`/reports/${reportId}/comments?per_page=50`);
+  if (!res?.data?.items) return;
+  const list = document.getElementById('comments-list');
+  if (res.data.items.length === 0) {
+    list.innerHTML = '<p class="text-center text-on-surface-variant text-sm py-4">Belum ada komentar</p>';
+    return;
+  }
+  list.innerHTML = res.data.items.map(c => {
+    const av = c.author?.avatar_url
+      ? `<img src="${c.author.avatar_url}" class="w-8 h-8 rounded-full object-cover flex-shrink-0">`
+      : `<div class="w-8 h-8 rounded-full bg-primary-container text-white flex items-center justify-center text-xs font-bold flex-shrink-0">${(c.author?.full_name||'?')[0]}</div>`;
+    return `<div class="flex gap-2">
+      ${av}
+      <div class="flex-1 bg-surface-container rounded-xl px-3 py-2">
+        <p class="text-xs font-bold text-primary">${c.author?.full_name||'Pengguna'}</p>
+        <p class="text-sm text-on-surface">${c.content}</p>
+        <p class="text-xs text-on-surface-variant mt-1">${timeAgo(c.created_at)}</p>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function submitComment() {
+  if (!isLoggedIn()) { window.location.href = '/login.html'; return; }
+  const input = document.getElementById('comment-input');
+  const content = input.value.trim();
+  if (!content) return;
+  const res = await api.post(`/reports/${reportId}/comments`, { content });
+  if (res?.status === 'success') {
+    input.value = '';
+    loadComments();
+    showToast('Komentar ditambahkan');
+  }
+}
+
+async function contactOwner() {
+  if (!isLoggedIn()) { window.location.href = '/login.html'; return; }
+  if (!reportData) { showToast('Data laporan belum dimuat', 'error'); return; }
+  if (!reportData.user_id) { showToast('ID pemilik tidak ditemukan', 'error'); return; }
+
+  showToast('Membuka chat...');
+  const res = await api.post('/chat/conversations', {
+    user_id: parseInt(reportData.user_id),
+    report_id: parseInt(reportData.id)
+  });
+
+  if (res === null) return;
+
+  if (res?.data?.conversation?.id) {
+    window.location.href = `/chat.html?conv=${res.data.conversation.id}`;
+    return;
+  }
+
+  const errMsg = res?.message || `Status: ${res?.status || 'unknown'}`;
+  showToast('Gagal: ' + errMsg, 'error');
+}
+
+async function deleteReport() {
+  if (!confirm('Hapus laporan ini?')) return;
+  const res = await api.delete(`/reports/${reportId}`);
+  if (res?.status === 'success') {
+    showToast('Laporan dihapus');
+    setTimeout(() => window.location.href = '/feed.html', 1000);
+  }
+}
+
+  // ── Detail Carousel ─────────────────────────────────────────────────────────
+  function initDetailCarousel() {
+    const track = document.getElementById('detail-carousel');
+    if (!track) return;
+    const total = track.children.length;
+    if (total <= 1) return;
+    let startX = 0;
+    function goTo(idx) {
+      idx = Math.max(0, Math.min(total - 1, idx));
+      track.setAttribute('data-idx', idx);
+      track.style.transform = `translateX(-${idx * 100}%)`;
+      document.querySelectorAll('.det-dot').forEach((d, i) => {
+        d.className = 'det-dot rounded-full transition-all duration-300 ' +
+          (i === idx ? 'bg-white w-3 h-1.5' : 'bg-white/50 w-1.5 h-1.5');
+      });
+    }
+    track.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
+    track.addEventListener('touchend', e => {
+      const diff = e.changedTouches[0].clientX - startX;
+      const idx = parseInt(track.getAttribute('data-idx')) || 0;
+      if (Math.abs(diff) > 40) goTo(diff < 0 ? idx + 1 : idx - 1);
+    });
+    let msx = 0, md = false;
+    track.addEventListener('mousedown', e => { msx = e.clientX; md = true; });
+    track.addEventListener('mouseup', e => {
+      if (!md) return; md = false;
+      const diff = e.clientX - msx;
+      const idx = parseInt(track.getAttribute('data-idx')) || 0;
+      if (Math.abs(diff) > 40) goTo(diff < 0 ? idx + 1 : idx - 1);
+    });
+  }
+
+  function openLightbox(url) {
+    let lb = document.getElementById('_lightbox');
+    if (!lb) {
+      lb = document.createElement('div');
+      lb.id = '_lightbox';
+      lb.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:9999;display:flex;align-items:center;justify-content:center;cursor:zoom-out;';
+      lb.onclick = () => lb.remove();
+      document.body.appendChild(lb);
+    }
+    lb.innerHTML = `<img src="${url}" style="max-width:95vw;max-height:95vh;object-fit:contain;border-radius:8px;">`;
+  }
+
+</script>
+</body>
+</html>
