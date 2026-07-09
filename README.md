@@ -1,165 +1,138 @@
-# Winemu 🔍
+# Winemu — Platform Temu Barang Hilang & Ditemukan
 
-Platform temu barang berbasis komunitas yang terpercaya. Laporkan barang hilang, temukan barang orang lain, dan bantu sesama melalui feed sosial.
+Aplikasi web komunitas untuk melaporkan dan mencari barang hilang/ditemukan, dibangun dengan Flask (backend REST API) dan halaman HTML/Tailwind statis (frontend) yang terhubung langsung ke API.
 
----
+## Struktur Proyek
 
-## Cara Menjalankan Aplikasi
-
-### Prasyarat
-
-Pastikan sudah terinstall:
-- Python 3.10+
-- pip
-- MySQL / XAMPP
-- Git
-
----
-
-### 1. Clone Repository
-
-```bash
-git clone https://github.com/username/winemu.git
-cd winemu
+```
+winemu/
+├── backend/              # Flask REST API
+│   ├── app/
+│   │   ├── api/v1/       # Blueprint endpoint (auth, users, reports, claims, chat, admin, dst)
+│   │   ├── models/       # SQLAlchemy models (User, Report, Claim, dll)
+│   │   ├── schemas/      # (reserved untuk Marshmallow schemas tambahan)
+│   │   ├── services/     # (reserved untuk business logic kompleks)
+│   │   ├── repositories/ # (reserved untuk data access layer kompleks)
+│   │   ├── middleware/   # (reserved untuk middleware kustom)
+│   │   ├── utils/        # Helper: response formatter, upload handler
+│   │   ├── config/       # Konfigurasi Flask (DB, JWT, upload, dll)
+│   │   ├── static/       # File upload (avatar, foto laporan)
+│   │   ├── sockets.py    # Event handler Flask-SocketIO (chat realtime)
+│   │   └── __init__.py   # App factory
+│   ├── migrations/       # Flask-Migrate / Alembic migration scripts
+│   ├── requirements.txt
+│   ├── seed.py            # Script seeding kategori + akun admin/demo
+│   ├── run.py              # Entry point aplikasi
+│   └── .env                # Konfigurasi environment
+├── frontend/              # Halaman statis (HTML + TailwindCSS CDN + vanilla JS)
+│   ├── js/api.js           # API client (fetch wrapper, token refresh, toast)
+│   ├── js/nav.js            # Komponen navigasi bersama
+│   ├── admin/                # Panel admin (dashboard, reports, users, conflicts, logs, settings)
+│   └── *.html                # Halaman publik (feed, login, register, chat, dst)
+├── database/
+│   ├── schema.sql            # DDL referensi (hasil generate dari model SQLAlchemy)
+│   └── seed.sql                # Data awal kategori (untuk import phpMyAdmin)
+└── docs/
 ```
 
-### 2. Setup Backend
+## Stack Teknologi
+
+- **Backend**: Python Flask, Flask-SQLAlchemy, Flask-Migrate, Flask-JWT-Extended, Flask-SocketIO, Flask-CORS, Marshmallow
+- **Database**: MySQL (port **3308**), diakses via phpMyAdmin
+- **Auth**: JWT (access + refresh token)
+- **Realtime**: Flask-SocketIO untuk fitur chat
+- **Maps**: LeafletJS (OpenStreetMap tiles)
+- **Frontend**: HTML statis + TailwindCSS (CDN) + vanilla JavaScript, UI sesuai desain yang sudah disediakan
+
+## Setup & Instalasi
+
+### 1. Database (MySQL via phpMyAdmin, port 3308)
+
+Buka phpMyAdmin Anda yang berjalan di MySQL port 3308, lalu buat database `winemu` (atau biarkan migration yang membuatnya otomatis lewat `CREATE DATABASE IF NOT EXISTS` di `database/schema.sql`).
+
+Cara termudah — gunakan Flask-Migrate (disarankan):
 
 ```bash
 cd backend
 pip install -r requirements.txt
 ```
 
-Buat file `.env` di folder `backend/`:
+Edit file `.env` sesuaikan kredensial MySQL Anda:
 
 ```env
 DB_HOST=localhost
-DB_PORT=3306
-DB_NAME=winemu_db
+DB_PORT=3308
+DB_NAME=winemu
 DB_USER=root
 DB_PASSWORD=
-
-SECRET_KEY=ganti_dengan_secret_key_acak
-JWT_SECRET_KEY=ganti_dengan_jwt_secret_acak
-
-FLASK_ENV=development
-FLASK_DEBUG=True
 ```
 
-### 3. Setup Database
-
-Buat database di MySQL:
-
-```sql
-CREATE DATABASE winemu_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-```
-
-Lalu jalankan migrasi:
+Lalu jalankan migration:
 
 ```bash
 flask db upgrade
 ```
 
-### 4. Jalankan Backend
+Ini akan membuat seluruh 12 tabel (`users`, `roles`-equivalent via `role` column, `reports`, `report_media`, `categories`, `comments`, `bookmarks`, `claims`, `notifications`, `conversations`, `messages`, `activity_logs`).
+
+**Alternatif** — jika Anda lebih suka import manual lewat phpMyAdmin: import `database/schema.sql` lalu `database/seed.sql` melalui tab Import.
+
+### 2. Seed Data Awal
 
 ```bash
+cd backend
+python seed.py
+```
+
+Ini membuat:
+- 10 kategori default (Elektronik, Dokumen, dst)
+- Akun admin: `admin@winemu.id` / `admin123`
+- Akun demo: `demo@winemu.id` / `demo123`
+
+### 3. Jalankan Backend
+
+```bash
+cd backend
 python run.py
 ```
 
-Backend berjalan di: `http://localhost:5000`
+Server berjalan di `http://localhost:5000`, sekaligus melayani file frontend statis di root path (`/`, `/login.html`, `/admin/dashboard.html`, dst) dan REST API di `/api/v1/*`.
 
----
+### 4. Akses Aplikasi
 
-### 5. Jalankan Frontend
+- Aplikasi user: `http://localhost:5000/`
+- Login: `http://localhost:5000/login.html`
+- Admin console: `http://localhost:5000/admin/dashboard.html` (login dengan akun `role=admin`)
 
-Frontend adalah static HTML — tidak perlu build tool. Cukup serve dengan web server sederhana.
+## Endpoint API Utama
 
-Opsi 1 — Python:
-```bash
-cd frontend
-python -m http.server 8080
-```
+| Modul | Prefix | Contoh |
+|---|---|---|
+| Auth | `/api/v1/auth` | register, login, refresh, logout, forgot-password, reset-password |
+| Users | `/api/v1/users` | profile, avatar upload, bookmarks |
+| Reports | `/api/v1/reports` | CRUD laporan hilang/ditemukan, like, comment, media |
+| Categories | `/api/v1/categories` | list & manage kategori |
+| Claims | `/api/v1/claims` | ajukan klaim kepemilikan, approve/reject, dispute |
+| Chat | `/api/v1/chat` | percakapan & pesan (realtime via SocketIO) |
+| Notifications | `/api/v1/notifications` | daftar notifikasi, mark as read |
+| Admin | `/api/v1/admin` | dashboard stats, kelola user, kelola laporan, resolusi konflik |
 
-Opsi 2 — VS Code Live Server:
-Klik kanan `index.html` → Open with Live Server
+## Fitur yang Sudah Terhubung End-to-End
 
-Akses di browser: `http://localhost:8080`
+1. **Authentication** — Register, Login, Logout, Refresh Token, Forgot/Reset Password ✅
+2. **User Profile** — Edit profil, upload avatar, bookmark ✅
+3. **Reports (Destinations-equivalent)** — CRUD laporan, upload foto/video, kategori, lokasi (lat/lng), like, comment ✅
+4. **Feed** — Infinite scroll, filter (hilang/ditemukan), search ✅
+5. **Review/Interaksi** — Like, comment pada laporan ✅
+6. **Conflict/Claim System** — Ajukan klaim dengan verifikasi ciri rahasia, approve/reject oleh pemilik atau admin, eskalasi dispute ✅
+7. **Map System** — Marker Leaflet, nearby reports, detail lokasi per laporan ✅
+8. **Bookmark System** — Simpan laporan favorit ✅
+9. **Admin Panel** — Dashboard dengan grafik & peta operasional, kelola laporan, kelola pengguna, resolusi konflik, log sistem, pengaturan ✅
+10. **Analytics Dashboard** — KPI cards (total laporan, user, status), breakdown kategori, pertumbuhan user ✅
 
----
+## Catatan Produksi
 
-## Struktur Folder
-winemu/
-├── backend/
-│   ├── app/
-│   │   ├── models/        # SQLAlchemy models
-│   │   ├── routes/        # Blueprint routes (API)
-│   │   ├── helpers/       # Utility functions
-│   │   └── init.py    # App factory
-│   ├── migrations/        # Flask-Migrate files
-│   ├── run.py
-│   └── requirements.txt
-└── frontend/
-├── desktop/           # Tampilan desktop
-├── js/
-│   ├── api.js         # API client & auth helper
-│   ├── nav.js         # Navigasi & notifikasi realtime
-│   └── permissions.js # Dialog izin browser
-├── index.html
-├── feed.html
-├── chat.html
-├── report.html
-└── ...
-
----
-
-## Cara Masuk ke Aplikasi
-
-### Daftar Akun Baru
-1. Buka `http://localhost:8080`
-2. Klik **Daftar Sekarang**
-3. Isi nama, email, dan password
-4. Klik **Daftar**
-
-### Login
-1. Buka `http://localhost:8080`
-2. Klik **Masuk ke Akun**
-3. Masukkan email dan password
-4. Klik **Masuk**
-
-Setelah login, akan diarahkan otomatis ke halaman **Feed**.
-
----
-
-## Fitur Utama
-
-- **Feed Laporan** — Lihat laporan barang hilang & ditemukan di sekitar Anda
-- **Pencarian** — Cari barang berdasarkan nama, kategori, atau lokasi
-- **Chat Realtime** — Hubungi pelapor langsung via Socket.IO
-- **Notifikasi** — Notif realtime untuk klaim, like, komentar, dan pesan masuk
-- **Lokasi** — Tampilan berbasis peta dengan Leaflet.js
-- **Autentikasi** — JWT-based auth, register, login, forgot password
-
----
-
-## Tech Stack
-
-| Layer | Teknologi |
-|---|---|
-| Frontend | HTML, Tailwind CSS, Vanilla JS |
-| Backend | Python, Flask, SQLAlchemy |
-| Database | MySQL |
-| Realtime | Socket.IO |
-| Auth | JWT |
-| Maps | Leaflet.js |
-
----
-
-## Catatan
-
-- Pastikan MySQL sudah berjalan sebelum menjalankan backend
-- File `.env` tidak ikut di-push ke GitHub (sudah ada di `.gitignore`)
-- Izin browser (lokasi & notifikasi) akan diminta otomatis saat pertama kali masuk ke feed
-
----
-
-© 2026 Winemu Ecosystem · Yogyakarta, ID · ꦮꦶꦤꦼꦩꦸ
+- Untuk produksi, ganti `SECRET_KEY` dan `JWT_SECRET_KEY` di `.env` dengan nilai random yang kuat.
+- `flask-socketio` dikonfigurasi dengan `async_mode='eventlet'`; pastikan `eventlet` terinstall (`pip install eventlet`) — sudah ada di `requirements.txt`.
+- Upload media disimpan secara lokal di `backend/app/static/uploads/`. Untuk skala besar, ganti `app/utils/upload.py` agar menulis ke MinIO/S3 (kredensial sudah disiapkan di `.env`: `MINIO_*`).
+- Gunakan WSGI server produksi (`gunicorn` + `eventlet` worker, atau `gevent`) ketika deploy, bukan `flask run` / dev server bawaan.
